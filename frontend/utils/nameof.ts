@@ -1,0 +1,1 @@
+export const nameof = <T>(field: keyof T) => field;

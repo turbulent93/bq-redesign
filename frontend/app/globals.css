@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    -webkit-tap-highlight-color: transparent;
+    @apply overflow-x-hidden select-none
+}
+
+::-webkit-scrollbar {
+    @apply h-1 w-1
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-200 rounded-sm border
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-sm
+}
