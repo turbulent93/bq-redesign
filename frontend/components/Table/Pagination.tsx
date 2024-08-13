@@ -63,8 +63,6 @@ export function Pagination({ currentPage = 1, onPageChange = () => { }, colorSch
         registersPerPage: perPage,
     });
 
-    if (total === 0) return '';
-
     const renderPages = useMemo(() => {
         if (totalPages <= 5) {
             return new Array(totalPages).fill(0).map((_, index) => (
@@ -111,6 +109,9 @@ export function Pagination({ currentPage = 1, onPageChange = () => { }, colorSch
             </>
         )
     }, [currentPage, siblingsCount, previousPages, nextPages, totalPages, colorScheme]);
+
+    if (total === 0) return '';
+
     return (
         <Stack direction='row' mt='8' justify='center' align='center' spacing='6' margin={1}>
             <Stack direction='row' spacing='2'>

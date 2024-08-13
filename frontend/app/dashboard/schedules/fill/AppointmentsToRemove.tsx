@@ -45,7 +45,7 @@ export const AppointmentsToRemove = ({data}: AppointmentsToRemoveProps) => {
             }
             <Flex flexDir={"column"} gap={3} mb={3}>
                 {
-                    appointments?.list.map(i => <Box bgColor="gray.100" borderRadius={5} px={4} py={2}>
+                    appointments?.list.map(i => <Box bgColor="gray.100" borderRadius={5} px={4} py={2} key={i.id}>
                         {
                             `${i.service?.name}, ${i.startAt} - ${i.endAt}`
                         }

@@ -142,7 +142,7 @@ const TimePickerContent = ({scheduleId, duration, goToServiceStep, goToNext}: Ti
 export const TimePicker = (props: TimePickerProps) => {
     const {isOpen, onOpen, onClose} = useDisclosure()
 
-    const width = window.innerWidth
+    const width = window?.innerWidth
 
     useEffect(() => {
         if(props.scheduleId) 

@@ -3,12 +3,14 @@
 import { statisticClient } from "@/services/services";
 import { Box, Container, Flex, Spinner, Text } from "@chakra-ui/react";
 import { useQuery } from "react-query";
-import Chart from 'react-apexcharts'
 import { useAuth } from "@/utils/useAuth";
+
+import dynamic from 'next/dynamic'
+    
+const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 const colors = ["#ff6f00", "#17A398", "#e0c097", "#002d5b"]
 const gray600 = "#4A5568"
-
 
 export default function Page() {
     const {user} = useAuth()
@@ -192,7 +194,7 @@ export default function Page() {
                     data: data.applications.values,
                 }]}
                 type="bar"
-                width={40 & data.applications.labels.length}
+                width={40 * data.applications.labels.length}
                 height={160}
             />
         </Box>
