@@ -141,3 +141,4 @@ C:\Users\U\source\repos\bq-redesign\backend\BqApi\bin\Debug\net8.0\Telegram.Bot.
 C:\Users\U\source\repos\bq-redesign\backend\BqApi\bin\Debug\net8.0\Microsoft.AspNetCore.JsonPatch.dll
 C:\Users\U\source\repos\bq-redesign\backend\BqApi\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 C:\Users\U\source\repos\bq-redesign\backend\BqApi\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
+C:\Users\U\source\repos\bq-redesign\backend\BqApi\obj\Debug\net8.0\BqApi.sourcelink.json

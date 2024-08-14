@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BqApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+599aa3b304c500db950e4afd66f3f7a44bc7e4fb")]
 [assembly: System.Reflection.AssemblyProductAttribute("BqApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BqApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
