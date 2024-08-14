@@ -53,7 +53,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql("Host=localhost;Port=5432;Database=bq;Password=1234;Username=postgres"));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PgsqlConnection")));
 
 var config = TypeAdapterConfig.GlobalSettings;
 
