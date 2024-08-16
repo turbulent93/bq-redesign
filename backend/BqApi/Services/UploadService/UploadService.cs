@@ -4,17 +4,16 @@ using BqApi.Models;
 using BqApi.Services.UploadService;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace BeautyQueenApi.Services.UploadService
 {
     public class UploadService : IUploadService
     {
-        private readonly IWebHostEnvironment _appEnvironment;
+        private readonly UploadSettings _settings;
         private readonly ApplicationDbContext _context;
-        public UploadService(IWebHostEnvironment appEnvironment, ApplicationDbContext context)
+        public UploadService(IConfiguration _config, ApplicationDbContext context)
         {
-            _appEnvironment = appEnvironment;
+            _settings = _config.GetSection(nameof(UploadSettings)).Get<UploadSettings>()!;
             _context = context;
         }
 
@@ -28,21 +27,8 @@ namespace BeautyQueenApi.Services.UploadService
 
         public async Task<FileDto> UploadAsync(UploadDto request)
         {
-            //if(!Directory.Exists(_appEnvironment.WebRootPath))
-            //{
-            //    Directory.CreateDirectory(_appEnvironment.WebRootPath);
-            //}
-
-            //var dirPath = Path.Combine(
-            //    _appEnvironment.WebRootPath,
-            //    "files");
-
-            //if(!Directory.Exists(dirPath)) {
-            //    Directory.CreateDirectory(dirPath);
-            //}
-
             string fileName = Guid.NewGuid() + Path.GetExtension(request.File.FileName);
-            string path = Path.Combine(_appEnvironment.WebRootPath, "files", fileName);
+            string path = Path.Combine(_settings.UploadPath, "files", fileName);
 
             using var fileStream = new FileStream(path, FileMode.Create);
             await request.File.CopyToAsync(fileStream);
@@ -65,9 +51,9 @@ namespace BeautyQueenApi.Services.UploadService
             var item = await _context.File.FirstOrDefaultAsync(i => i.Id == id)
                 ?? throw new Exception(ErrorMessages.FILE_ERROR);
 
-            if (File.Exists(item.Path))
+            if (File.Exists(Path.Combine(_settings.UploadPath, item.Path)))
             {
-                File.Delete(item.Path);
+                File.Delete(Path.Combine(_settings.UploadPath, item.Path));
 
                 _context.File.Remove(item);
 
