@@ -16,9 +16,11 @@ export default function RootLayout({
 }: Readonly<{
   	children: React.ReactNode;
 }>) {
+    const vh = window.innerHeight * 0.01
+
 	return (
 		<html lang="en">
-			<body className="overflow-y-hidden">
+			<body className="overflow-y-hidden" style={{height: `calc(${vh}px * 100)`}}>
 				<Providers>
 					<Content>
 						{children}
