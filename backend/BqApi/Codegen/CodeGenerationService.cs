@@ -12,13 +12,16 @@ public class CodeGenerationService
 {
     private readonly IServiceProvider _serviceProvider;
     private readonly IEnumerable<OpenApiDocumentRegistration> _documents;
+    private readonly CodegenSettings _settings;
 
     public CodeGenerationService(
         IServiceProvider serviceProvider,
-        IEnumerable<OpenApiDocumentRegistration> documents)
+        IEnumerable<OpenApiDocumentRegistration> documents,
+        IConfiguration config)
     {
         _serviceProvider = serviceProvider;
         _documents = documents;
+        _settings = config.GetSection(nameof(CodegenSettings)).Get<CodegenSettings>()!;
     }
 
     private Task<NSwag.OpenApiDocument> GenerateOpenApiDocumentAsync(string documentName)
@@ -34,72 +37,18 @@ public class CodeGenerationService
             .GenerateAsync(_serviceProvider.CreateScope());
     }
 
-    private async Task GenerateDtoTypesAsync()
-    {
-        Console.WriteLine("Generating models...");
-
-        var document = await GenerateOpenApiDocumentAsync("v1");
-        var generator = new TypeScriptClientGenerator(document, new TypeScriptClientGeneratorSettings
-        {
-            Template = TypeScriptTemplate.Axios,
-            GenerateDtoTypes = true,
-            GenerateClientClasses = false,
-            GenerateClientInterfaces = false,
-            GenerateResponseClasses = true,
-            TypeScriptGeneratorSettings =
-            {
-                EnumStyle = TypeScriptEnumStyle.Enum,
-                TypeStyle = TypeScriptTypeStyle.Interface,
-                UseLeafType = false,
-                NullValue = TypeScriptNullValue.Undefined,
-                DateTimeType = TypeScriptDateTimeType.String,
-                GenerateDefaultValues = true,
-                MarkOptionalProperties = false,
-                GenerateCloneMethod = false,
-            },
-        });
-
-        var content = generator
-            .GenerateFile(ClientGeneratorOutputType.Contracts)
-            .Replace("\r\n", "\n")
-            .Replace("\r", "\n")
-            .Replace("\n", Environment.NewLine);
-
-        // foreach (var generateDtoPath in _settings.GenerateDtoPaths)
-        // {
-        // }
-        if (!Directory.Exists("generated"))
-        {
-            Directory.CreateDirectory("generated");
-        }
-        const string path = "generated/models.ts";
-
-        if (File.Exists(path) &&
-            await AreFileContentsEqualAsync(content, path))
-        {
-            return;
-        }
-
-        await File.WriteAllTextAsync(
-            path,
-            content
-        );
-    }
-
     private async Task GenerateTypeScriptClient()
     {
-        const string generatePath = "C:\\Users\\U\\source\\repos\\bq-redesign\\frontend\\services";
-
-        if (!Directory.Exists(generatePath))
+        if (!Directory.Exists(_settings.GeneratePath))
         {
-            Directory.CreateDirectory(generatePath);
+            Directory.CreateDirectory(_settings.GeneratePath);
         }
 
         var document = await GenerateOpenApiDocumentAsync("v1");
 
         await GenerateClient(
             document: document,
-            generatePath: generatePath + "/client.ts",
+            generatePath: _settings.GeneratePath + "/client.ts",
             generateCode: (document) =>
             {
                 var settings = new TypeScriptClientGeneratorSettings
@@ -140,7 +89,7 @@ public class CodeGenerationService
     {
         //if (true)
         //    await GenerateDtoTypesAsync();
-        if (true)
+        if (_settings.GenerationEnabled)
             await GenerateTypeScriptClient();
     }
 }

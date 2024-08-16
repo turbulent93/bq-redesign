@@ -8,6 +8,7 @@ using BqApi.Services.StatisticService;
 using BqApi.TgBot;
 using Mapster;
 using MapsterMapper;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -16,6 +17,15 @@ using System.Reflection;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Host
+    .ConfigureAppConfiguration((hostingContext, config) =>
+    {
+        config.AddJsonFile(
+            "appsettings.Local.json",
+             optional: true,
+             reloadOnChange: true);
+    });
 
 builder.Services.AddCors(p => p.AddPolicy("FrontendPolicy", build =>
 {
