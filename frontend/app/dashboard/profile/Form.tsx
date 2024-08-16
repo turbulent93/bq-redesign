@@ -52,12 +52,6 @@ export const Form = () => {
                     ?.filter(i => user?.employee?.specializations?.map(i => i.id).includes(Number(i.value)))
             }
         />
-        {
-            specializations?.map(i => i?.value)
-        }
-        {
-            user?.employee?.specializations?.map(i => i.id)
-        }
         {/* <Text
             fontSize={16}
             fontWeight={"bold"}

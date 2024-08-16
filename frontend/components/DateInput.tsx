@@ -26,7 +26,7 @@ export const DateInput = ({value, onChange, label, disabled}: DateInputProps) =>
         year: curDate.year(),
         employeeId: user?.employee?.id,
         onSuccess: (data) => {
-            const first = data.find(i => i.scheduleId && i.day >= curDate.day())
+            const first = data.find(i => i.scheduleId && i.day >= curDate.date())
 
             if(first) {
                 onChange({

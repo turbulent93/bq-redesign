@@ -80,7 +80,7 @@ export const CustomTable = ({
                                                     opacity: "0.5"
                                                 }}
                                             >
-                                                <Link href={`${updatePath}/${row.id}`}>
+                                                <Link href={`${updatePath}?id=${row.id}`}>
                                                     <BsPencilFill/>
                                                 </Link>
                                             </Button>

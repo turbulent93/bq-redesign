@@ -2,11 +2,14 @@
 
 import { SpecializationDto } from "@/services/client";
 import { specializationsClient } from "@/services/services";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Form } from "../../Form";
+import { Form } from "../Form";
 
-export default function Page({params}: {params: {id: number}}) {
+export default function Page() {
+	const searchParams = useSearchParams()
+	const id = searchParams.get("id")
+	
 	const queryClient = useQueryClient()
     const router = useRouter()
 
@@ -17,8 +20,8 @@ export default function Page({params}: {params: {id: number}}) {
 	})
 
 	const {data} = useQuery(
-        ["view specialization", params.id],
-        () => specializationsClient.view(Number(params.id))
+        ["view specialization", id],
+        () => specializationsClient.view(Number(id))
     )
 
 	return <Form mutate={mutate} values={data} />

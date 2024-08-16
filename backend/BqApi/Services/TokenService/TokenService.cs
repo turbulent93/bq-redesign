@@ -116,8 +116,8 @@ namespace BeautyQueenApi.Services.TokenService
             List<Claim> claims =
             [
                 new Claim("Id", user.Id.ToString()),
-                new Claim("EmployeeId", user.Employee?.Id.ToString()!),
-                new Claim(ClaimTypes.Role, user.Role)
+                new Claim("EmployeeId", user?.Employee != null ? user.Employee?.Id.ToString()! : ""),
+                new Claim(ClaimTypes.Role, user?.Role!)
             ];
 
             var now = DateTime.UtcNow;
@@ -160,10 +160,12 @@ namespace BeautyQueenApi.Services.TokenService
 
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
 
+            var employeeId = GetClaim(principal.Claims, CustomClaimTypes.EmployeeId);
+
             return new ClaimsResult
             {
                 Id = Int32.Parse(GetClaim(principal.Claims, CustomClaimTypes.Id)),
-                EmployeeId = Int32.Parse(GetClaim(principal.Claims, CustomClaimTypes.EmployeeId))
+                EmployeeId = employeeId != "" ? Int32.Parse(employeeId) : null
             };
         }
 

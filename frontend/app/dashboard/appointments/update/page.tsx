@@ -1,11 +1,12 @@
 'use client';
 
 import { EmployeeDto } from "@/services/client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 // import { Form } from "../../Form";
 
-export default function Page({params}: {params: {id: number}}) {
+export default function Page() {
+	const {} = useSearchParams()
 	const queryClient = useQueryClient()
     const router = useRouter()
 

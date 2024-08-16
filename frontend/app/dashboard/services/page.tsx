@@ -64,11 +64,10 @@ export default function ServicesPage() {
         }
     })
 
-    const actionsDisabled = (value: ServiceDto) => {
-        return !isAdmin
-            ? value.createdBy != user?.employee?.id
-            : true
-    }
+    // const actionsDisabled = (value: ServiceDto) => {
+    //     console.log(isAdmin)
+    //     return true
+    // }
 
     return (
         <Container maxW="800px">
@@ -84,7 +83,7 @@ export default function ServicesPage() {
                 removeMutate={mutate}
                 page={page}
                 setPage={setPage}
-                actionsDisabled={actionsDisabled}
+                // actionsDisabled={actionsDisabled}
             />
         </Container>
     );

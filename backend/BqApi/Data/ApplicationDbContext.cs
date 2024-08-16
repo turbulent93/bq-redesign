@@ -30,8 +30,8 @@ namespace BeautyQueenApi.Data
         {
             if(_accessor.HttpContext != null)
             {
-                var employeeId = _accessor.HttpContext!.User.Claims
-                    .Where(c => c.Type == CustomClaimTypes.EmployeeId)
+                var userId = _accessor.HttpContext!.User.Claims
+                    .Where(c => c.Type == CustomClaimTypes.Id)
                     .Select(x => x.Value)
                     .FirstOrDefault()!;
 
@@ -41,7 +41,7 @@ namespace BeautyQueenApi.Data
 
                 foreach (var entry in changedEntries)
                 {
-                    entry.Entity.Update(Int32.Parse(employeeId));
+                    entry.Entity.Update(Int32.Parse(userId));
                 }
             }
 

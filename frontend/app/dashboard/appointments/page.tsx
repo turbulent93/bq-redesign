@@ -73,8 +73,8 @@ export default function Page() {
 
     const actionsDisabled = (value: AppointmentDto) => {
         return !isAdmin
-            ? value.createdBy != user?.employee?.id
-            : true
+            ? value.createdBy != user?.id
+            : false
     }
 
     return (
