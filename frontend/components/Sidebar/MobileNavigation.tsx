@@ -38,7 +38,7 @@ export const MobileNavigation = () => {
                     >
                     <Flex>
                         <Avatar
-                            src={`${SERVER_URL}/${user?.employee?.file?.path}`}
+                            src={!!user?.employee?.file?.path ? `${SERVER_URL}/${user?.employee?.file?.path}` : undefined}
                             w="40px"
                             h="40px"
                             />

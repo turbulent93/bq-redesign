@@ -3,6 +3,7 @@
 import { CustomForm } from "@/components/CustomForm"
 import { CustomInput } from "@/components/CustomInput"
 import { CustomSelect } from "@/components/CustomSelect"
+import { FileUpload } from "@/components/FileUpload"
 import { EmployeeDto, UserDto } from "@/services/client"
 import { specializationsClient, usersClient } from "@/services/services"
 import { nameof } from "@/utils/nameof"
@@ -34,6 +35,10 @@ export const Form = () => {
     )
 
     return <CustomForm onSubmit={mutate} values={user}>
+        <FileUpload
+            name={`${nameof<UserDto>("employee")}.${nameof<EmployeeDto>("fileId")}`}
+            employeeId={user?.employee?.id}
+        />
         <CustomInput
             label="Имя"
             name={`${nameof<UserDto>("employee")}.${nameof<EmployeeDto>("fullName")}`}
@@ -52,14 +57,6 @@ export const Form = () => {
                     ?.filter(i => user?.employee?.specializations?.map(i => i.id).includes(Number(i.value)))
             }
         />
-        {/* <Text
-            fontSize={16}
-            fontWeight={"bold"}
-            textColor={"gray.600"}
-            my={4}
-        >
-            Данные пользователя
-        </Text> */}
         <CustomInput
             label="Логин"
             name={nameof<UserDto>("login")}

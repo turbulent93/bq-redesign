@@ -61,7 +61,7 @@ export const FileUpload = ({name}: FileUploadProps) => {
     }
 
     const {} = useQuery(["view file", fileId], () => uploadClient.view(fileId), {
-        enabled: fileId && !croppedSrc,
+        enabled: !!fileId && !croppedSrc,
         onSuccess: (data) => {
             setCroppedSrc(data.path)
         }

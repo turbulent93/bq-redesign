@@ -86,7 +86,7 @@ export default function ServicesPage() {
                 ? <Form/>
                 : <>
                     <Avatar
-                        src={`${SERVER_URL}/${user?.employee?.file?.path}`}
+                        src={!!user?.employee?.file?.path ? `${SERVER_URL}/${user?.employee?.file?.path}` : undefined}
                         w={"160px"}
                         h={"160px"}
                         // objectFit={'cover'}
