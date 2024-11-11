@@ -9,6 +9,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import {ADMIN_ROLE_NAME} from "@/utils/constants"
+import { DashboardHeader } from "@/components/DashboardHeader";
 
 const SERVER_URL = process.env.SERVER_URL!
 
@@ -73,6 +74,24 @@ const columns: ColumnType[] = [
     }
 ]
 
+const abbreviatedColumns: ColumnType[] = [
+    {
+        title: "",
+        name: nameof<UserDto>("employee"),
+        convertContent: (value) => <Avatar src={`${SERVER_URL}/${value?.file?.path}`} w="30px" h="30px"/>
+    },
+    {
+        title: "Логин",
+        name: nameof<UserDto>("login")
+    },
+    {
+        title: "Действия",
+        name: "_actions",
+        removeDisabled: (value) => value.login == "admin",
+        updateDisabled: (value) => value.login == "admin"
+    }
+]
+
 export default function ServicesPage() {
     const [page, setPage] = useState<number>(1)
     const {data} = useQuery(
@@ -87,16 +106,18 @@ export default function ServicesPage() {
             queryClient.invalidateQueries(["get users", page])
         }
     })
+    
+    const [abbreviatedTable, setAbbreviatedTable] = useState(false)
 
     return (
         <Container maxW="800px">
-            <Button mb={4}>
-                <Link href={"users/add"}>
-                    Добавить пользователя
-                </Link>
-            </Button>
+            <DashboardHeader
+                addUrl="users/add"
+                abbreviatedTable={abbreviatedTable}
+                setAbbreviatedTable={setAbbreviatedTable}
+            />
             <CustomTable
-                columns={columns}
+                columns={abbreviatedTable ? abbreviatedColumns : columns}
                 data={data}
                 updatePath="users/update"
                 removeMutate={mutate}

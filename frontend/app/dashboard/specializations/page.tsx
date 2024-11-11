@@ -8,6 +8,7 @@ import { useAuth } from "@/utils/useAuth";
 import { Button, Container } from "@chakra-ui/react";
 import Link from "next/link";
 import { useState } from "react";
+import { CiCirclePlus } from "react-icons/ci";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 const columns: ColumnType[] = [
@@ -46,9 +47,9 @@ export default function ServicesPage() {
 
     return (
         <Container maxW="800px">
-            <Button mb={4}>
+            <Button mb={4} leftIcon={<CiCirclePlus size={24}/>}>
                 <Link href={"specializations/add"}>
-                    Добавить специализацию
+                    Добавить
                 </Link>
             </Button>
             <CustomTable

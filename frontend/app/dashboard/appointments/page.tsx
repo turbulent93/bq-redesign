@@ -12,6 +12,7 @@ import { AppointmentsActivity } from "./AppointmentsActivity";
 import { DateInput } from "@/components/DateInput";
 import { SchedulerValue } from "@/components/Scheduler/Scheduler";
 import { useAuth } from "@/utils/useAuth";
+import { DashboardHeader } from "@/components/DashboardHeader";
 
 const columns: ColumnType[] = [
     {
@@ -41,6 +42,23 @@ const columns: ColumnType[] = [
         name: "_actions"
     }
 ]
+
+const abbreviatedColumns: ColumnType[] = [
+    {
+        title: "Услуга",
+        name: nameof<AppointmentDto>("service"),
+        convertContent: (value: ServiceDto) => value.name
+    },
+    {
+        title: "Время",
+        name: nameof<AppointmentDto>("startAt")
+    },
+    {
+        title: "Действия",
+        name: "_actions"
+    }
+]
+
 
 export default function Page() {
     const {user, isAdmin} = useAuth()
@@ -76,17 +94,17 @@ export default function Page() {
             ? value.createdBy != user?.id
             : false
     }
+    
+    const [abbreviatedTable, setAbbreviatedTable] = useState(false)
 
     return (
         <Container maxW="800px">
-            <Flex gap={3} flexWrap={"wrap"} mb={4}>
-                <Button>
-                    <Link href={"appointments/add"}>
-                        Добавить запись
-                    </Link>
-                </Button>
-                <DateInput value={schedulerValue} onChange={setSchedulerValue}/>
-            </Flex>
+            <DashboardHeader
+                addUrl="appointments/add"
+                abbreviatedTable={abbreviatedTable}
+                setAbbreviatedTable={setAbbreviatedTable}
+            />
+            <DateInput value={schedulerValue} onChange={setSchedulerValue}/>
             <Tabs tabIndex={tab} onChange={setTab}>
                 <TabList>
                     <Tab>Календарь</Tab>
@@ -98,7 +116,7 @@ export default function Page() {
                 </TabPanel>
                 <TabPanel>
                     <CustomTable
-                        columns={columns}
+                        columns={abbreviatedTable ? abbreviatedColumns : columns}
                         data={data}
                         updatePath="appointments/update"
                         removeMutate={mutate}

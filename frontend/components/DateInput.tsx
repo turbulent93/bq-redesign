@@ -48,7 +48,7 @@ export const DateInput = ({value, onChange, label, disabled}: DateInputProps) =>
         <InputGroup mb={label ? 1 : undefined}>
             <Input
                 placeholder='Дата не выбрана'
-                value={value?.date}
+                value={value?.date || ""}
                 onChange={(e) => onChange({...value, date: e.target.value})}
                 disabled={disabled}
             />

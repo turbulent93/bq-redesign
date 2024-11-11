@@ -1,5 +1,6 @@
 'use client';
 
+import { DashboardHeader } from "@/components/DashboardHeader";
 import { ColumnType, CustomTable } from "@/components/Table/Table";
 import { ServiceDto } from "@/services/client";
 import { servicesClient } from "@/services/services";
@@ -47,6 +48,17 @@ const columns: ColumnType[] = [
     }
 ]
 
+const abbreviatedColumns: ColumnType[] = [
+    {
+        title: "Название",
+        name: nameof<ServiceDto>("name")
+    },
+    {
+        title: "Действия",
+        name: "_actions"
+    }
+]
+
 export default function ServicesPage() {
     const {user, isAdmin} = useAuth()
 
@@ -68,16 +80,18 @@ export default function ServicesPage() {
     //     console.log(isAdmin)
     //     return true
     // }
+    
+    const [abbreviatedTable, setAbbreviatedTable] = useState(false)
 
     return (
         <Container maxW="800px">
-            <Button mb={4}>
-                <Link href={"services/add"}>
-                    Добавить услугу
-                </Link>
-            </Button>
+            <DashboardHeader
+                addUrl="services/add"
+                abbreviatedTable={abbreviatedTable}
+                setAbbreviatedTable={setAbbreviatedTable}
+            />
             <CustomTable
-                columns={columns}
+                columns={abbreviatedTable ? abbreviatedColumns : columns}
                 data={data}
                 updatePath="services/update"
                 removeMutate={mutate}

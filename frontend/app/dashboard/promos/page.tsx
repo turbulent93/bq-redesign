@@ -1,13 +1,15 @@
 'use client';
 
+import { DashboardHeader } from "@/components/DashboardHeader";
 import { ColumnType, CustomTable } from "@/components/Table/Table";
 import { PromoDto, ServiceDto } from "@/services/client";
 import { promosClient, servicesClient } from "@/services/services";
 import { nameof } from "@/utils/nameof";
 import { useAuth } from "@/utils/useAuth";
-import { Button, Container } from "@chakra-ui/react";
+import { Button, Container, Flex, Switch, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { useState } from "react";
+import { CiCirclePlus } from "react-icons/ci";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 const columns: ColumnType[] = [
@@ -33,6 +35,17 @@ const columns: ColumnType[] = [
     }
 ]
 
+const abbreviatedColumns: ColumnType[] = [
+    {
+        title: "Название",
+        name: nameof<PromoDto>("title")
+    },
+    {
+        title: "Действия",
+        name: "_actions"
+    }
+]
+
 export default function ServicesPage() {
     const {user, isAdmin} = useAuth()
 
@@ -50,15 +63,17 @@ export default function ServicesPage() {
         }
     })
 
+    const [abbreviatedTable, setAbbreviatedTable] = useState(false)
+
     return (
         <Container maxW="800px">
-            <Button mb={4}>
-                <Link href={"promos/add"}>
-                    Добавить промо
-                </Link>
-            </Button>
+            <DashboardHeader
+                addUrl="promos/add"
+                abbreviatedTable={abbreviatedTable}
+                setAbbreviatedTable={setAbbreviatedTable}
+            />
             <CustomTable
-                columns={columns}
+                columns={abbreviatedTable ? abbreviatedColumns : columns}
                 data={data}
                 updatePath="promos/update"
                 removeMutate={mutate}
