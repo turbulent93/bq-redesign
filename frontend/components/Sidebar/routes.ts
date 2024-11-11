@@ -8,6 +8,7 @@ import { BsScissors } from "react-icons/bs";
 import { FaCogs } from "react-icons/fa";
 import { IoMdHome } from "react-icons/io";
 import { RiAdminLine } from "react-icons/ri";
+import { MdOutlinePercent } from "react-icons/md";
 
 export type RouteType = {
     title: string,
@@ -52,5 +53,10 @@ export const routes: RouteType[] = [
         title: "Записи",
         href: "/dashboard/appointments",
         Icon: AiOutlineBook
+    },
+    {
+        title: "Промо",
+        href: "/dashboard/promos",
+        Icon: MdOutlinePercent
     },
 ]

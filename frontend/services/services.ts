@@ -1,4 +1,4 @@
-import { AppointmentsClient, SchedulesClient, ServicesClient, SpecialiaztionsClient, StatisticClient, TokensClient, UploadClient, UsersClient } from "../services/client";
+import { AppointmentsClient, PromosClient, SchedulesClient, ServicesClient, SpecialiaztionsClient, StatisticClient, TokensClient, UploadClient, UsersClient } from "../services/client";
 import { instance } from "@/api/api.interceptor";
 
 export const servicesClient = new ServicesClient(undefined, instance)
@@ -16,3 +16,5 @@ export const statisticClient = new StatisticClient(undefined, instance)
 export const uploadClient = new UploadClient(undefined, instance)
 
 export const tokensClient = new TokensClient(undefined, instance)
+
+export const promosClient = new PromosClient(undefined, instance)

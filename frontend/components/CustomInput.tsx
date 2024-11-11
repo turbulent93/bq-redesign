@@ -1,4 +1,4 @@
-import { FormErrorMessage, Input, InputGroup, InputLeftElement, InputRightElement, Text } from "@chakra-ui/react"
+import { FormErrorMessage, Input, InputGroup, InputLeftElement, InputRightElement, Text, Textarea } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { useFormContext } from "react-hook-form"
 
@@ -6,7 +6,7 @@ type CustomInputProps = {
     label: string
     name: string
     rightElement?: React.ReactNode
-    type?: "text" | "number" | "password",
+    type?: "text" | "number" | "password" | "textarea",
     required?: boolean
     forceReset?: boolean
 }
@@ -24,14 +24,20 @@ export const CustomInput = ({label, name, rightElement, type, required, forceRes
     return <>
         <Text mb='8px'>{label}</Text>
         <InputGroup className={!errors[name] ? "mb-3" : "mb-1"}>
-            <Input
-                placeholder="Не заполнено"
-                type={type}
-                isInvalid={!!errors[name]}
-                
-                errorBorderColor="red.300"
-                {...register(name, required ? {required: "*Обязательное поле"} : undefined)}
-            />
+            {
+                type == "textarea" ? <Textarea
+                    placeholder="Не заполнено"
+                    isInvalid={!!errors[name]}                    
+                    errorBorderColor="red.300"
+                    {...register(name, required ? {required: "*Обязательное поле"} : undefined)}
+                /> : <Input
+                    placeholder="Не заполнено"
+                    type={type}
+                    isInvalid={!!errors[name]}
+                    errorBorderColor="red.300"
+                    {...register(name, required ? {required: "*Обязательное поле"} : undefined)}
+                />
+            }
             {
                 rightElement && <InputRightElement pointerEvents='none' color='gray.300' fontSize='1.2em'>
                     {rightElement}

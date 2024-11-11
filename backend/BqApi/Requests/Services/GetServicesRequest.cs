@@ -13,6 +13,7 @@ namespace BeautyQueenApi.Requests.Services
 {
     public class GetServiceRequest : PaginationRequest, IRequest<PaginationResponse<ServiceDto>> {
         public int? EmployeeId { get; set; }
+        public int[]? ExludedIds { get; set; }
 
         public class Handler(ApplicationDbContext context
             //IHttpContextAccessor accessor,
@@ -39,6 +40,11 @@ namespace BeautyQueenApi.Requests.Services
                     items = _context
                         .Service
                         .Include(i => i.Specialization);
+                }
+
+                if(request.ExludedIds != null)
+                {
+                    items = items.Where(i => !request.ExludedIds.Contains(i.Id));
                 }
 
                 //var role = _tokenService.GetClaim(_accessor.HttpContext!.User.Claims, ClaimTypes.Role);

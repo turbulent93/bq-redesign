@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Providers } from "./providers";
+import { Providers } from "./dashboard/providers";
 import { Content } from "./Content";
 
 export const metadata: Metadata = {
@@ -20,9 +20,7 @@ export default function RootLayout({
 		<html lang="en">
 			<body className="overflow-y-hidden">
 				<Providers>
-					<Content>
-						{children}
-					</Content>
+					{children}
 				</Providers>
 			</body>
 		</html>

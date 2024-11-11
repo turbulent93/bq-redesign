@@ -25,6 +25,8 @@ namespace BeautyQueenApi.Data
         public DbSet<Appointment> Appointment { get; set; }
         public DbSet<User> User { get; set; }
         public DbSet<UploadedFile> File { get; set; }
+        public DbSet<Promo> Promo { get; set; }
+        public DbSet<PromoService> PromoService { get; set; }
 
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {

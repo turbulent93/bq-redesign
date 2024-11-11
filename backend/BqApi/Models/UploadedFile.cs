@@ -11,5 +11,6 @@ namespace BqApi.Models
         //public int EmployeeId { get; set; }
 
         public Employee? Employee { get; set; }
+        public Promo? Promo { get; set; }
     }
 }

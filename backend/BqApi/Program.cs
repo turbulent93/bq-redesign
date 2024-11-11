@@ -18,14 +18,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Host
-    .ConfigureAppConfiguration((hostingContext, config) =>
-    {
-        config.AddJsonFile(
+builder.Configuration.AddJsonFile(
             "appsettings.Local.json",
              optional: true,
              reloadOnChange: true);
-    });
 
 builder.Services.AddCors(p => p.AddPolicy("FrontendPolicy", build =>
 {

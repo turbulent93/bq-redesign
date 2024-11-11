@@ -11,6 +11,7 @@
         public const string HAS_APPOINTMENT_ERROR = "Один или бололее дней расписания имеют запись";
         public const string APPOINTMENT_ERROR = "Запись не найдена";
         public const string FILE_ERROR = "Файл не найден";
+        public const string PROMO_ERROR = "Промо не найдено";
 
         // token errors
         public const string AUTHENTICATE_ERROR = "Неправильный логин или пароль";

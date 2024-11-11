@@ -102,6 +102,75 @@ namespace BqApi.Migrations
                     b.ToTable("Employee");
                 });
 
+            modelBuilder.Entity("BeautyQueenApi.Models.Promo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BonusCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("ImageId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageId")
+                        .IsUnique();
+
+                    b.ToTable("Promo");
+                });
+
+            modelBuilder.Entity("BeautyQueenApi.Models.PromoService", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Discount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PromoId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PromoId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("PromoService");
+                });
+
             modelBuilder.Entity("BeautyQueenApi.Models.Schedule", b =>
                 {
                     b.Property<int>("Id")
@@ -299,6 +368,36 @@ namespace BqApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("BeautyQueenApi.Models.Promo", b =>
+                {
+                    b.HasOne("BqApi.Models.UploadedFile", "Image")
+                        .WithOne("Promo")
+                        .HasForeignKey("BeautyQueenApi.Models.Promo", "ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Image");
+                });
+
+            modelBuilder.Entity("BeautyQueenApi.Models.PromoService", b =>
+                {
+                    b.HasOne("BeautyQueenApi.Models.Promo", "Promo")
+                        .WithMany("PromoServices")
+                        .HasForeignKey("PromoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BeautyQueenApi.Models.Service", "Service")
+                        .WithMany("PromoServices")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Promo");
+
+                    b.Navigation("Service");
+                });
+
             modelBuilder.Entity("BeautyQueenApi.Models.Schedule", b =>
                 {
                     b.HasOne("BeautyQueenApi.Models.Employee", "Employee")
@@ -336,9 +435,19 @@ namespace BqApi.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("BeautyQueenApi.Models.Promo", b =>
+                {
+                    b.Navigation("PromoServices");
+                });
+
             modelBuilder.Entity("BeautyQueenApi.Models.Schedule", b =>
                 {
                     b.Navigation("Appointments");
+                });
+
+            modelBuilder.Entity("BeautyQueenApi.Models.Service", b =>
+                {
+                    b.Navigation("PromoServices");
                 });
 
             modelBuilder.Entity("BeautyQueenApi.Models.Specialization", b =>
@@ -354,6 +463,8 @@ namespace BqApi.Migrations
             modelBuilder.Entity("BqApi.Models.UploadedFile", b =>
                 {
                     b.Navigation("Employee");
+
+                    b.Navigation("Promo");
                 });
 #pragma warning restore 612, 618
         }

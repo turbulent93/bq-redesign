@@ -19,7 +19,7 @@ namespace BeautyQueenApi.Requests.Users
                 var item = await _context
                     .User
                     .Include(i => i.Employee)
-                    .ThenInclude(i => i.Specializations)
+                    .ThenInclude(i => i!.Specializations)
                     .FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken)
                         ?? throw new Exception(ErrorMessages.USER_ERROR);
 

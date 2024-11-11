@@ -87,7 +87,8 @@ export const FileUpload = ({name}: FileUploadProps) => {
         onSuccess: () => {
             setCroppedSrc(undefined)
             toast({
-                title: "Фотография удалена"
+                title: "Фотография удалена",
+                status: "error"
             })
         }
     })

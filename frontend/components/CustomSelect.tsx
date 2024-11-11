@@ -13,7 +13,7 @@ type CustomSelectProps = {
     multiple?: boolean
 }
 
-export const CustomSelect = ({options, label, name, required, multiple}: CustomSelectProps) => {
+export const CustomSelect = ({options, label, name, required, multiple, defaultValue}: CustomSelectProps) => {
     const {control, formState: {errors}} = useFormContext()
 
     return <>

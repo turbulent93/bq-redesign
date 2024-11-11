@@ -14,6 +14,7 @@ namespace BeautyQueenApi.Models
         public int SpecializationId { get; set; } = specializationId;
 
         public Specialization Specialization { get; set; } = null!;
+        public List<PromoService> PromoServices { get; set; } = null!;
 
         public void Update(CreateOrUpdateServiceRequest request) {
             Name = request.Name;
