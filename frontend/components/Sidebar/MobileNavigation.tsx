@@ -85,6 +85,9 @@ export const MobileNavigation = () => {
                         <Flex textColor={"gray.600"} alignItems={"center"} justifyContent="center" w="100%" h="100%">
                             <Icon size={26}/>
                         </Flex>
+                        {/* <Text fontSize={14}>
+                            {title}
+                        </Text> */}
                     </Link>)
             }
         </Flex>

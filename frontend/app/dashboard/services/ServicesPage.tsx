@@ -6,12 +6,10 @@ import { ServiceDto } from "@/services/client";
 import { servicesClient } from "@/services/services";
 import { nameof } from "@/utils/nameof";
 import { useAuth } from "@/utils/useAuth";
-import { Button, Container, Flex } from "@chakra-ui/react";
+import { Button, Container, Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { ServiceNavigation } from "./ServiceNavigation";
 
 const columns: ColumnType[] = [
     {
@@ -62,8 +60,6 @@ const abbreviatedColumns: ColumnType[] = [
 ]
 
 export default function ServicesPage() {
-    const {user, isAdmin} = useAuth()
-
     const [page, setPage] = useState<number>(1)
     const {data, isLoading} = useQuery(
         ["get services", page],
@@ -77,30 +73,23 @@ export default function ServicesPage() {
             queryClient.invalidateQueries(["get services", page])
         }
     })
-
-    // const actionsDisabled = (value: ServiceDto) => {
-    //     console.log(isAdmin)
-    //     return true
-    // }
+    
     const [abbreviatedTable, setAbbreviatedTable] = useState(false)
 
-    return (
-        <Container maxW="800px">
-            <ServiceNavigation />
-            <DashboardHeader
-                addUrl="services/add"
-                abbreviatedTable={abbreviatedTable}
-                setAbbreviatedTable={setAbbreviatedTable}
-            />
-            <CustomTable
-                columns={abbreviatedTable ? abbreviatedColumns : columns}
-                data={data}
-                updatePath="services/update"
-                removeMutate={mutate}
-                page={page}
-                setPage={setPage}
-                // actionsDisabled={actionsDisabled}
-            />
-        </Container>
-    );
+    return <>
+        <DashboardHeader
+            addUrl="services/add"
+            abbreviatedTable={abbreviatedTable}
+            setAbbreviatedTable={setAbbreviatedTable}
+        />
+        <CustomTable
+            columns={abbreviatedTable ? abbreviatedColumns : columns}
+            data={data}
+            updatePath="services/update"
+            removeMutate={mutate}
+            page={page}
+            setPage={setPage}
+            // actionsDisabled={actionsDisabled}
+        />
+    </>
 }

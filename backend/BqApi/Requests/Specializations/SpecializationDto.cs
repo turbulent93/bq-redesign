@@ -1,9 +1,10 @@
-﻿namespace BeautyQueenApi.Requests.Specializations
+﻿using BqApi.Models.Audit;
+
+namespace BeautyQueenApi.Requests.Specializations
 {
-    public class SpecializationDto
+    public class SpecializationDto : TrackedEntity
     {
         public int? Id { get; set; }
         public string Name { get; set; } = null!;
-        public int CreatedBy { get; set; }
     }
 }

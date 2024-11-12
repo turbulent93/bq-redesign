@@ -18,11 +18,11 @@ export type RouteType = {
 }
 
 export const routes: RouteType[] = [
-    {
-        title: "Главная",
-        href: "/dashboard/home",
-        Icon: IoMdHome
-    },
+    // {
+    //     title: "Главная",
+    //     href: "/dashboard/home",
+    //     Icon: IoMdHome
+    // },
     {
         title: "Пользователи",
         href: "/dashboard/users",
@@ -34,21 +34,21 @@ export const routes: RouteType[] = [
     //     href: "/dashboard/employees",
     //     Icon: AiOutlineUser
     // },
-    {
-        title: "Расписание",
-        href: "/dashboard/schedules",
-        Icon: AiOutlineSchedule
-    },
+    // {
+    //     title: "Расписание",
+    //     href: "/dashboard/schedules",
+    //     Icon: AiOutlineSchedule
+    // },
     {
         title: "Услуги",
         href: "/dashboard/services",
         Icon: FaCogs
     },
-    {
-        title: "Специализации",
-        href: "/dashboard/specializations",
-        Icon: BsScissors
-    },
+    // {
+    //     title: "Специализации",
+    //     href: "/dashboard/specializations",
+    //     Icon: BsScissors
+    // },
     {
         title: "Записи",
         href: "/dashboard/appointments",
@@ -58,5 +58,23 @@ export const routes: RouteType[] = [
         title: "Промо",
         href: "/dashboard/promos",
         Icon: MdOutlinePercent
+    },
+]
+
+export const serviceRoutes: RouteType[] = [
+    {
+        title: "Услуги",
+        href: "/dashboard/services",
+        Icon: AiOutlineBook
+    },
+    {
+        title: "Группы",
+        href: "/dashboard/service-groups",
+        Icon: AiOutlineBook
+    },
+    {
+        title: "Специализации",
+        href: "/dashboard/specializations",
+        Icon: BsScissors
     },
 ]

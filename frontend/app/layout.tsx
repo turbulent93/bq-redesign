@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./dashboard/providers";
-import { Content } from "./Content";
 
 export const metadata: Metadata = {
   title: "Королева красоты",
@@ -18,7 +17,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className="overflow-y-hidden">
+			<body>
 				<Providers>
 					{children}
 				</Providers>

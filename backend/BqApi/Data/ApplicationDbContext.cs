@@ -27,6 +27,7 @@ namespace BeautyQueenApi.Data
         public DbSet<UploadedFile> File { get; set; }
         public DbSet<Promo> Promo { get; set; }
         public DbSet<PromoService> PromoService { get; set; }
+        public DbSet<ServiceGroup> ServiceGroup { get; set; }
 
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {

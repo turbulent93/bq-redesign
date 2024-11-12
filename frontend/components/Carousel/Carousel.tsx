@@ -1,6 +1,7 @@
 import { Box, Button, Flex, Image, Text } from "@chakra-ui/react"
-import { useEffect, useRef, useState } from "react"
+import { TouchEventHandler, useEffect, useRef, useState } from "react"
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs"
+import { useSwipe } from "./useSwipe"
 
 type CarouselProps = {
     items: CardItem[]
@@ -18,6 +19,7 @@ const SERVER_URL = process.env.SERVER_URL!
 
 export const Carousel = ({items, type, autoSlide = true}: CarouselProps) => {
     const [curItem, setCurItem] = useState<number>(0)
+    // const [autoSlide, setAutoSlide] = useState(as)
     const autoSlideRef = useRef<ReturnType<typeof setInterval>>()
 
     const toPrev = () => setCurItem((c) => c == 0 ? items.length - 1 : c - 1)
@@ -31,14 +33,43 @@ export const Carousel = ({items, type, autoSlide = true}: CarouselProps) => {
         return () => clearInterval(autoSlideRef.current)
     }, [])
 
-    return <Box overflow={"hidden"} position={"relative"} h={"400px"}>
+    const events = useSwipe({
+        leftHandler: () => {
+            toNext()
+            clearInterval(autoSlideRef.current)
+        },
+        rightHandler: () => {
+            toPrev()
+            clearInterval(autoSlideRef.current)
+        },
+    })
+
+    // useEffect(() => {
+    //     console.log(result)
+    //     if(result == "left") {
+    //         toNext()
+    //     } else if(result == "right") {
+    //         toPrev()
+    //     }
+    //     if(result) {
+    //         clearInterval(autoSlideRef.current)
+    //     }
+    // }, [result])
+
+    return <Box
+        overflow={"hidden"}
+        position={"relative"}
+        h={"400px"}
+        {...events}
+    >
         <Flex transition={"transform ease-out"} transitionDuration={"500ms"} style={{transform: `translateX(-${curItem * 100}%)`}}>
             {
                 type == "images"
                     ? items.map((i, index) => <Box key={index} minW="100%">
                         <Image src={i.image} />
                     </Box>)
-                    : items.map((i, index) => <Box 
+                    : items.map((i, index) => <Box
+                        key={index}
                         borderRadius={14}
                         border={"gray.600"}
                         shadow={"lg"}

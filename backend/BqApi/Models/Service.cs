@@ -4,7 +4,7 @@ using BqApi.Models.Audit;
 
 namespace BeautyQueenApi.Models
 {
-    public class Service(string name, int price, int duration, int specializationId) : TrackedEntity
+    public class Service(string name, int price, int duration, int specializationId, int groupId) : TrackedEntity
     {
         [Key]
         public int Id { get; set; }
@@ -12,8 +12,10 @@ namespace BeautyQueenApi.Models
         public int Price { get; set; } = price;
         public int Duration { get; set; } = duration;
         public int SpecializationId { get; set; } = specializationId;
+        public int GroupId { get; set; } = groupId;
 
         public Specialization Specialization { get; set; } = null!;
+        public ServiceGroup Group { get; set; } = null!;
         public List<PromoService> PromoServices { get; set; } = null!;
 
         public void Update(CreateOrUpdateServiceRequest request) {

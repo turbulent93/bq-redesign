@@ -36,12 +36,12 @@ export const Content = ({children} : {children: React.ReactNode}) => {
 
 	return <Flex
 		h={`calc(${vh}px * 100)`}
-		overflowY="hidden"
+		// overflowY="hidden"
 	>
 		<Sidebar />
-        <Box w="100%" overflowY={"auto"} h={`calc(${vh}px * 100 - 146px)`} mt={"70px"} mb={"76px"}>
-            {children}
-        </Box>
+			<Box w="100%" overflowY={"auto"} h={`calc(${vh}px * 100 - 146px)`} mt={"70px"} mb={"76px"}>
+				{children}
+			</Box>
 		<MobileNavigation />
 	</Flex>
 }
