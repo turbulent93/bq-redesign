@@ -11,7 +11,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { ServiceNavigation } from "../services/ServiceNavigation";
+import { DashboardNavigation } from "../services/DashboardNavigation";
+import { serviceRoutes } from "@/components/Sidebar/routes";
 
 const columns: ColumnType[] = [
     {
@@ -40,12 +41,12 @@ export default function Page() {
     })
 
     return <Container maxW="800px">
-        <ServiceNavigation />
+        <DashboardNavigation routes={serviceRoutes}/>
         <Button mb={4} leftIcon={<CiCirclePlus size={24}/>}>
-                <Link href={"service-groups/add"}>
-                    Добавить
-                </Link>
-            </Button>
+            <Link href={"service-groups/add"}>
+                Добавить
+            </Link>
+        </Button>
         <CustomTable
             columns={columns}
             data={data}

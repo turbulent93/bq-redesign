@@ -49,6 +49,7 @@ export const Form = ({mutate, values}: FormProps) => {
             <PromoTemplate />
             <FileUpload
                 name={nameof<PromoDto>("imageId")}
+                aspectRatio={3 / 2}
             />
             <CustomInput
                 label="Заголовок"

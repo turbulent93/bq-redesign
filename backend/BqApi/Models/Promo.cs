@@ -27,6 +27,7 @@ namespace BeautyQueenApi.Models
             Description = request.Description;
             StartDate = DateOnly.Parse(request.StartDate);
             EndDate = DateOnly.Parse(request.EndDate);
+            ImageId = request.ImageId;
         }
     }
 }

@@ -11,7 +11,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { ServiceNavigation } from "./ServiceNavigation";
+import { DashboardNavigation } from "./DashboardNavigation";
+import { serviceRoutes } from "@/components/Sidebar/routes";
 
 const columns: ColumnType[] = [
     {
@@ -86,7 +87,7 @@ export default function ServicesPage() {
 
     return (
         <Container maxW="800px">
-            <ServiceNavigation />
+            <DashboardNavigation routes={serviceRoutes}/>
             <DashboardHeader
                 addUrl="services/add"
                 abbreviatedTable={abbreviatedTable}

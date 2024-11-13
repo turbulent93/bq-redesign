@@ -3,7 +3,7 @@
 import { PromoDto } from "@/services/client"
 import { uploadClient } from "@/services/services"
 import { nameof } from "@/utils/nameof"
-import { Box, Button, Image, Text } from "@chakra-ui/react"
+import { AspectRatio, Box, Button, Image, Text } from "@chakra-ui/react"
 import { useFormContext } from "react-hook-form"
 import { useQuery } from "react-query"
 
@@ -25,13 +25,15 @@ export const PromoTemplate = () => {
             border={"gray.600"}
             shadow={"lg"}
         >
-            <Image
-                src={data?.path ? `${SERVER_URL}/${data?.path}` : "/haircut.jpg"}
-                borderTopRadius={14}
-                maxH={"200px"}
-                w="100%"
-                objectFit={"cover"}
-            />
+            <AspectRatio ratio={3 / 2}>
+                <Image
+                    // src={data?.path ? `${SERVER_URL}/${data?.path}` : "/haircut.jpg"}
+                    src={"/haircut.jpg"}
+                    borderTopRadius={14}
+                    w="100%"
+                    objectFit={"cover"}
+                />
+            </AspectRatio>
             <Box p={5}>
                 <Text
                     fontSize={24}

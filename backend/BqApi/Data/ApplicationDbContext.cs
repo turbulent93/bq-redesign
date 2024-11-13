@@ -28,6 +28,7 @@ namespace BeautyQueenApi.Data
         public DbSet<Promo> Promo { get; set; }
         public DbSet<PromoService> PromoService { get; set; }
         public DbSet<ServiceGroup> ServiceGroup { get; set; }
+        public DbSet<Gallery> Gallery { get; set; }
 
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {

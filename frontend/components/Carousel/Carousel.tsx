@@ -1,10 +1,10 @@
-import { Box, Button, Flex, Image, Text } from "@chakra-ui/react"
+import { AspectRatio, Box, Button, Flex, Image, Spinner, Text } from "@chakra-ui/react"
 import { TouchEventHandler, useEffect, useRef, useState } from "react"
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs"
 import { useSwipe } from "./useSwipe"
 
 type CarouselProps = {
-    items: CardItem[]
+    items?: CardItem[]
     type: "images" | "cards"
     autoSlide?: boolean
 }
@@ -22,8 +22,8 @@ export const Carousel = ({items, type, autoSlide = true}: CarouselProps) => {
     // const [autoSlide, setAutoSlide] = useState(as)
     const autoSlideRef = useRef<ReturnType<typeof setInterval>>()
 
-    const toPrev = () => setCurItem((c) => c == 0 ? items.length - 1 : c - 1)
-    const toNext = () => setCurItem((c) => c == items.length - 1 ? 0 : c + 1)
+    const toPrev = () => setCurItem((c) => items?.length ? c == 0 ? items?.length - 1 : c - 1 : 0)
+    const toNext = () => setCurItem((c) => items?.length ? c == items?.length - 1 ? 0 : c + 1 : 0)
 
     useEffect(() => {
         if(!autoSlide) return
@@ -56,19 +56,22 @@ export const Carousel = ({items, type, autoSlide = true}: CarouselProps) => {
     //     }
     // }, [result])
 
+    if(!items)
+        <Spinner textAlign={"center"} />
+
     return <Box
         overflow={"hidden"}
         position={"relative"}
-        h={"400px"}
+        // h={"400px"}
         {...events}
     >
-        <Flex transition={"transform ease-out"} transitionDuration={"500ms"} style={{transform: `translateX(-${curItem * 100}%)`}}>
+        <Flex transition={"transform ease-out"} transitionDuration={"500ms"} style={{transform: `translateX(-${curItem * 100}%)`}} mb={8}>
             {
                 type == "images"
-                    ? items.map((i, index) => <Box key={index} minW="100%">
+                    ? items?.map((i, index) => <Box key={index} minW="100%">
                         <Image src={i.image} />
                     </Box>)
-                    : items.map((i, index) => <Box
+                    : items?.map((i, index) => <Box
                         key={index}
                         borderRadius={14}
                         border={"gray.600"}
@@ -78,7 +81,6 @@ export const Carousel = ({items, type, autoSlide = true}: CarouselProps) => {
                         <Image
                             src={`${SERVER_URL}/${i.image}`}
                             borderTopRadius={14}
-                            maxH={"200px"}
                             w="100%"
                             objectFit={"cover"}
                         />
@@ -140,7 +142,7 @@ export const Carousel = ({items, type, autoSlide = true}: CarouselProps) => {
                 </Box>
             </Button>
         </Flex> */}
-        <Flex position={"absolute"} bottom={2} right={0} left={0} alignItems={"center"} gap={3} mt={3} justifyContent={"center"}>
+        <Flex position={"absolute"} bottom={1} right={0} left={0} alignItems={"center"} gap={3} mt={3} justifyContent={"center"}>
             {
                 items?.map((i, index) => <Box
                     w={"12px"}

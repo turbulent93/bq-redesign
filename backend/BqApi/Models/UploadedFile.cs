@@ -12,5 +12,6 @@ namespace BqApi.Models
 
         public Employee? Employee { get; set; }
         public Promo? Promo { get; set; }
+        public Gallery? Gallery { get; set; }
     }
 }

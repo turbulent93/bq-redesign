@@ -1,13 +1,17 @@
-import { serviceRoutes } from "@/components/Sidebar/routes"
+import { RouteType, serviceRoutes } from "@/components/Sidebar/routes"
 import { Button, Flex, Link } from "@chakra-ui/react"
 import { usePathname } from "next/navigation"
 
-export const ServiceNavigation = () => {
+type DashboardNavigationProps = {
+    routes: RouteType[]
+}
+
+export const DashboardNavigation = ({routes}: DashboardNavigationProps) => {
     const pathname = usePathname()
 
     return <Flex gap={3} mb={3}>
         {
-            serviceRoutes.map(i => <Button
+            routes.map(i => <Button
                 key={i.href}
                 border={0}
                 bgColor={"inherit"}

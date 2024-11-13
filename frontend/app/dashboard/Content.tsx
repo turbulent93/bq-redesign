@@ -7,6 +7,7 @@ import { MobileNavigation } from "@/components/Sidebar/MobileNavigation"
 import { useAuth } from "@/utils/useAuth"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
+import "cropperjs/dist/cropper.css";
 
 export const Content = ({children} : {children: React.ReactNode}) => {
 	const {isAuth, isLoading, isAdmin} = useAuth()
@@ -14,7 +15,7 @@ export const Content = ({children} : {children: React.ReactNode}) => {
 	const [vh, setVh] = useState<number>()
 
 	useEffect(() => {
-		setVh(window.innerHeight * 0.01)
+		setVh(window.innerHeight)
 		// console.log(window.innerHeight * 0.01)
 	}, [])
 
@@ -35,11 +36,11 @@ export const Content = ({children} : {children: React.ReactNode}) => {
 	}
 
 	return <Flex
-		h={`calc(${vh}px * 100)`}
+		h={`${vh}px`}
 		// overflowY="hidden"
 	>
-		<Sidebar />
-			<Box w="100%" overflowY={"auto"} h={`calc(${vh}px * 100 - 146px)`} mt={"70px"} mb={"76px"}>
+		{/* <Sidebar /> */}
+			<Box w="100%" overflowY={"auto"} h={`calc(${vh}px - 146px)`} mt={"70px"} mb={"76px"}>
 				{children}
 			</Box>
 		<MobileNavigation />

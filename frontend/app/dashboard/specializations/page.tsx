@@ -10,6 +10,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { DashboardNavigation } from "../services/DashboardNavigation";
+import { serviceRoutes } from "@/components/Sidebar/routes";
 
 const columns: ColumnType[] = [
     {
@@ -47,6 +49,7 @@ export default function ServicesPage() {
 
     return (
         <Container maxW="800px">
+            <DashboardNavigation routes={serviceRoutes}/>
             <Button mb={4} leftIcon={<CiCirclePlus size={24}/>}>
                 <Link href={"specializations/add"}>
                     Добавить
