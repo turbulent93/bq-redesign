@@ -52,10 +52,10 @@ export const Form = () => {
             required
             multiple={true}
             options={specializations ?? []}
-            defaultValue={
-                specializations
-                    ?.filter(i => user?.employee?.specializations?.map(i => i.id).includes(Number(i.value)))
-            }
+            // defaultValue={
+            //     specializations
+            //         ?.filter(i => user?.employee?.specializations?.map(i => i.id).includes(Number(i.value)))
+            // }
         />
         <CustomInput
             label="Логин"

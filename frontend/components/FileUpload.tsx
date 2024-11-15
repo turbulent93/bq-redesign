@@ -27,10 +27,6 @@ export const FileUpload = ({name, multiple, aspectRatio = 1}: FileUploadProps) =
     const {watch, setValue, getValues} = useFormContext()
     const fileId = watch(name)
 
-    useEffect(() => {
-        console.log("file id", fileId)
-    }, [fileId])
-
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [images, setImages] = useState<FileDto[]>([]) // "/haircut.jpg"
     const [curImage, setCurImage] = useState<number>(0)

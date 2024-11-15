@@ -19,11 +19,14 @@ import { FileUpload } from "@/components/FileUpload"
 import { PromoServiceForm } from "./PromoServiceForm"
 import { PromoServicesList } from "./PromoServicesList"
 import { CiCirclePlus } from "react-icons/ci";
+import { FormContent } from "./FormContent"
 
 type FormProps = {
     mutate: (item: PromoDto) => void,
     values?: PromoDto
 }
+
+const PROMO_TYPES = ["Скидка на услуги", "Начисление бонусов", "Бесплатные услуги"].map(i => ({value: i, label: i}))
 
 export const Form = ({mutate, values}: FormProps) => {
     const {isOpen, onOpen, onClose} = useDisclosure()
@@ -39,10 +42,6 @@ export const Form = ({mutate, values}: FormProps) => {
         if(values)
             setPromoServices(values?.promoServices)
     }, [values])
-
-    useEffect(() => {
-        console.log(promoServices)
-    }, [promoServices])
 
     return <>
         <CustomForm onSubmit={(value) => mutate({...value, promoServices})} values={values}>
@@ -69,12 +68,15 @@ export const Form = ({mutate, values}: FormProps) => {
                 label="Дата окончания"
                 name={nameof<PromoDto>("endDate")}
             />
-            <Button
-                leftIcon={<CiCirclePlus size={24}/>}
-                mb={2}
-                onClick={onOpen}
-            >Добавить услугу</Button>
-            <PromoServicesList
+            <CustomSelect
+                label="Тип"
+                name={nameof<PromoDto>("type")}
+                required
+                options={PROMO_TYPES ?? []}
+                defaultValue={PROMO_TYPES[0]}
+            />
+            <FormContent
+                onOpen={onOpen}
                 items={promoServices}
                 setItems={setPromoServices}
                 currentService={currentService}

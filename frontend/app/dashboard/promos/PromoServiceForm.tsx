@@ -71,7 +71,7 @@ export const PromoServiceForm = ({isOpen, onClose, values, items, setItems, curr
                     name={nameof<PromoServiceDto>("serviceId")}
                     required
                     options={services ?? []}
-                    defaultValue={services?.find(i => i.value == values?.serviceId)}
+                    // defaultValue={services?.find(i => i.value == values?.serviceId)}
                 />
                 <Flex alignItems={"end"}>
                     <Box mr={2}>

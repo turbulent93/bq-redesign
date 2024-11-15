@@ -98,10 +98,10 @@ export const Form = ({mutate, values}: FormProps) => {
             required
             multiple={true}
             options={specializations ?? []}
-            defaultValue={
-                specializations
-                    ?.filter(i => values?.employee?.specializationIds.includes(Number(i.value)))
-            }
+            // defaultValue={
+            //     specializations
+            //         ?.filter(i => values?.employee?.specializationIds.includes(Number(i.value)))
+            // }
         />
         <Text
             fontSize={16}

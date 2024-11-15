@@ -51,14 +51,14 @@ export const Form = ({mutate, values}: FormProps) => {
             name={nameof<ServiceDto>("specializationId")}
             required
             options={specializations ?? []}
-            defaultValue={specializations?.find(i => i.value == values?.specializationId)}
+            // defaultValue={specializations?.find(i => i.value == values?.specializationId)}
         />
         <CustomSelect
             label="Группа"
             name={nameof<ServiceDto>("groupId")}
             required
             options={groups ?? []}
-            defaultValue={groups?.find(i => i.value == values?.groupId)}
+            // defaultValue={groups?.find(i => i.value == values?.groupId)}
         />
     </CustomForm>
 }

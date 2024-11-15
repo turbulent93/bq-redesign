@@ -36,7 +36,7 @@ export const Form = ({mutate, values}: FormProps) => {
             name={nameof<CreateOrUpdateGalleryRequest>("serviceId")}
             required
             options={services ?? []}
-            defaultValue={services?.find(i => i.value == values?.id)}
+            // defaultValue={services?.find(i => i.value == values?.id)}
         />
     </CustomForm>
 }
