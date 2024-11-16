@@ -1,4 +1,4 @@
-import { AppointmentsClient, GalleryClient, PromosClient, SchedulesClient, ServiceGroupClient, ServicesClient, SpecialiaztionsClient, StatisticClient, TokensClient, UploadClient, UsersClient } from "../services/client";
+import { AppointmentsClient, GalleryClient, PromosClient, PunchMapsClient, SchedulesClient, ServiceGroupClient, ServicesClient, SpecialiaztionsClient, StatisticClient, TokensClient, UploadClient, UsersClient } from "../services/client";
 import { instance } from "@/api/api.interceptor";
 
 export const servicesClient = new ServicesClient(undefined, instance)
@@ -22,3 +22,5 @@ export const promosClient = new PromosClient(undefined, instance)
 export const serviceGroupClient = new ServiceGroupClient(undefined, instance)
 
 export const galleryClient = new GalleryClient(undefined, instance)
+
+export const punchMapsClient = new PunchMapsClient(undefined, instance)

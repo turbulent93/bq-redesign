@@ -7,6 +7,7 @@
         public string? Password { get; set; } = null!;
         public string? NewPassword { get; set; } = null!;
         public string Role { get; set; } = null!;
+        public int? PunchMapId { get; set; }
 
         public EmployeeDto? Employee { get; set; }
     }

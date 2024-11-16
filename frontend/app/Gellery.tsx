@@ -22,7 +22,7 @@ export const Gallery = ({items}: GalleryProps) => {
             borderRadius={"md"}
             overflow={"hidden"}
             templateColumns={"repeat(2, 1fr)"}
-            mb={4}
+            mb={8}
         >
             {
                 items?.map(i => <Image

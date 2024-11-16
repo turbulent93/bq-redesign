@@ -16,6 +16,8 @@ export const Hero = () => {
         alignItems={"end"}
         flexDir={"column"}
         p={4}
+        mb={8}
+        shadow={"lg"}
     >
         <Button
             w="100px"

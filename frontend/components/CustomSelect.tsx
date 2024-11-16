@@ -18,7 +18,6 @@ export const CustomSelect = ({options, label, name, required, multiple, defaultV
     const {control, formState: {errors}, setValue} = useFormContext()
 
     useEffect(() => {
-        console.log("set value")
         if(defaultValue)
             setValue(name, Array.isArray(defaultValue) ? defaultValue.map(i => i.value) : defaultValue.value)
     }, [])

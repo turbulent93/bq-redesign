@@ -59,7 +59,8 @@ namespace BeautyQueenApi.Requests.Users
                     item = new(
                         request.Login,
                         BCrypt.Net.BCrypt.HashPassword(request.Password),
-                        request.Role
+                        request.Role,
+                        request.PunchMapId
                     );
 
                     _context.User.Add(item);

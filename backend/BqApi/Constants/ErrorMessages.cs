@@ -12,6 +12,7 @@
         public const string APPOINTMENT_ERROR = "Запись не найдена";
         public const string FILE_ERROR = "Файл не найден";
         public const string PROMO_ERROR = "Промо не найдено";
+        public const string PUNCH_MAP_ERROR = "Панч-карта не найдена";
 
         // token errors
         public const string AUTHENTICATE_ERROR = "Неправильный логин или пароль";

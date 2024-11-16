@@ -1,6 +1,8 @@
 'use client';
 
 import { DashboardHeader } from "@/components/DashboardHeader";
+import { DashboardNavigation } from "@/components/DashboardNavigation";
+import { promoRoutes, serviceRoutes } from "@/components/Sidebar/routes";
 import { ColumnType, CustomTable } from "@/components/Table/Table";
 import { PromoDto, ServiceDto } from "@/services/client";
 import { promosClient, servicesClient } from "@/services/services";
@@ -67,6 +69,7 @@ export default function ServicesPage() {
 
     return (
         <Container maxW="800px">
+            <DashboardNavigation routes={promoRoutes}/>
             <DashboardHeader
                 addUrl="promos/add"
                 abbreviatedTable={abbreviatedTable}

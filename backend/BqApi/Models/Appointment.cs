@@ -18,5 +18,6 @@ namespace BeautyQueenApi.Models
         public Employee Employee { get; set; } = null!;
         public Schedule Schedule { get; set; } = null!;
         public Service Service { get; set; } = null!;
+        public List<User> Appointments { get; set; } = null!;
     }
 }

@@ -17,7 +17,8 @@ public class DbInitializer(
             (
                 AuthOptions.INIT_ADMIN_LOGIN,
                 BCrypt.Net.BCrypt.HashPassword(AuthOptions.INIT_USER_PASSWORD),
-                AuthOptions.INIT_ADMIN_ROLE_NAME
+                AuthOptions.INIT_ADMIN_ROLE_NAME,
+                null
             ));
         }
 

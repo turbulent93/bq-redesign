@@ -1,5 +1,6 @@
 ﻿using BeautyQueenApi.Constants;
 using BeautyQueenApi.Models;
+using BeautyQueenApi.Requests.PunchMaps;
 using BeautyQueenApi.Services.TokenService;
 using BqApi.Models;
 using BqApi.Models.Audit;
@@ -29,6 +30,8 @@ namespace BeautyQueenApi.Data
         public DbSet<PromoService> PromoService { get; set; }
         public DbSet<ServiceGroup> ServiceGroup { get; set; }
         public DbSet<Gallery> Gallery { get; set; }
+        public DbSet<PunchMap> PunchMap { get; set; }
+        public DbSet<PunchMapPromo> PunchMapPromo { get; set; }
 
         public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {

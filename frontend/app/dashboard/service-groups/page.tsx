@@ -11,7 +11,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { CiCirclePlus } from "react-icons/ci";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { DashboardNavigation } from "../services/DashboardNavigation";
+import { DashboardNavigation } from "../../../components/DashboardNavigation";
 import { serviceRoutes } from "@/components/Sidebar/routes";
 
 const columns: ColumnType[] = [

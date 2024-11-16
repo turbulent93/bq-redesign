@@ -19,7 +19,7 @@ export const PriceList = ({items}: PriceListProps) => {
         <Text fontSize={22} textAlign={"center"} mb={3} fontWeight={"bold"}>
             Прайс-лист
         </Text>
-        <Accordion allowMultiple mb={3}>
+        <Accordion allowMultiple mb={8}>
             {
                 items?.map(g => <AccordionItem key={g.id}>
                     <AccordionButton>

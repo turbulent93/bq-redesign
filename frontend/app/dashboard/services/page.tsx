@@ -11,7 +11,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { DashboardNavigation } from "./DashboardNavigation";
+import { DashboardNavigation } from "../../../components/DashboardNavigation";
 import { serviceRoutes } from "@/components/Sidebar/routes";
 
 const columns: ColumnType[] = [
