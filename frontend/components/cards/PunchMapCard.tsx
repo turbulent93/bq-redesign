@@ -19,7 +19,7 @@ type PunchMapCardProps = {
     showProgress?: boolean
 }
 
-export const PunchMapCard = ({columnsCount, stepsCount, items, onOpen, id, register, showProgress = false}: PunchMapCardProps) => {
+export const PunchMapCard = ({columnsCount, stepsCount, items, onOpen, id, register, showProgress = false, promos}: PunchMapCardProps) => {
     // const lastStep = 4 //useMemo(() => items ? items.reduce((p, c) => c.step > p ? c.step : p, 0) : 0, [items])
     const {user, isLoading, isAuth} = useAuth()
 
@@ -30,11 +30,6 @@ export const PunchMapCard = ({columnsCount, stepsCount, items, onOpen, id, regis
 			queryClient.invalidateQueries({queryKey: "check"})
         }
 	})
-
-    const {data: promos} = useQuery(
-        ["get promos"],
-        () => promosClient.get({})
-    )
 
     return <>
         <Box
@@ -89,7 +84,7 @@ export const PunchMapCard = ({columnsCount, stepsCount, items, onOpen, id, regis
                             <Text
                                 fontSize={12}
                                 // w="160px"
-                            >*{i.step} - {i.promo?.description || promos?.list.find(p => p.id == i.promoId)?.description}</Text>
+                            >*{i.step} - {i.promo?.description || promos?.find(p => p.id == i.promoId)?.description}</Text>
                             {
                                 showProgress && user?.stepsCount! >= i.step && <Box
                                 ml="auto"

@@ -38,7 +38,7 @@ const SERVER_URL = process.env.SERVER_URL!
 export default function Home() {
 	const [promoId, setPromoId] = useState<number>()
 
-	const {data: promos = [], isLoading: isPromosLoading} = useQuery(
+	const {data: promoCards = [], isLoading: isPromosLoading} = useQuery(
         ["get promos"],
         () => promosClient.get({onlyCurrent: true, showOnHomePage: true}), {
 			select: (data) => data.list.map(i => {
@@ -73,12 +73,17 @@ export default function Home() {
 	const [punchMapId, setPunchMapId] = useState<number>()
 	const {isOpen, onOpen, onClose} = useDisclosure()
 
+    const {data: promos} = useQuery(
+        ["get promos"],
+        () => promosClient.get({})
+    )
+
 	const {data: punchMaps = [], isLoading} = useQuery(
         ["get punch-maps"],
         () => punchMapsClient.get({page: undefined, size: undefined}), {
 			select: (data) => data.list.map(i => {
 				const PunchMapItem = () => {
-					return <PunchMapCard {...i} items={i.punchMapPromos} register={() => {
+					return <PunchMapCard {...i} items={i.punchMapPromos} promos={promos?.list} register={() => {
 						setPunchMapId(i.id)
 						onOpen()
 					}}/>
@@ -95,7 +100,7 @@ export default function Home() {
 	return <Box>
 		<Hero />
 		<Container mt={4}>
-			<Carousel items={promos} autoSlide/>
+			<Carousel items={promoCards} autoSlide/>
 			<PriceList items={serviceGroups} />
 			<Text fontSize={22} textAlign={"center"} mb={3} fontWeight={"bold"}>
 				Получайте скидки за посещение!
@@ -109,6 +114,6 @@ export default function Home() {
 			/>
 			<Gallery items={gallery} />
 		</Container>
-		<Footer showMap={false} />
+		<Footer />
 	</Box>
 }
