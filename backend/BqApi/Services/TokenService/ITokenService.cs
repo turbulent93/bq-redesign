@@ -8,7 +8,8 @@ namespace BeautyQueenApi.Services.TokenService
 {
     public interface ITokenService
     {
-        public Task<TokenDto> Authenticate(TokenRequest request);
+        public Task<TokenDto> Login(TokenRequest request);
+        public Task<TokenDto> Register(TokenRequest request);
         public Task<TokenDto> Refresh(TokenDto request);
         public Task<CheckResultDto> Check(TokenDto request);
         public string GetClaim(IEnumerable<Claim> claims, string claimType);

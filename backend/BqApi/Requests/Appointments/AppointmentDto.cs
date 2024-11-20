@@ -13,6 +13,8 @@ namespace BeautyQueenApi.Requests.Appointments
         public string StartAt { get; set; } = null!;
         public string EndAt { get; set; } = null!;
         public string Phone { get; set; } = null!;
+        public int? PaidWithBonuses { get; set; }
+        public int? PromoId { get; set; }
         public int CreatedBy { get; set; }
 
         public EmployeeDto? Employee { get; set; }

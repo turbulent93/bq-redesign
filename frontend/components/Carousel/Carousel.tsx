@@ -21,23 +21,27 @@ export const Carousel = ({items, autoSlide = true}: CarouselProps) => {
     // const [autoSlide, setAutoSlide] = useState(as)
     const autoSlideRef = useRef<ReturnType<typeof setInterval>>()
 
-    const toPrev = () => setCurItem((c) => items?.length ? c == 0 ? items?.length - 1 : c - 1 : 0)
-    const toNext = () => setCurItem((c) => items?.length ? c == items?.length - 1 ? 0 : c + 1 : 0)
+    const toPrev = () => setCurItem(items?.length ? curItem == 0 ? items?.length - 1 : curItem - 1 : 0)
+    const toNext = () => setCurItem(items?.length ? curItem == items?.length - 1 ? 0 : curItem + 1 : 0)
 
     useEffect(() => {
-        if(!autoSlide) return
+        if(!autoSlide || (items && items?.length < 2)) return
 
-        autoSlideRef.current = setInterval(toNext, 5000)
+        autoSlideRef.current = setInterval(() => {
+            toNext()
+        }, 5000)
 
         return () => clearInterval(autoSlideRef.current)
-    }, [])
+    }, [items])
 
     const events = useSwipe({
         leftHandler: () => {
+            console.log("clear interval")
             toNext()
             clearInterval(autoSlideRef.current)
         },
         rightHandler: () => {
+            console.log("clear interval")
             toPrev()
             clearInterval(autoSlideRef.current)
         },

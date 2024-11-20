@@ -8,12 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BeautyQueenApi.Requests.Schedules
 {
-    public class ScheduleTimeDto
-    {
-        public string Time { get; set; } = null!;
-        public bool IsAvailable { get; set; }
-    }
-
     public class GetScheduleTimesRequest : IRequest<List<ScheduleTimeDto>> {
         public int ScheduleId { get; set; }
         public int Duration { get; set; }

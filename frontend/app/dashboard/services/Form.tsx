@@ -44,7 +44,18 @@ export const Form = ({mutate, values}: FormProps) => {
             name={nameof<ServiceDto>("price")}
             required
             rightElement="₽"
-            type="number"
+        />
+        <CustomInput
+            label="Бонусы за запись"
+            name={nameof<ServiceDto>("bonusCount")}
+            required
+            rightElement="₽"
+        />
+        <CustomInput
+            label="Можно оплатить бонусами"
+            name={nameof<ServiceDto>("paidAmountWithBonuses")}
+            required
+            rightElement="₽"
         />
         <CustomSelect
             label="Специализация"

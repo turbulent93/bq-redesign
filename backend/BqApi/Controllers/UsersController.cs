@@ -40,6 +40,13 @@ namespace BeautyQueenApi.Controllers
             return await _mediator.Send(request);
         }
 
+        [HttpPut("partial/{id}")]
+        public async Task<ActionResult<UserDto>> PartialUpdate(int id, PartialUpdateUserRequest request)
+        {
+            request.Id = id;
+            return await _mediator.Send(request);
+        }
+
         [HttpPost]
         public async Task<ActionResult<UserDto>> Create(CreateOrUpdateUserRequest request)
         {

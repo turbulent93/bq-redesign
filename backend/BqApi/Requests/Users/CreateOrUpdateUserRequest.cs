@@ -46,21 +46,26 @@ namespace BeautyQueenApi.Requests.Users
                         }
                         item.Update(request.Login,
                             BCrypt.Net.BCrypt.HashPassword(request.NewPassword),
-                            request.Role);
+                            request.Role,
+                            request.PunchMapId,
+                            request.StepsCount);
                     } else
                     {
                         item.Update(request.Login,
                             null,
-                            request.Role);
+                            request.Role,
+                            request.PunchMapId,
+                            request.StepsCount);
                     }
                 }
                 else
                 {
                     item = new(
                         request.Login,
-                        BCrypt.Net.BCrypt.HashPassword(request.Password),
+                        request.Password != null ? BCrypt.Net.BCrypt.HashPassword(request.Password) : null,
                         request.Role,
-                        request.PunchMapId
+                        request.PunchMapId,
+                        request.StepsCount
                     );
 
                     _context.User.Add(item);

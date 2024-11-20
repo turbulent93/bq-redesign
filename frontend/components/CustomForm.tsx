@@ -1,6 +1,6 @@
 "use client"
 
-import { Button, Container } from "@chakra-ui/react"
+import { Box, Button, Container } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { useForm, FormProvider } from "react-hook-form"
 
@@ -9,24 +9,26 @@ type FormProps = {
     onSubmit: (value: any) => void,
     values?: Record<string, any>,
     submitText?: string
+    submitW?: string
     isSubmitVisible?: boolean
     buttons?: (typeof Button)[]
     maxW?: string
     my?: number
+    px?: number
 }
 
-export const CustomForm = ({onSubmit, children, values, buttons, submitText, maxW, isSubmitVisible = true, my = 8}: FormProps) => {
+export const CustomForm = ({onSubmit, children, values, buttons, submitText, maxW, isSubmitVisible = true, my = 8, submitW, px}: FormProps) => {
     const methods = useForm()
 
     useEffect(() => {
         methods.reset(values)
     }, [values])
 
-    return <Container maxW={maxW ?? "600px"} my={my}>
+    return <Container maxW={maxW ?? "600px"} my={my} px={px}>
         <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)}>
                 {children}
-                <Button mt={2} type="submit" display={!isSubmitVisible ? "none" : undefined}>
+                <Button mt={2} type="submit" display={!isSubmitVisible ? "none" : undefined} w={submitW}>
                     {submitText ?? "Отправить"}
                 </Button>
                 {

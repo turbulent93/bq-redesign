@@ -13,6 +13,8 @@ import { DateInput } from "@/components/DateInput";
 import { SchedulerValue } from "@/components/Scheduler/Scheduler";
 import { useAuth } from "@/utils/useAuth";
 import { DashboardHeader } from "@/components/DashboardHeader";
+import { DashboardNavigation } from "@/components/DashboardNavigation";
+import { appointmentRoutes, serviceRoutes } from "@/components/Sidebar/routes";
 
 const columns: ColumnType[] = [
     {
@@ -99,6 +101,7 @@ export default function Page() {
 
     return (
         <Container maxW="800px">
+            <DashboardNavigation routes={appointmentRoutes}/>
             <DashboardHeader
                 addUrl="appointments/add"
                 abbreviatedTable={abbreviatedTable}

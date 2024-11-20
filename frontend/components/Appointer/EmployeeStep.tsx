@@ -1,53 +1,59 @@
 'use client';
 
 import { ColumnType, CustomTable } from "@/components/Table/Table";
-import { AppointmentDto, EmployeeDto, ServiceDto, UserDto } from "@/services/client";
+import { AppointmentDto, EmployeeDto, ServiceDto, UpcomigAppointment, UserDto } from "@/services/client";
 import { usersClient } from "@/services/services";
 import { nameof } from "@/utils/nameof";
-import { Avatar, Box, Button, Container, Flex, Text } from "@chakra-ui/react";
+import { Avatar, Box, Button, Container, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
+import moment from "moment";
 import Link from "next/link";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { AiOutlineSchedule } from "react-icons/ai";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 const SERVER_URL = process.env.SERVER_URL!
 
-const columns: ColumnType[] = [
-    {
-        title: "Фото",
-        name: nameof<EmployeeDto>("file"),
-        convertContent: (value) => <Avatar src={`${SERVER_URL}/${value?.path}`} w="30px" h="30px"/>
-    },
-    {
-        title: "Имя",
-        name: nameof<EmployeeDto>("fullName")
-    },
-    {
-        title: "Действия",
-        name: "_actions"
-    }
-]
-
 type EmployeeStepProps = {
     goToNext: () => void
     goBack: () => void
+    goToPhone: () => void
+    duration?: number
 }
 
-export default function EmployeeStep({goToNext, goBack}: EmployeeStepProps) {
+
+const weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
+
+const getUpcomingDate = (items: UpcomigAppointment[]) => {
+    const date = moment(items[0].date, "DD.MM.YYYY HH:mm:ss")
+    const diff = moment().diff(date, "days")
+    
+    // console.log(moment().format("DD.MM.YYYY HH:mm:ss"), items[0].date, date.format("DD.MM.YYYY HH:mm:ss"), diff)
+
+    if(diff == 0) {
+        return "сегодня"
+    } else if(diff == 1) {
+        return "завтра"
+    } else {
+        return `${date.date()}.${date.month() + 1}, ${weekDays[date.weekday() - 1]}`
+    }
+}
+
+export default function EmployeeStep({goToNext, goBack, goToPhone, duration}: EmployeeStepProps) {
     const {setValue, watch} = useFormContext()
 
-    const serviceIdChanged = watch(nameof<AppointmentDto>("serviceId"))
+    const serviceId = watch(nameof<AppointmentDto>("serviceId"))
 
     const [page, setPage] = useState<number>(1)
-    const {data} = useQuery(
-        ["get employees", page, serviceIdChanged],
-        () => usersClient.getEmployees({page: page, size: 10}), {
-            enabled: !!serviceIdChanged
+    const {data, isLoading} = useQuery(
+        ["get employees", page, serviceId],
+        () => usersClient.getEmployees({page: page, size: 10, withUpcomingAppointments: true, duration, serviceId}), {
+            enabled: !!serviceId && !!duration
         }
     )
 
-    if(!serviceIdChanged) {
+    if(!serviceId) {
         return <Flex
             w="100%"
             justifyContent={"center"}
@@ -59,29 +65,101 @@ export default function EmployeeStep({goToNext, goBack}: EmployeeStepProps) {
                 _hover={{textDecoration: "underline"}} 
                 onClick={goBack}
             >
-                Сначала выберите мастера
+                Сначала выберите услугу
             </Text>
             <FaExternalLinkAlt />
         </Flex>
     }
 
+    if(data?.list.length == 0 && !isLoading) {
+        return <Text textAlign={"center"} fontWeight={"bold"}>Нет свободных мастеров</Text>
+    }
+
+    if(data?.list.length == 0 && isLoading) {
+        return <Spinner mx="auto" />
+    }
+
     return (
-        <Container maxW="800px" px={0}>
-            <CustomTable
-                columns={columns}
-                data={data}
-                page={page}
-                setPage={setPage}
-                actions={[
-                    {
-                        text: "Выбрать",
-                        mutate: (value) => {
-                            setValue(nameof<AppointmentDto>("employeeId"), value.id)
-                            goToNext()
+        <Box>
+            {
+                data?.list.map(i => <Box
+                        key={i.id}
+                        // bgColor={"gray.700"}
+                        p={3}
+                        shadow={"lg"}
+                        border={"1px"}
+                        borderColor={"gray.300"}
+                        borderRadius={"md"}
+                        mb={3}
+                        maxW={"326px"}
+                    >
+                    <Flex mb={2} alignItems={"center"}>
+                        <Avatar
+                            src={`${SERVER_URL}/${i.file?.path}`}
+                            // w="30px"
+                            // h="30px"
+                            mr={2}
+                        />
+                        <Box>
+                            <Text color={"gray.700"} fontSize={20}>
+                                {i.fullName}
+                            </Text>
+                            <Text
+                                color={"gray.500"} 
+                                whiteSpace={"nowrap"}
+                                overflow={"hidden"}
+                                textOverflow={"ellipsis"}
+                                maxW="240px"
+                            >
+                                {i.specializations?.map(s => s.name).join(", ")}
+                            </Text>
+                        </Box>
+                        {/* <Button
+                            leftIcon={<AiOutlineSchedule size={20} />}
+                            ml={2}
+                        >
+
+                        </Button> */}
+                    </Flex>
+                    <Flex mb={2}>
+                        <Text>
+                            Ближайшее время на
+                        </Text>
+                        <Text fontWeight={"bold"} ml={1}>{getUpcomingDate(i.upcomingAppointments)}</Text>
+                    </Flex>
+                    <Flex gap={3} flexWrap={"wrap"}>
+                        {
+                            i.upcomingAppointments.map(t => <Button
+                                key={t.startAt}
+                                w={"60px"}
+                                onClick={() => {
+                                    setValue(nameof<AppointmentDto>("employeeId"), i.id)
+                                    setValue(nameof<AppointmentDto>("scheduleId"), t.scheduleId)
+                                    setValue(nameof<AppointmentDto>("startAt"), t.startAt)
+                                    setValue(nameof<AppointmentDto>("endAt"), t.endAt)
+
+                                    goToPhone()
+                                }}
+                            >
+                                {
+                                    t.startAt
+                                }
+                            </Button>)
                         }
-                    }
-                ]}
-            />
-        </Container>
+                        <Button
+                            // leftIcon={<AiOutlineSchedule size={20} />}
+                            // ml={2}
+                            onClick={() => {
+                                setValue(nameof<AppointmentDto>("employeeId"), i.id)
+                                goToNext()
+                            }}
+                        >
+                            Другое
+                        </Button>
+                    </Flex>
+
+                </Box>)
+            }
+        </Box>
     );
 }

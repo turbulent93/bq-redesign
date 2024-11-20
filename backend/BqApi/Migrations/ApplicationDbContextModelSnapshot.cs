@@ -39,9 +39,11 @@ namespace BqApi.Migrations
                     b.Property<TimeOnly>("EndAt")
                         .HasColumnType("time without time zone");
 
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("PaidWithBonuses")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("PromoId")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ScheduleId")
                         .HasColumnType("integer");
@@ -52,13 +54,20 @@ namespace BqApi.Migrations
                     b.Property<TimeOnly>("StartAt")
                         .HasColumnType("time without time zone");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeId");
 
+                    b.HasIndex("PromoId");
+
                     b.HasIndex("ScheduleId");
 
                     b.HasIndex("ServiceId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Appointment");
                 });
@@ -117,13 +126,16 @@ namespace BqApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateOnly>("EndDate")
+                    b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date");
 
                     b.Property<int>("ImageId")
                         .HasColumnType("integer");
 
-                    b.Property<DateOnly>("StartDate")
+                    b.Property<bool>("ShowOnHomePage")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateOnly?>("StartDate")
                         .HasColumnType("date");
 
                     b.Property<string>("Title")
@@ -232,6 +244,9 @@ namespace BqApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BonusCount")
+                        .HasColumnType("integer");
+
                     b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
 
@@ -244,6 +259,9 @@ namespace BqApi.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("PaidAmountWithBonuses")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Price")
                         .HasColumnType("integer");
@@ -308,9 +326,6 @@ namespace BqApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AppointmentId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime?>("ExpiresIn")
                         .HasColumnType("timestamp with time zone");
 
@@ -319,7 +334,6 @@ namespace BqApi.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int?>("PunchMapId")
@@ -332,9 +346,10 @@ namespace BqApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.Property<int?>("StepsCount")
+                        .HasColumnType("integer");
 
-                    b.HasIndex("AppointmentId");
+                    b.HasKey("Id");
 
                     b.HasIndex("Login")
                         .IsUnique();
@@ -437,6 +452,21 @@ namespace BqApi.Migrations
                     b.ToTable("EmployeeSpecialization");
                 });
 
+            modelBuilder.Entity("PromoUser", b =>
+                {
+                    b.Property<int>("PromosId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UsersId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PromosId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("PromoUser");
+                });
+
             modelBuilder.Entity("BeautyQueenApi.Models.Appointment", b =>
                 {
                     b.HasOne("BeautyQueenApi.Models.Employee", "Employee")
@@ -444,6 +474,10 @@ namespace BqApi.Migrations
                         .HasForeignKey("EmployeeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("BeautyQueenApi.Models.Promo", "Promo")
+                        .WithMany()
+                        .HasForeignKey("PromoId");
 
                     b.HasOne("BeautyQueenApi.Models.Schedule", "Schedule")
                         .WithMany("Appointments")
@@ -457,11 +491,21 @@ namespace BqApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("BeautyQueenApi.Models.User", "User")
+                        .WithMany("Appointments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Employee");
+
+                    b.Navigation("Promo");
 
                     b.Navigation("Schedule");
 
                     b.Navigation("Service");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BeautyQueenApi.Models.Employee", b =>
@@ -503,7 +547,7 @@ namespace BqApi.Migrations
                         .IsRequired();
 
                     b.HasOne("BeautyQueenApi.Models.Service", "Service")
-                        .WithMany("PromoServices")
+                        .WithMany()
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -564,10 +608,6 @@ namespace BqApi.Migrations
 
             modelBuilder.Entity("BeautyQueenApi.Models.User", b =>
                 {
-                    b.HasOne("BeautyQueenApi.Models.Appointment", null)
-                        .WithMany("Appointments")
-                        .HasForeignKey("AppointmentId");
-
                     b.HasOne("BqApi.Models.PunchMap", "PunchMap")
                         .WithMany()
                         .HasForeignKey("PunchMapId");
@@ -618,9 +658,19 @@ namespace BqApi.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("BeautyQueenApi.Models.Appointment", b =>
+            modelBuilder.Entity("PromoUser", b =>
                 {
-                    b.Navigation("Appointments");
+                    b.HasOne("BeautyQueenApi.Models.Promo", null)
+                        .WithMany()
+                        .HasForeignKey("PromosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BeautyQueenApi.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("BeautyQueenApi.Models.Promo", b =>
@@ -631,11 +681,6 @@ namespace BqApi.Migrations
             modelBuilder.Entity("BeautyQueenApi.Models.Schedule", b =>
                 {
                     b.Navigation("Appointments");
-                });
-
-            modelBuilder.Entity("BeautyQueenApi.Models.Service", b =>
-                {
-                    b.Navigation("PromoServices");
                 });
 
             modelBuilder.Entity("BeautyQueenApi.Models.ServiceGroup", b =>
@@ -650,6 +695,8 @@ namespace BqApi.Migrations
 
             modelBuilder.Entity("BeautyQueenApi.Models.User", b =>
                 {
+                    b.Navigation("Appointments");
+
                     b.Navigation("Employee");
                 });
 

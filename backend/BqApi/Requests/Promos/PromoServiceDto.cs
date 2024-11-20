@@ -11,7 +11,6 @@ namespace BeautyQueenApi.Requests.Promos
         public int PromoId { get; set; }
         public int ServiceId { get; set; }
         public int Discount { get; set; }
-        public string Unit { get; set; } = null!;
 
         //public PromoDto? Promo { get; set; }
         public ServiceDto? Service { get; set; }

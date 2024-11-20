@@ -20,15 +20,15 @@ import { PromoServiceForm } from "./PromoServiceForm"
 import { PromoServicesList } from "./PromoServicesList"
 import { CiCirclePlus } from "react-icons/ci";
 import { FormContent } from "./FormContent"
+import { CustomSwitch } from "@/components/CustomSwitch"
+import { PROMO_TYPES } from "@/utils/constants"
 
 type FormProps = {
     mutate: (item: PromoDto) => void,
     values?: PromoDto
 }
 
-const PROMO_TYPES = ["Скидка на услуги", "Начисление бонусов", "Бесплатные услуги"].map(i => ({value: i, label: i}))
-
-export const Form = ({mutate, values}: FormProps) => {
+export const Form = ({mutate, values = {type: PROMO_TYPES[0]} as PromoDto}: FormProps) => {
     const {isOpen, onOpen, onClose} = useDisclosure()
     const [promoServices, setPromoServices] = useState<PromoServiceDto[]>([])
     const [currentService, setCurrentService] = useState<PromoServiceDto>()
@@ -39,7 +39,7 @@ export const Form = ({mutate, values}: FormProps) => {
     }, [currentService])
 
     useEffect(() => {
-        if(values)
+        if(values.promoServices)
             setPromoServices(values?.promoServices)
     }, [values])
 
@@ -72,8 +72,8 @@ export const Form = ({mutate, values}: FormProps) => {
                 label="Тип"
                 name={nameof<PromoDto>("type")}
                 required
-                options={PROMO_TYPES ?? []}
-                defaultValue={PROMO_TYPES[0]}
+                options={PROMO_TYPES.map(i => ({value: i, label: i})) ?? []}
+                // defaultValue={PROMO_TYPES[0]}
             />
             <FormContent
                 onOpen={onOpen}
@@ -81,6 +81,10 @@ export const Form = ({mutate, values}: FormProps) => {
                 setItems={setPromoServices}
                 currentService={currentService}
                 setCurrentService={setCurrentService}
+            />
+            <CustomSwitch
+                name={nameof<PromoDto>("showOnHomePage")}
+                label={"Показывать на главной странице"}
             />
         </CustomForm>
         <PromoServiceForm

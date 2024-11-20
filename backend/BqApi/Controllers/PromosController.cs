@@ -3,6 +3,7 @@ using BeautyQueenApi.Requests.Promos;
 using BeautyQueenApi.Requests.Services;
 using BeautyQueenApi.Requests.Specializations;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BeautyQueenApi.Controllers
@@ -14,6 +15,7 @@ namespace BeautyQueenApi.Controllers
         private readonly ISender _mediator = mediator;
 
         [HttpPost("get")]
+        [AllowAnonymous]
         public async Task<ActionResult<PaginationResponse<PromoDto>>> Get(GetPromoRequest request)
         {
             return await _mediator.Send(request);

@@ -15,7 +15,7 @@ const red = definePartsStyle({
 const gray = definePartsStyle({
     track: {
         _checked: {
-            bg: "gray.300",
+            bg: "gray.700",
         }
     },
     thumb: {

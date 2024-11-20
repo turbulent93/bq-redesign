@@ -22,7 +22,7 @@ export const useSwipe = ({leftHandler, rightHandler}: UseSwipeProps) => {
     const onTouchEnd = () => {
         if (!touchStart || !touchEnd) return
 
-        console.log(touchStart, touchEnd)
+        // console.log(touchStart, touchEnd)
 
         const distance = touchStart - touchEnd
         const isLeftSwipe = distance > minSwipeDistance

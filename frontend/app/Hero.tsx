@@ -20,12 +20,16 @@ export const Hero = () => {
         shadow={"lg"}
     >
         <Button
-            w="100px"
+            // w="100px"
             mb={20}
             // bgColor={"gray.600"}
             // color={"white"}
             colorScheme="blackAlpha"
-        >Войти</Button>
+        >
+            <Link href={"/profile"}>
+                Личный кабинет
+            </Link>
+        </Button>
         <Flex
             textColor={"white"}
             flexDir={"column"}
@@ -46,7 +50,9 @@ export const Hero = () => {
                 >89226763076</Link> или онлайн
             </Text>
             <Button mt={3}>
-                Записаться
+                <Link href="/appointment">
+                    Записаться
+                </Link>
             </Button>
         </Flex>
     </Flex>

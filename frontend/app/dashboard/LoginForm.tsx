@@ -5,29 +5,31 @@ import { CustomForm } from "@/components/CustomForm"
 import { CustomInput } from "@/components/CustomInput"
 import { TokenRequest } from "@/services/client"
 import { tokensClient } from "@/services/services"
-import { Box, Button, Flex, Input, InputGroup, InputRightElement, Text, useToast } from "@chakra-ui/react"
+import { nameof } from "@/utils/nameof"
+import { Box, Button, Flex, Input, InputGroup, InputRightElement, Text, useFormControlContext, useToast } from "@chakra-ui/react"
 import { useState } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, useFormContext } from "react-hook-form"
 import { RiEyeCloseFill, RiEyeCloseLine, RiEyeLine } from "react-icons/ri"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 
-export const LoginForm = () => {
-    const queryClient = useQueryClient()
-    const toast = useToast()
+const RegistrationButton = () => {
+        return <Button
+            colorScheme="blackAlpha"
+            w="100%"
+            mt={2}
+            type="submit"
+        >Зарегестироваться</Button>
+    }
 
-    const {mutate} = useMutation((data: TokenRequest) => tokensClient.login(data), {
+export const LoginForm = ({type = "login"}: {type?: "register" | "login"}) => {
+    const queryClient = useQueryClient()
+
+    const {mutate} = useMutation((data: TokenRequest) => type == "login" ? tokensClient.login(data) : tokensClient.register(data), {
         onSuccess: (data) => {
-            console.log(data)
             setTokens(data)
             queryClient.invalidateQueries(["check"])
-            toast({
-                title: "Вход прошел успешно",
-                status: "success"
-            })
         }
     })
-
-    const {register, handleSubmit} = useForm<TokenRequest>()
 
     return <Flex
         alignItems="center"
@@ -40,9 +42,17 @@ export const LoginForm = () => {
             // borderRadius="5px"
             p={4}
             boxShadow='md'
-            
+
+            w={"260px"}
         >
-            <form onSubmit={handleSubmit((data) => mutate(data))}>
+            <CustomForm
+                onSubmit={mutate}
+                submitText={"Войти"}
+                submitW="100%"
+                buttons={type == "register" ? [RegistrationButton] : undefined}
+                my={0}
+                px={0}
+            >
                 <Text
                     textColor={"white"}
                     fontSize={20}
@@ -51,37 +61,28 @@ export const LoginForm = () => {
                 >
                     Войти
                 </Text>
-                <Text
-                    mb={2}
-                    textColor={"white"}
-                >Логин</Text>
-                <Input
-                    mb={4} 
-                    variant={"flushed"}
-                    placeholder="Не заполнено"
+                <CustomInput
+                    name={nameof<TokenRequest>("login")}
+                    label={"Логин"}
+                    variant="flushed"
+                    labelColor="white"
                     focusBorderColor="white"
-                    textColor={"white"}
-                    {...register("login")}
+                    type={type == "register" ? "phone" : "text"}
+                    required
+                    color="white"
                 />
-                <Text
-                    mb={1}
-                    textColor={"white"}
-                >Пароль</Text>
-                <Input
-                    mb={4}
-                    variant={"flushed"}
-                    placeholder="Не заполнено"
-                    focusBorderColor="white"
-                    textColor={"white"}
+                <CustomInput
+                    name={nameof<TokenRequest>("password")}
+                    label={"Пароль"}
+                    variant="flushed"
+                    labelColor="white"
                     type="password"
-                    {...register("password")}
+                    focusBorderColor="white"
+                    required
+                    color="white"
                 />
-                <Button
-                    bgColor={"white"}
-                    w="100%"
-                    type="submit"
-                >Войти</Button>
-            </form>
+                {/* <Input variant={"flushed"} /> */}
+            </CustomForm>
         </Box>
     </Flex>
 }

@@ -40,8 +40,7 @@ namespace BeautyQueenApi.Requests.Promos
                         {
                             ps = new(item.Id,
                             psd.ServiceId,
-                            psd.Discount,
-                            psd.Unit);
+                            psd.Discount);
 
                             _context.PromoService.Add(ps);
                         }
@@ -53,11 +52,12 @@ namespace BeautyQueenApi.Requests.Promos
                 {
                     item = new(request.Title,
                         request.Description,
-                        DateOnly.Parse(request.StartDate),
-                        DateOnly.Parse(request.EndDate),
+                        request.StartDate != null && request.StartDate != "" ? DateOnly.Parse(request.StartDate) : null,
+                        request.EndDate != null && request.EndDate != "" ? DateOnly.Parse(request.EndDate) : null,
                         request.BonusCount,
                         request.Type,
-                        request.ImageId);
+                        request.ImageId,
+                        request.ShowOnHomePage);
 
                     _context.Promo.Add(item);
 
@@ -67,8 +67,7 @@ namespace BeautyQueenApi.Requests.Promos
                     {
                         PromoService? ps = new(item.Id,
                             psd.ServiceId,
-                            psd.Discount,
-                            psd.Unit);
+                            psd.Discount);
 
                         _context.PromoService.Add(ps);
                     }

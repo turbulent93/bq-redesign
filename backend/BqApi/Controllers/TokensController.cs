@@ -15,11 +15,18 @@ namespace BeautyQueenApi.Controllers
     {
         private readonly ITokenService _tokenService = tokenService;
 
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<ActionResult<TokenDto>> Register(TokenRequest request)
+        {
+            return await _tokenService.Register(request);
+        }
+
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<ActionResult<TokenDto>> Login(TokenRequest request)
         {
-            return await _tokenService.Authenticate(request);
+            return await _tokenService.Login(request);
         }
 
         [HttpPost("refresh")]

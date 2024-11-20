@@ -6,8 +6,7 @@ import { CiCirclePlus } from "react-icons/ci"
 import { PromoServicesList } from "./PromoServicesList"
 import { CustomInput } from "@/components/CustomInput"
 import { useEffect } from "react"
-
-const PROMO_TYPES = ["Скидка на услуги", "Начисление бонусов", "Бесплатные услуги"]
+import { PROMO_TYPE_DISCOUNT, PROMO_TYPES } from "@/utils/constants"
 
 type FormContent = {
     onOpen: () => void
@@ -21,13 +20,11 @@ export const FormContent = ({onOpen, ...listProps}: FormContent) => {
     const {watch} = useFormContext()
     const promoType = watch(nameof<PromoDto>("type"))
 
-    useEffect(() => {
-        console.log(promoType)
-    }, [promoType])
-
-    return promoType == PROMO_TYPES[0] || promoType == PROMO_TYPES[2]
+    return promoType == PROMO_TYPE_DISCOUNT
         ? <>
             <Button
+                // bgColor={"gray.700"}
+                // color={"white"}
                 leftIcon={<CiCirclePlus size={24}/>}
                 mb={2}
                 onClick={onOpen}

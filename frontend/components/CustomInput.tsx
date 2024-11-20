@@ -1,20 +1,43 @@
 import { FormErrorMessage, Input, InputGroup, InputLeftElement, InputRightElement, NumberDecrementStepper, NumberIncrementStepper, NumberInput, NumberInputField, NumberInputStepper, Text, Textarea } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { Controller, useFormContext } from "react-hook-form"
+import { FaPhone } from "react-icons/fa"
+
+const mask = (value: string) => {
+    const phone = value.replace(/^8|[^_^\d]/g, "")
+
+    if(phone.length == 0) {
+        return ""
+    }
+
+    if(phone.length < 4) {
+        return "8 (" + phone
+    }
+
+    if(phone.length < 7) {
+        return "8 (" + phone.slice(0, 3) + ") " + phone.slice(3)
+    }
+
+    return "8 (" + phone.slice(0, 3) + ") " + phone.slice(3, 6) + "-" + phone.slice(6, 10)
+}
 
 type CustomInputProps = {
     label: string
     name: string
     rightElement?: React.ReactNode
-    type?: "text" | "number" | "password" | "textarea",
+    type?: "text" | "number" | "password" | "textarea" | "phone",
     required?: boolean
     forceReset?: boolean
-    defaultValue?: string | number
+    defaultValue?: string
     min?: number
     max?: number
+    variant?: "flushed"
+    labelColor?: string
+    focusBorderColor?: string
+    color?: string
 }
 
-export const CustomInput = ({label, name, rightElement, type, required, forceReset, defaultValue, min, max}: CustomInputProps) => {
+export const CustomInput = ({label, name, rightElement, type, required, forceReset, defaultValue, min, max, variant, labelColor, focusBorderColor, color}: CustomInputProps) => {
     const {register, formState: {errors}, setValue, watch, control, reset, getValues} = useFormContext()
 
     const watchedValue = watch(name)
@@ -27,17 +50,20 @@ export const CustomInput = ({label, name, rightElement, type, required, forceRes
     useEffect(() => {
         if(defaultValue)
             reset({...getValues(), [name]: defaultValue})
-    }, [])
+    }, [defaultValue])
 
     return <>
-        <Text mb='8px'>{label}</Text>
-        <InputGroup className={!errors[name] ? "mb-3" : "mb-1"}>
+        <Text color={labelColor} mb={1}>{label}</Text>
+        <InputGroup mb={errors[name] ? 1 : 3}>
             {
-                type == "textarea" ? 
+                type == "textarea" ?    
                 <Textarea
                     placeholder="Не заполнено"
                     isInvalid={!!errors[name]}                    
                     errorBorderColor="red.300"
+                    variant={variant}
+                    focusBorderColor={focusBorderColor}
+                    color={color}
                     {...register(name, required ? {required: "*Обязательное поле"} : undefined)}
                 /> : 
                 type == "number" ?
@@ -53,6 +79,9 @@ export const CustomInput = ({label, name, rightElement, type, required, forceRes
                         min={min}
                         w="100%"
                         errorBorderColor="red.300"
+                        variant={variant}
+                        focusBorderColor={focusBorderColor}
+                        color={color}
                     >
                         <NumberInputField />
                         <NumberInputStepper>
@@ -62,12 +91,30 @@ export const CustomInput = ({label, name, rightElement, type, required, forceRes
                         </NumberInput>
                     }
                 /> :
+                type == "phone" ? <Controller
+                    name={name}
+                    control={control}
+                    rules={{required: "*Обязательное поле"}}
+                    render={({field}) => <Input
+                        placeholder="Не заполнено"
+                        isInvalid={!!errors[name]}
+                        errorBorderColor="red.300"
+                        value={field.value || ""}
+                        onChange={e => field.onChange(mask(e.target.value))}
+                        variant={variant}
+                        focusBorderColor={focusBorderColor}
+                        color={color}
+                    />}
+                /> :
                 <Input
                     placeholder="Не заполнено"
                     type={type}
                     isInvalid={!!errors[name]}
                     errorBorderColor="red.300"
                     {...register(name, required ? {required: "*Обязательное поле"} : undefined)}
+                    variant={variant}
+                    focusBorderColor={focusBorderColor}
+                    color={color}
                 />
             }
             {

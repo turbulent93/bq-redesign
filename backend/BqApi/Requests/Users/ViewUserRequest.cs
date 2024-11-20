@@ -20,6 +20,10 @@ namespace BeautyQueenApi.Requests.Users
                     .User
                     .Include(i => i.Employee)
                     .ThenInclude(i => i!.Specializations)
+                    .Include(i => i.Appointments)
+                    .ThenInclude(i => i.Service)
+                    .Include(i => i.Appointments)
+                    .ThenInclude(i => i.Schedule)
                     .FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken)
                         ?? throw new Exception(ErrorMessages.USER_ERROR);
 

@@ -27,12 +27,14 @@ export const PromoServicesList = ({items, setItems, currentService, setCurrentSe
     return <Box>
         {
             items
-                .map((i: PromoServiceDto, index) => <Flex
+                ?.map((i: PromoServiceDto, index) => <Flex
                     key={i.id || index}
-                    border={"1px"}
-                    borderColor={"gray.600"}
-                    borderStyle={"dashed"}
-                    borderRadius={12}
+                    // border={"1px"}
+                    // borderColor={"gray.600"}
+                    // borderStyle={"dashed"}
+                    // bgColor={"gray.100"}
+                    // shadow={"lg"}
+                    borderRadius={"md"}
                     mb={2}
                     py={2}
                     px={4}
@@ -45,17 +47,14 @@ export const PromoServicesList = ({items, setItems, currentService, setCurrentSe
                             }
                         </Text>
                         <Text fontSize={14}>
-                            {
-                                `${services?.find(s => s.id == i.serviceId)!?.price - i.discount}р (-${i.discount}р)`
-                                // services?.find(s => s.id == i.serviceId)!?.price - (i.unit == "%"
-                                //     ? (services?.find(s => s.id == i.serviceId)?.price! / 100) * i.discount
-                                //     : i.discount)
-                            }
+                            {i.discount}р
                         </Text>
                     </Box>
                     <Flex justifyContent={"center"}>
                         <Button
-                            color={"gray.400"}
+                            // color={"gray.400"}
+                            color={"white"}
+                            bgColor={"gray.700"}
                             mr={2} size={"xs"}
                             _disabled={{
                                 opacity: "0.5"
@@ -67,7 +66,8 @@ export const PromoServicesList = ({items, setItems, currentService, setCurrentSe
                         <Popover closeOnBlur={true}>
                             <PopoverTrigger>
                                 <Button
-                                    color={"red.400"} 
+                                    bgColor={"red.400"} 
+                                    color={"white"}
                                     size={"xs"}
                                     _disabled={{
                                         opacity: "0.5"
@@ -91,7 +91,7 @@ export const PromoServicesList = ({items, setItems, currentService, setCurrentSe
                                         }}
                                         mr={2}
                                         onClick={() => setItems([
-                                            ...items.filter(s => !(s.discount == i.discount && s.serviceId == i.serviceId && s.unit == i.unit))
+                                            ...items.filter(s => s.id != (i.id ? i.id : index))
                                         ])}
                                     >
                                         Да
@@ -104,15 +104,6 @@ export const PromoServicesList = ({items, setItems, currentService, setCurrentSe
                         </Popover>
                     </Flex>
                 </Flex>)
-        }
-        {
-            items.length > 0 && <Text fontSize={18}>
-                Скидка всего - {
-                    items.reduce((c, s) => c + Number(s.discount), 0)
-                }р, -{
-                    Math.floor((items.reduce((c, s) => c + Number(s.discount), 0) / items.reduce((c, s) => services?.find(i => i.id == s.serviceId)?.price! + c, 0)) * 100)
-                }% от суммы
-            </Text>
         }
     </Box>
 }

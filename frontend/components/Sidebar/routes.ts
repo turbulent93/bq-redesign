@@ -97,3 +97,16 @@ export const promoRoutes: RouteType[] = [
         Icon: PiPathBold
     },
 ]
+
+export const appointmentRoutes: RouteType[] = [
+    {
+        title: "Записи",
+        href: "/dashboard/appointments",
+        Icon: AiOutlineBook
+    },
+    {
+        title: "Расписание",
+        href: "/dashboard/schedules",
+        Icon: AiOutlineSchedule
+    },
+]

@@ -1,4 +1,5 @@
 ﻿using BeautyQueenApi.Requests.Schedules;
+using BqApi.Services.ScheduleService;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

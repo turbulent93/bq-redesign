@@ -13,6 +13,7 @@ using Parlot.Fluent;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Threading;
 
 namespace BeautyQueenApi.Services.TokenService
 {
@@ -20,18 +21,56 @@ namespace BeautyQueenApi.Services.TokenService
     {
         private readonly ApplicationDbContext _context = context;
 
-        public async Task<TokenDto> Authenticate(TokenRequest request)
+        public async Task<TokenDto> Register(TokenRequest request)
+        {
+            User? user = _context.User
+                .FirstOrDefault(x => x.Login == request.Login);
+
+            if(user == null)
+            {
+                user = new User(request.Login, request.Password, "Клиент", request.PunchMapId, null);
+
+                _context.User.Add(user);
+
+                await _context.SaveChangesAsync();
+
+                if (request.PunchMapId != null)
+                {
+                    var promo = await _context.Promo.FirstOrDefaultAsync(i => i.Id == request.PromoId)
+                        ?? throw new Exception(ErrorMessages.PROMO_ERROR);
+
+                    user.Promos.Add(promo);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+            if (request.Password == null)
+            {
+                return new TokenDto();
+            } else
+            {
+                return await GetTokens(user);
+            }
+        }
+
+        public async Task<TokenDto> Login(TokenRequest request)
         {
             User? user = _context.User
                 .Include(i => i.Employee)
                 .FirstOrDefault(x => x.Login == request.Login)
                     ?? throw new Exception(ErrorMessages.AUTHENTICATE_ERROR);
-
+           
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
                 throw new Exception(ErrorMessages.AUTHENTICATE_ERROR);
             }
 
+            return await GetTokens(user);
+        }
+
+        private async Task<TokenDto> GetTokens(User user)
+        {
             var refreshToken = CreateRefreshToken();
 
             user.RefreshToken = refreshToken;
@@ -40,7 +79,8 @@ namespace BeautyQueenApi.Services.TokenService
 
             await _context.SaveChangesAsync();
 
-            return new TokenDto {
+            return new TokenDto
+            {
                 AccessToken = CreateAccessToken(user),
                 RefreshToken = refreshToken
             };
@@ -87,13 +127,21 @@ namespace BeautyQueenApi.Services.TokenService
 
             var claims = GetPrincipalFromToken(request.AccessToken);
 
-            User? user = await _context
+            var user = await _context
                 .User
                 .Include(i => i.Employee)
                 .ThenInclude(i => i!.Specializations)
                 .Include(i => i.Employee)
                 .ThenInclude(i => i!.File)
-                .FirstOrDefaultAsync(x => x.Id == claims.Id)
+                .Include(i => i.Appointments)
+                .ThenInclude(i => i.Service)
+                .Include(i => i.Appointments)
+                .ThenInclude(i => i.Schedule)
+                .Include(i => i.PunchMap)
+                .ThenInclude(i => i!.PunchMapPromos)
+                .ThenInclude(i => i.Promo)
+                .Include(i => i.Promos)
+                .FirstOrDefaultAsync(i => i.Id == claims.Id)
                     ?? throw new Exception(ErrorMessages.USER_ERROR);
 
             if (user.RefreshToken != request.RefreshToken)

@@ -2,7 +2,7 @@
 
 import { Carousel } from "@/components/Carousel/Carousel";
 import { galleryClient, promosClient, punchMapsClient, serviceGroupClient } from "@/services/services";
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, AspectRatio, Box, Button, Container, Flex, Grid, GridItem, Image, Link, Spinner, Text } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, AspectRatio, Box, Button, Container, Flex, Grid, GridItem, Image, Link, Spinner, Text, useDisclosure } from "@chakra-ui/react";
 import { FaCrown, FaPhone, FaVk } from "react-icons/fa";
 import { useQuery } from "react-query";
 import { PriceList } from "./PriceList";
@@ -11,6 +11,8 @@ import { Footer } from "./Footer";
 import { Gallery } from "./Gellery";
 import { PromoCard } from "@/components/cards/PromoCard";
 import { PunchMapCard } from "@/components/cards/PunchMapCard";
+import { FastRegisterModal } from "./FastRegisterModal";
+import { useState } from "react";
 
 const images = [
 	{
@@ -34,12 +36,17 @@ const images = [
 const SERVER_URL = process.env.SERVER_URL!
 
 export default function Home() {
-	const {data: promos, isLoading: isPromosLoading} = useQuery(
+	const [promoId, setPromoId] = useState<number>()
+
+	const {data: promos = [], isLoading: isPromosLoading} = useQuery(
         ["get promos"],
-        () => promosClient.get({}), {
+        () => promosClient.get({onlyCurrent: true, showOnHomePage: true}), {
 			select: (data) => data.list.map(i => {
 				const PromoItem = () => {
-					return <PromoCard {...i} image={`${SERVER_URL}/${i.image?.path}`} key={i.id}/>
+					return <PromoCard {...i} image={`${SERVER_URL}/${i.image?.path}`} key={i.id} register={() => {
+							setPromoId(i.id)
+							onOpen()
+						}}/>
 				}
 
 				return PromoItem
@@ -63,12 +70,18 @@ export default function Home() {
 		}
     )
 
-	const {data: punchMaps, isLoading} = useQuery(
+	const [punchMapId, setPunchMapId] = useState<number>()
+	const {isOpen, onOpen, onClose} = useDisclosure()
+
+	const {data: punchMaps = [], isLoading} = useQuery(
         ["get punch-maps"],
         () => punchMapsClient.get({page: undefined, size: undefined}), {
 			select: (data) => data.list.map(i => {
 				const PunchMapItem = () => {
-					return <PunchMapCard {...i} items={i.punchMapPromos}/>
+					return <PunchMapCard {...i} items={i.punchMapPromos} register={() => {
+						setPunchMapId(i.id)
+						onOpen()
+					}}/>
 				}
 
 				return PunchMapItem
@@ -88,8 +101,14 @@ export default function Home() {
 				Получайте скидки за посещение!
 			</Text>
 			<Carousel items={punchMaps} autoSlide />
+			<FastRegisterModal
+				isOpen={isOpen}
+				onClose={onClose}
+				punchMapId={punchMapId}
+				promoId={promoId}
+			/>
 			<Gallery items={gallery} />
 		</Container>
-		<Footer />
+		<Footer showMap={false} />
 	</Box>
 }

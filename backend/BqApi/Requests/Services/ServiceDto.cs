@@ -11,6 +11,8 @@ namespace BeautyQueenApi.Requests.Services
         public int Duration { get; set; }
         public int SpecializationId { get; set; }
         public int GroupId { get; set; }
+        public int BonusCount { get; set; }
+        public int PaidAmountWithBonuses { get; set; }
         public int CreatedBy { get; set; }
 
         public SpecializationDto? Specialization { get; set; }

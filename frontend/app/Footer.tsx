@@ -6,17 +6,32 @@ import { useQuery } from "react-query";
 import { PriceList } from "./PriceList";
 import { Hero } from "./Hero";
 
-export const Footer = () => {
+export const Footer = ({showMap = true}: {showMap?: boolean}) => {
     return  <>
         <Box position={"relative"} overflow={"hidden"}>
-			<iframe
-				src="https://yandex.ru/map-widget/v1/org/koroleva_krasoty/1357796792/?ll=65.329997%2C55.444048&z=17"
-				allowFullScreen
-				width="100%"
-				height={300}
-			/>
+			{
+				showMap ? <iframe
+					src="https://yandex.ru/map-widget/v1/org/koroleva_krasoty/1357796792/?ll=65.329997%2C55.444048&z=17"
+					allowFullScreen
+					width="100%"
+					height={300}
+				/> : <Flex
+					justifyContent={"center"}
+					alignItems={"center"}
+					h={300}
+					borderTop={"1px"}
+					borderColor={"gray.300"}
+				>
+					<Text
+						fontSize={22}
+						fontWeight={"bold"}
+					>
+						Карта
+					</Text>
+				</Flex>
+			}
 		</Box>
-		<Flex justifyContent={"center"} gap={4} alignItems={"center"} bgColor={"gray.600"} py={6} color="white">
+		<Flex justifyContent={"center"} gap={4} alignItems={"center"} bgColor={"gray.700"} py={6} color="white">
 			<Text>ул. Станционная, 41</Text>
 			<Box
 				borderRadius="100%"

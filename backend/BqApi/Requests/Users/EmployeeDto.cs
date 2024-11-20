@@ -1,5 +1,6 @@
 ﻿using BeautyQueenApi.Requests.Services;
 using BeautyQueenApi.Requests.Specializations;
+using BqApi.Services.ScheduleService;
 using BqApi.Services.UploadService;
 
 namespace BqApi.Requests.Users
@@ -18,5 +19,6 @@ namespace BqApi.Requests.Users
 
         public List<SpecializationDto>? Specializations { get; set; }
         public FileDto? File { get; set; }
+        public List<UpcomigAppointment> UpcomingAppointments { get; set; } = [];
     }
 }

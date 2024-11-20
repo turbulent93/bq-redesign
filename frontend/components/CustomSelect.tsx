@@ -14,13 +14,8 @@ type CustomSelectProps = {
     multiple?: boolean
 }
 
-export const CustomSelect = ({options, label, name, required, multiple, defaultValue}: CustomSelectProps) => {
-    const {control, formState: {errors}, setValue} = useFormContext()
-
-    useEffect(() => {
-        if(defaultValue)
-            setValue(name, Array.isArray(defaultValue) ? defaultValue.map(i => i.value) : defaultValue.value)
-    }, [])
+export const CustomSelect = ({options, label, name, required, multiple}: CustomSelectProps) => {
+    const {control, formState: {errors}} = useFormContext()
 
     return <>
         <Text mb='8px'>{label}</Text>
@@ -46,7 +41,6 @@ export const CustomSelect = ({options, label, name, required, multiple, defaultV
                     : (value as CustomSelectItem).value)}
                 ref={field.ref}
                 name={field.name}
-                defaultValue={defaultValue}
                 errorBorderColor="red.300"
                 isInvalid={!!errors[name]}
                 // onChange={(value) => field.onChange(multiple ? value.map((i: CustomSelectItem) => i.value) : value.value)}

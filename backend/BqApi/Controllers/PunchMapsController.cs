@@ -4,6 +4,7 @@ using BeautyQueenApi.Requests.PunchMaps;
 using BeautyQueenApi.Requests.Services;
 using BeautyQueenApi.Requests.Specializations;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BeautyQueenApi.Controllers
@@ -15,6 +16,7 @@ namespace BeautyQueenApi.Controllers
         private readonly ISender _mediator = mediator;
 
         [HttpPost("get")]
+        [AllowAnonymous]
         public async Task<ActionResult<PaginationResponse<PunchMapDto>>> Get(GetPunchMapRequest request)
         {
             return await _mediator.Send(request);

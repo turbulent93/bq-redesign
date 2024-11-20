@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Providers } from "./providers";
-import { Content } from "./Content";
+import { Content } from "../Content";
 
 export const metadata: Metadata = {
   title: "Королева красоты",

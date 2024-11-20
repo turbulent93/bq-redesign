@@ -1,6 +1,7 @@
 'use client'
 
 import { inputTheme } from '@/theme/InputTheme';
+import { stepperTheme } from '@/theme/StepperTheme';
 import { switchTheme } from '@/theme/SwitchTheme';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import { QueryClient, QueryClientProvider } from 'react-query'
@@ -17,7 +18,8 @@ const client = new QueryClient({
 const theme = extendTheme({
   components: {
     Switch: switchTheme,
-    Input: inputTheme
+    Input: inputTheme,
+    // Stepper: stepperTheme
   }
 });
 

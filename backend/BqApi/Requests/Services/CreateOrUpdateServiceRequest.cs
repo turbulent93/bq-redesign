@@ -24,7 +24,14 @@ namespace BeautyQueenApi.Requests.Services
                     item.Update(request);
 
                 } else {
-                    item = new(request.Name, request.Price, request.Duration, request.SpecializationId, request.GroupId);
+                    item = new(
+                        request.Name,
+                        request.Price,
+                        request.Duration,
+                        request.SpecializationId,
+                        request.GroupId,
+                        request.BonusCount,
+                        request.PaidAmountWithBonuses);
 
                     _context.Service.Add(item);
                 }

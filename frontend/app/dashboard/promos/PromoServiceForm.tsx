@@ -7,6 +7,7 @@ import { PromoDto, PromoServiceDto } from "@/services/client"
 import { servicesClient } from "@/services/services"
 import { nameof } from "@/utils/nameof"
 import { Box, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text } from "@chakra-ui/react"
+import { useEffect } from "react"
 import { useFormContext } from "react-hook-form"
 import { useQuery } from "react-query"
 
@@ -24,11 +25,15 @@ const UNITS = ["р", "%"].map(i => ({value: i, label: i}))
 
 export const PromoServiceForm = ({isOpen, onClose, values, items, setItems, currentService, setCurrentService}: PromoServiceFormProps) => {
     const {data: services} = useQuery(
-        ["get services", items],
-        () => servicesClient.get({page: undefined, size: undefined, exludedIds: items.map(i => i.serviceId!)}), {
+        ["get services by excluded ids"],
+        () => servicesClient.get({page: undefined, size: undefined, exludedIds: items ? items.map(i => i.serviceId!) : []}), {
             select: (data) => data.list.map(i => ({label: i.name, value: i.id}))
         }
     )
+
+    useEffect(() => {
+        console.log(items)
+    }, [items])
 
     return <Modal
         isOpen={isOpen}
@@ -73,15 +78,16 @@ export const PromoServiceForm = ({isOpen, onClose, values, items, setItems, curr
                     options={services ?? []}
                     // defaultValue={services?.find(i => i.value == values?.serviceId)}
                 />
-                <Flex alignItems={"end"}>
+                {/* <Flex alignItems={"end"}> */}
                     <Box mr={2}>
                         <CustomInput
-                            label="Скидка"
+                            label="Итоговая цена"
                             name={nameof<PromoServiceDto>("discount")}
                             required
+                            rightElement="₽"
                         />
                     </Box>
-                    <Box w="120px">
+                    {/* <Box w="120px">
                         <CustomSelect
                             label=""
                             name={nameof<PromoServiceDto>("unit")}
@@ -89,7 +95,7 @@ export const PromoServiceForm = ({isOpen, onClose, values, items, setItems, curr
                             options={UNITS}
                         />
                     </Box>
-                </Flex>
+                </Flex> */}
                 
             </CustomForm>
         </ModalContent>
