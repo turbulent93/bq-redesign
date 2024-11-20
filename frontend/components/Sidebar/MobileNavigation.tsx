@@ -1,6 +1,6 @@
 "use client"
 
-import { Avatar, Box, Flex, Heading, Link, Text } from "@chakra-ui/react"
+import { Avatar, Box, Container, Flex, Heading, Link, Text } from "@chakra-ui/react"
 import { routes } from "./routes"
 import { usePathname } from "next/navigation"
 import { FaCrown } from "react-icons/fa"
@@ -13,19 +13,30 @@ export const MobileNavigation = () => {
     const {user, isAdmin} = useAuth()
 
     return <>
-        <Flex
+        {/* <Flex
             display={["flex", "none"]} 
             pos="absolute"
             top={0}
             w="100%"
-            bgColor={"gray.100"}
+            // bgColor={"gray.100"}
             alignItems={"center"}
             justifyContent={"space-between"}
             py={2}
             px={6}
-            borderBottomRadius={"10px"}
-            h="60px"
-        >
+            // borderBottomRadius={"10px"}
+        > */}
+            <Container
+                display={["flex", "none"]} 
+                pos="absolute"
+                top={0}
+                w="100%"
+                // display="flex"
+                alignItems={"center"}
+                justifyContent={"space-between"}
+                borderBottom={"1px"}
+                borderColor={"gray.300"}
+                h="60px"
+            >
             <Box textColor={"gray.600"}>
                 <FaCrown size={30}/>
             </Box>
@@ -56,15 +67,16 @@ export const MobileNavigation = () => {
                     </Flex>
                 </Link>
             }
-        </Flex>
+            </Container>
+        {/* </Flex> */}
         <Flex
         display={["flex", "none"]} 
             pos="absolute"
             bottom={0}
             w="100%"
-            bgColor={"gray.100"}
+            bgColor={"gray.700"}
             justifyContent={"center"}
-            borderTopRadius={"10px"}
+            // borderTopRadius={"10px"}
             gap={4}
             h="66px"
             px={2}
@@ -74,15 +86,15 @@ export const MobileNavigation = () => {
                     .filter(i => i.protected ? isAdmin : true)
                     .map(({Icon, href, title}) => <Link
                         borderRadius={8}
-                        _hover={{ textDecor: 'none', backgroundColor: "gray.300" }}
+                        // _hover={{ textDecor: 'none', backgroundColor: "gray.300" }}
                         w={"40px"}
                         h="40px"
                         my={3}
-                        bgColor={pathname.includes(href) ? "gray.300" : undefined}
+                        bgColor={pathname.includes(href) ? "gray.600" : undefined}
                         href={href}
                         key={href}
                     >
-                        <Flex textColor={"gray.600"} alignItems={"center"} justifyContent="center" w="100%" h="100%">
+                        <Flex textColor={"white"} alignItems={"center"} justifyContent="center" w="100%" h="100%">
                             <Icon size={26}/>
                         </Flex>
                         {/* <Text fontSize={14}>

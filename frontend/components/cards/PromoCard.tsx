@@ -36,30 +36,32 @@ export const PromoCard = ({id, image, title, description, type, register, startD
         minW="100%"
         position={"relative"}
     >
-        <Box
-            fontSize={12}
-            position={"absolute"}
-            top={0}
-            right={0}
-            ml={2}
-            bgColor={"gray.700"}
-            color={"white"}
-            px={2}
-            py={1}
-            // borderRadius={14}
-            borderRadius={"md"}
-            borderTopRightRadius={14}
-            // borderBottomLeftRadius={"md"}
-            shadow={"lg"}
-            zIndex={10}
-            textTransform={"uppercase"}
-        >
-            {
-                startDate && `с ${startDate}`
-            } {
-                endDate && `до ${endDate}`
-            }
-        </Box>
+        {
+            (startDate || endDate) && <Box
+                fontSize={12}
+                position={"absolute"}
+                top={0}
+                right={0}
+                ml={2}
+                bgColor={"gray.700"}
+                color={"white"}
+                px={2}
+                py={1}
+                // borderRadius={14}
+                borderRadius={"md"}
+                borderTopRightRadius={14}
+                // borderBottomLeftRadius={"md"}
+                shadow={"lg"}
+                zIndex={10}
+                textTransform={"uppercase"}
+            >
+                {
+                    startDate && `с ${startDate}`
+                } {
+                    endDate && `до ${endDate}`
+                }
+            </Box>
+        }
         <Image
             src={image ? image : "/haircut.jpg"}
             // src={"/haircut.jpg"}

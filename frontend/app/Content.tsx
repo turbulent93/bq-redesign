@@ -45,7 +45,7 @@ export const Content = ({children, type = "login"} : {children: React.ReactNode,
 		overflowY="hidden"
 	>
 		{/* <Sidebar /> */}
-			<Box w="100%" h={`calc(${vh}px - 146px)`} mt={"70px"} mb={"76px"}>
+			<Box w="100%" overflowY={"auto"} h={`calc(${vh}px - 146px)`} mt={"70px"} mb={"76px"}>
 				{children}
 			</Box>
 		<MobileNavigation />

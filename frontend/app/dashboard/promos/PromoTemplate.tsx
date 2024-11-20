@@ -24,6 +24,8 @@ export const PromoTemplate = () => {
             image={data?.path ? `${SERVER_URL}/${data?.path}` : undefined}
             title={watch(nameof<PromoDto>("title"))}
             description={watch(nameof<PromoDto>("description"))}
+            startDate={watch(nameof<PromoDto>("startDate"))}
+            endDate={watch(nameof<PromoDto>("endDate"))}
         />
     </Box>
 }

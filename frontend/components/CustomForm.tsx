@@ -17,7 +17,7 @@ type FormProps = {
     px?: number
 }
 
-export const CustomForm = ({onSubmit, children, values, buttons, submitText, maxW, isSubmitVisible = true, my = 8, submitW, px}: FormProps) => {
+export const CustomForm = ({onSubmit, children, values, buttons, submitText, maxW, isSubmitVisible = true, my = 0, submitW, px}: FormProps) => {
     const methods = useForm()
 
     useEffect(() => {
