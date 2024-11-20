@@ -8,12 +8,13 @@ import { useAuth } from "@/utils/useAuth";
 import { Button, Container, Flex, Link } from "@chakra-ui/react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { Suspense } from "react";
 import { BsArrowLeft } from "react-icons/bs";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
-export default function Page() {
-	// const searchParams = useSearchParams()
-	// const id = searchParams.get("id")
+const Content = () => {
+	const searchParams = useSearchParams()
+	const promoId = searchParams.get("promoId")
 
 	const queryClient = useQueryClient()
     const router = useRouter()
@@ -33,25 +34,19 @@ export default function Page() {
         onError: (e) => console.log(e)
 	})
 
-	const searchParams = useSearchParams()
-	const promoId = searchParams.get("promoId")
-
-    const {user} = useAuth()
-
     return <Flex
         p={4}
         mb={6}
     >
         <Appointer
-            // mutate={(v) => console.log("appointment", v)}
             mutate={mutate}
-            // values={{
-            //     phone: user?.role == CLIENT_ROLE_NAME ? user?.login : "",
-            //     paidWithBonuses: 0,
-            //     employeeId: 0,
-
-            // }}
-            promoId={Number(promoId)}
+            promoId={promoId ? Number(promoId) : undefined}
         />
     </Flex>
+}
+
+export default function Page() {
+    return <Suspense>
+        <Content />
+    </Suspense>
 }

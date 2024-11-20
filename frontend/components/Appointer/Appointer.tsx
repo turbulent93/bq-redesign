@@ -1,3 +1,5 @@
+"use client"
+
 import { CustomForm } from "@/components/CustomForm"
 import { AppointmentDto, EmployeeDto, ServiceDto } from "@/services/client"
 import { Box, Container, Flex, Grid, Step, StepDescription, StepIcon, StepIndicator, StepNumber, Stepper, StepSeparator, StepStatus, StepTitle, Switch, Text, useSteps } from "@chakra-ui/react"
