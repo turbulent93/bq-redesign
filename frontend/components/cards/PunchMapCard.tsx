@@ -31,6 +31,11 @@ export const PunchMapCard = ({columnsCount, stepsCount, items, onOpen, id, regis
         }
 	})
 
+    const {data: promos} = useQuery(
+        ["get promos"],
+        () => promosClient.get({})
+    )
+
     return <>
         <Box
             bgGradient='linear(to-br, gray.700, red.500)'
@@ -84,7 +89,7 @@ export const PunchMapCard = ({columnsCount, stepsCount, items, onOpen, id, regis
                             <Text
                                 fontSize={12}
                                 // w="160px"
-                            >*{i.step} - {i.promo?.description}</Text>
+                            >*{i.step} - {i.promo?.description || promos?.list.find(p => p.id == i.promoId)?.description}</Text>
                             {
                                 showProgress && user?.stepsCount! >= i.step && <Box
                                 ml="auto"

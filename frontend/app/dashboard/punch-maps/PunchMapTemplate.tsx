@@ -24,5 +24,5 @@ export const PunchMapTemplate = (props: PunchMapTemplateProps) => {
         }
     )
 
-    return <PunchMapCard {...props} stepsCount={stepsCount} columnsCount={columnsCount} promos={promos} />
+    return <PunchMapCard {...props} stepsCount={Number(stepsCount) || 0} columnsCount={Number(columnsCount) || 0} promos={promos} />
 }

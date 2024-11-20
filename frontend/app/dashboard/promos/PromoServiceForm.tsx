@@ -47,9 +47,9 @@ export const PromoServiceForm = ({isOpen, onClose, values, items, setItems, curr
             bg='blackAlpha.300'
             backdropFilter='blur(10px) hue-rotate(90deg)'
         />
-        <ModalContent mx={4}>
+        <ModalContent mx={4} py={6}>
             <ModalCloseButton />
-            <Text fontSize={18} ml={4} mt={4}>
+            <Text fontSize={18} ml={4} mb={2} fontWeight="bold">
                 Добавить услугу
             </Text>
             <CustomForm

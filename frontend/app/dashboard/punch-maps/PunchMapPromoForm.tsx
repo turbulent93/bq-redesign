@@ -3,7 +3,7 @@ import { CustomSelect } from "@/components/CustomSelect"
 import { PunchMapPromoDto } from "@/services/client"
 import { promosClient } from "@/services/services"
 import { nameof } from "@/utils/nameof"
-import { Button, Modal, ModalCloseButton, ModalContent, ModalOverlay } from "@chakra-ui/react"
+import { Button, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text } from "@chakra-ui/react"
 import { useEffect } from "react"
 import { useMutation, useQuery } from "react-query"
 
@@ -44,8 +44,11 @@ export const PunchMapPromoForm = ({currentItem, items, setItems, isOpen, onClose
         <ModalOverlay
             bg='blackAlpha.300'
         />
-        <ModalContent mx={4} borderRadius={"md"} overflow={"hidden"}>
+        <ModalContent mx={4} borderRadius={"md"} overflow={"hidden"} py={6}>
             <ModalCloseButton />
+            <Text fontSize={18} ml={4} mb={2} fontWeight="bold">
+                Добавить акцию
+            </Text>
             <CustomForm
                 submitText={currentItem?.promoId ? "Обновить" : "Добавить"}
                 onSubmit={(value) => {
