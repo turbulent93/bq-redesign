@@ -56,14 +56,14 @@ export default function Form({mutate, values}: FormProps) {
                 label="Количество шагов"
                 name={nameof<PunchMapDto>("stepsCount")}
                 required
-                defaultValue={6}
+                defaultValue={"6"}
                 type="number"
                 />
             <CustomInput
                 label="Количество колонок"
                 name={nameof<PunchMapDto>("columnsCount")}
                 required
-                defaultValue={3}
+                defaultValue={"3"}
                 type="number"
                 min={2}
                 max={6}

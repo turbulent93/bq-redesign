@@ -24,7 +24,7 @@ const columns: ColumnType[] = [
     {
         title: "Описание",
         name: nameof<PunchMapDto>("punchMapPromos"),
-        convertContent: (value) => value.map((i: PunchMapPromoDto) => ` ${i.step} - ${i.promo.description}`).join("\n")
+        convertContent: (value) => value.map((i: PunchMapPromoDto) => ` ${i.step} - ${i?.promo?.description}`).join("\n")
     },
     {
         title: "Действия",

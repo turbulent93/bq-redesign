@@ -19,7 +19,7 @@ export default function RootLayout({
 		// <html lang="en">
 		// 	<body className="overflow-y-hidden">
 				<Providers>
-					<Content>
+					<Content type={"login"}>
 						{children}
 					</Content>
 				</Providers>
