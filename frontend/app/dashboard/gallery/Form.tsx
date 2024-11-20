@@ -23,7 +23,7 @@ export const Form = ({mutate, values}: FormProps) => {
         onSubmit={mutate}
         values={{
             id: values?.id,
-            images: [values?.imageId],
+            images: values?.imageId ? [values?.imageId] : [],
             serviceId: values?.serviceId
         } as CreateOrUpdateGalleryRequest}
     >

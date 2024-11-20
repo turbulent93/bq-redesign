@@ -58,7 +58,7 @@ export const FileUpload = ({name, multiple, aspectRatio = 1}: FileUploadProps) =
         onSuccess: (data) => {
             if(multiple) {
                 setCropData([...cropData, data])
-                setValue(name, [...(getValues(name) != undefined ? getValues(name) : []), data.id])
+                setValue(name, [...(!!getValues(name) ? getValues(name) : []), data.id])
             } else {
                 setCropData([data])
                 setValue(name, data.id)
@@ -127,7 +127,7 @@ export const FileUpload = ({name, multiple, aspectRatio = 1}: FileUploadProps) =
             multiple={multiple}
         />
         <Flex
-            border={!multiple && cropData.length == 0 ? "1px" : undefined}
+            border={(multiple || cropData.length == 0) ? "1px" : undefined}
             borderColor={"gray.500"}
             borderStyle={"dashed"}
             borderRadius={"100%"}

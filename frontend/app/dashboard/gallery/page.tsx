@@ -86,7 +86,7 @@ export default function Page() {
                                 alignItems={"start"}
                                 p={1}
                             >
-                                <Button
+                                {/* <Button
                                     p={0}
                                     mr={1}
                                     onClick={() => {
@@ -97,7 +97,7 @@ export default function Page() {
                                     <BsPencilFill
                                         size={14}
                                     />
-                                </Button>
+                                </Button> */}
                                 <Popover closeOnBlur={true}>
                                     <PopoverTrigger>
                                         <Button p={0} color="red.400">
@@ -151,7 +151,7 @@ export default function Page() {
                 bg='blackAlpha.300'
                 backdropFilter='blur(10px)'
             />
-            <ModalContent mx={4} borderRadius={"md"} overflow={"hidden"}>
+            <ModalContent mx={4} borderRadius={"md"} overflow={"hidden"} py={4}>
                 <ModalCloseButton />
                 <Form
                     mutate={(values) => {
