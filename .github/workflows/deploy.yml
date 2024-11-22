@@ -16,9 +16,8 @@ jobs:
         script: |
           cd /var/www/bq-redesign
           echo ${{ secrets.PWD }} | sudo -S npm i --prefix frontend
-          npm run build --prefix frontend
           cd backend/BqApi
-          sudo dotnet build
-          sudo dotnet publish -c Release
-          sudo dotnet dotnet-ef database update
-          sudo pm2 restart all
+          echo ${{ secrets.PWD }} | sudo -S dotnet build
+          echo ${{ secrets.PWD }} | sudo -S dotnet publish -c Release
+          echo ${{ secrets.PWD }} | sudo -S dotnet dotnet-ef database update
+          echo ${{ secrets.PWD }} | sudo -S pm2 restart all
