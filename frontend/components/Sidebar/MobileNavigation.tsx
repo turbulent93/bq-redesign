@@ -25,29 +25,35 @@ export const MobileNavigation = () => {
             px={6}
             // borderBottomRadius={"10px"}
         > */}
-            <Container
+        {
+            pathname !== "/dashboard/profile" && <Flex
                 display={["flex", "none"]} 
                 pos="absolute"
                 top={0}
-                w="100%"
+                right={4}
+                left={4}
+                // w="100%"
                 // display="flex"
                 alignItems={"center"}
                 justifyContent={"space-between"}
                 borderBottom={"1px"}
                 borderColor={"gray.300"}
-                h="60px"
+                // h="60px"
             >
-            <Box textColor={"gray.600"}>
-                <FaCrown size={30}/>
-            </Box>
-            {
-                pathname !== "/dashboard/profile" && <Link
+                <Box
+                    textColor={"gray.700"}
+                    ml={4}
+                >
+                    <FaCrown size={36}/>
+                    {/* text */}
+                </Box>
+                <Link
                     href="/dashboard/profile"
                     _hover={{
                         textDecor: "none"
                     }}
                     >
-                    <Flex>
+                    <Flex bgColor={"gray.700"} color={"white"} borderRadius={"lg"} px={3} py={2} my={2}>
                         <Avatar
                             src={!!user?.employee?.file?.path ? `${SERVER_URL}/${user?.employee?.file?.path}` : undefined}
                             w="40px"
@@ -66,19 +72,21 @@ export const MobileNavigation = () => {
                         </Flex>
                     </Flex>
                 </Link>
-            }
-            </Container>
+            </Flex>
+        }
         {/* </Flex> */}
         <Flex
         display={["flex", "none"]} 
             pos="absolute"
             bottom={0}
+            right={0}
+            left={0}
             w="100%"
             bgColor={"gray.700"}
             justifyContent={"center"}
             // borderTopRadius={"10px"}
             gap={4}
-            h="66px"
+            // h="66px"
             px={2}
         >
             {

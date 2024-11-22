@@ -54,18 +54,19 @@ export default function ServicesPage() {
     return <Flex
         flexDir={"column"}
         alignItems={"center"}
-        borderRadius={5}
+        borderRadius={"md"}
         py={3}
-        bgColor={!isUpdate ? "gray.100" : undefined}
+        bgColor={!isUpdate ? "gray.700" : undefined}
+        color={!isUpdate ? "white" : undefined}
         my={4}
-        mx={10}
+        mx={!isUpdate ? 10 : undefined}
         position={"relative"}
     >
         <Box
             position={"absolute"}
             textColor={"gray.600"}
             top={3}
-            right={1}
+            right={4}
             cursor={"pointer"}
             onClick={() => setIsUpdate(!isUpdate)}
         >
@@ -77,6 +78,7 @@ export default function ServicesPage() {
                         borderRadius={5}
                     ><AiOutlineUser/></Box>
                     : <Box
+                        color={"white"}
                         p={3}
                     ><BsPencilFill/></Box>
             }
@@ -124,8 +126,9 @@ export default function ServicesPage() {
                         px={4}
                         py={2}
                         // textColor={"white"}
-                        textColor={"gray.600"}
+                        // textColor={"gray.600"}
                         alignItems={"center"}
+                        mb={4}
                     >
                         <Switch
                             isChecked={notificationsEnabled}
@@ -137,7 +140,8 @@ export default function ServicesPage() {
                         <FaTelegramPlane size={20}/>
                     </Flex>
                     <Button
-                        textColor={"red.300"}
+                        bgColor={"red.300"}
+                        color="white"
                         // gap={4}
                         // alignItems={"center"}
                         // mt={4}

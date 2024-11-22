@@ -34,7 +34,10 @@ export const Form = () => {
         }
     )
 
-    return <CustomForm onSubmit={mutate} values={user}>
+    return <CustomForm onSubmit={mutate} values={{...user, employee: {
+        ...user?.employee,
+        specializationIds: user?.employee?.specializations?.map(i => Number(i.id)) || []
+    }}}>
         <FileUpload
             name={`${nameof<UserDto>("employee")}.${nameof<EmployeeDto>("fileId")}`}
             employeeId={user?.employee?.id}
@@ -44,7 +47,6 @@ export const Form = () => {
             name={`${nameof<UserDto>("employee")}.${nameof<EmployeeDto>("fullName")}`}
             required
             forceReset
-            // resetValue={values?.employee ? undefined : undefined}
         />
         <CustomSelect
             label="Специализации"
@@ -52,10 +54,10 @@ export const Form = () => {
             required
             multiple={true}
             options={specializations ?? []}
-            // defaultValue={
-            //     specializations
-            //         ?.filter(i => user?.employee?.specializations?.map(i => i.id).includes(Number(i.value)))
-            // }
+            defaultValue={
+                specializations
+                    ?.filter(i => user?.employee?.specializations?.map(i => i.id).includes(Number(i.value)))
+            }
         />
         <CustomInput
             label="Логин"
