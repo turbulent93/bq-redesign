@@ -15,7 +15,7 @@ jobs:
         KEY: ${{ secrets.SSHKEY }}
         script: |
           cd /var/www/bq-redesign
-          sudo npm i --prefix frontend
+          echo ${{ secrets.PWD }} | sudo -S npm i --prefix frontend
           npm run build --prefix frontend
           cd backend/BqApi
           sudo dotnet build
