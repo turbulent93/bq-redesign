@@ -1,5 +1,6 @@
 import { AppointmentDto } from "@/services/client"
 import { appointmentsClient } from "@/services/services"
+import { TIME_FORMAT } from "@/utils/constants"
 import { Box, Divider, Grid, GridItem, Text } from "@chakra-ui/react"
 import moment from "moment"
 import { useQuery } from "react-query"
@@ -13,8 +14,8 @@ const DEFAULT_END_HOUR ="22:00"
 
 const getTimeItems = (startAt: string, endAt: string) => {
     const items = []
-    const startHour = moment(startAt, "HH:mm").hour()
-    const endHour = moment(endAt, "HH:mm").hour()
+    const startHour = moment(startAt, TIME_FORMAT).hour()
+    const endHour = moment(endAt, TIME_FORMAT).hour()
     const cur = moment({hours: startHour, minutes: 0})
 
     for (let i = 0; i <= endHour - startHour; i++) {
@@ -26,7 +27,7 @@ const getTimeItems = (startAt: string, endAt: string) => {
 }
 
 const getColSpan = (startAt: string, endAt: string, isWrapped?: boolean) => {
-    const end = moment(endAt, "HH:mm")
+    const end = moment(endAt, TIME_FORMAT)
 
     if(isWrapped) {
         // console.log((end.hours() - 9 + index) + (end.minutes() > 0 ? 1 : 0))
@@ -34,11 +35,11 @@ const getColSpan = (startAt: string, endAt: string, isWrapped?: boolean) => {
         return end.hours() % 4 + (end.minutes() > 0 ? 1 : 0)
     }
 
-    return (end.hours() - moment(startAt, "HH:mm").hours()) + (end.minutes() > 0 ? 1 : 0)
+    return (end.hours() - moment(startAt, TIME_FORMAT).hours()) + (end.minutes() > 0 ? 1 : 0)
 }
 
 const getRow = (startAt: string) => {
-    const hours = moment(startAt, "HH:mm").hours()
+    const hours = moment(startAt, TIME_FORMAT).hours()
 
     if(hours < 12)
         return 2
@@ -51,15 +52,15 @@ const getRow = (startAt: string) => {
 }
 
 const isWrapped = (startAt: string, endAt: string) => {
-    const endTime = moment(endAt, "HH:mm")
-    const startTime = moment(startAt, "HH:mm")
+    const endTime = moment(endAt, TIME_FORMAT)
+    const startTime = moment(startAt, TIME_FORMAT)
 
     return getColStart(startAt) == 4 && endTime.hours() > startTime.hours() && endTime.minutes() != 0
 }
 
 const getMl = (startAt: string, endAt: string) => {
     const colSpan = isWrapped(startAt, endAt) ? 1 : getColSpan(startAt, endAt)
-    const startMinutes = moment(startAt, "HH:mm").minutes()
+    const startMinutes = moment(startAt, TIME_FORMAT).minutes()
 
     // if(startAt == "11:10" || startAt == "14:10")
     //     console.log(startAt, `${startMinutes / (60 * colSpan) * 100}%`)
@@ -69,13 +70,13 @@ const getMl = (startAt: string, endAt: string) => {
 }
 
 const getColStart = (startAt: string) => {
-    const hour = moment(startAt, "HH:mm").hours()
+    const hour = moment(startAt, TIME_FORMAT).hours()
 
     return hour % 4 + 1
 }
 
 const getMr = (startAt: string, endAt: string, isNext?: boolean) => {
-    const endTime = moment(endAt, "HH:mm")
+    const endTime = moment(endAt, TIME_FORMAT)
 
     if(isNext) {
         return `${(60 - endTime.minutes()) / 60 * 100}%`
@@ -85,7 +86,7 @@ const getMr = (startAt: string, endAt: string, isNext?: boolean) => {
         return 0
     }
 
-    const startTime = moment(startAt, "HH:mm")
+    const startTime = moment(startAt, TIME_FORMAT)
     const colSpan = getColSpan(startAt, endAt)
     const endMinutes = endTime.hours() > startTime.hours() && endTime.minutes() == 0
         ? 60

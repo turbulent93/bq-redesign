@@ -6,6 +6,7 @@ using BqApi.Services.ScheduleService;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using System.Linq;
 
 namespace BeautyQueenApi.Requests.Users
@@ -52,12 +53,15 @@ namespace BeautyQueenApi.Requests.Users
                         {
                             var at = (await _scheduleService.GetAvailableTime(schedules[i].Id, (int)request.Duration))
                                 .Where(i => i.IsAvailable)
-                                .Select(std => new UpcomigAppointment(
-                                    schedules[i].Id,
-                                    schedules[i].Date.ToString(),
-                                    std.Time,
-                                    TimeOnly.Parse(std.Time).AddMinutes((int)request.Duration).ToString())
-                                )
+                                .Select(std => {
+                                    TimeOnly.TryParseExact(std.Time, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly time);
+
+                                    return new UpcomigAppointment(
+                                        schedules[i].Id,
+                                        schedules[i].Date.ToString(),
+                                        std.Time,
+                                        time.AddMinutes((int)request.Duration).ToString());
+                                })
                                 .ToList();
 
                             if(at.Count > 0)

@@ -39,18 +39,11 @@ type ContentProps = {
 }
 
 const AppointerPriceList = ({onClick, promoId}: {onClick: (v: ServiceDto) => void, promoId?: number}) => {
-    const {setValue, watch, reset, getValues} = useFormContext()
-
-    const pi = watch("promoId")
-
-    useEffect(() => {
-        console.log("value changed", pi)
-    }, [pi])
+    const {setValue, reset, getValues} = useFormContext()
 
     useEffect(() => {
         reset({...getValues(), [nameof<AppointmentDto>("promoId")]: promoId})
-        console.log("set value", getValues("promoId"))
-    }, [])
+    }, [promoId])
 
     const {data: serviceGroups, isLoading: isServiceGroupsLoading} = useQuery(
         ["get service-groups", promoId],
@@ -79,23 +72,25 @@ const Content = ({index, goToNext, setActiveStep, promoId}: ContentProps) => {
 
     if(index == 1) {
         return <>
-            <Flex mb={4} alignItems={"center"} justifyContent={"center"}>
-                <Text mr={4}>
-                    Использовать акцию
-                </Text>
-                <Switch
-                    isChecked={usePromo}
-                    onChange={(e) => {
-                        setUsePromo(e.target.checked)
-                        if(e.target.checked) {
-                            setValue(nameof<AppointmentDto>("promoId"), promoId)
-                        } else {
-                            setValue(nameof<AppointmentDto>("promoId"), undefined)
-                        }
-                    }}
-                    variant={"gray"}
-                />
-            </Flex>
+            {
+                !!promoId && <Flex mb={4} alignItems={"center"} justifyContent={"center"}>
+                    <Text mr={4}>
+                        Использовать акцию
+                    </Text>
+                    <Switch
+                        isChecked={usePromo}
+                        onChange={(e) => {
+                            setUsePromo(e.target.checked)
+                            if(e.target.checked) {
+                                setValue(nameof<AppointmentDto>("promoId"), promoId)
+                            } else {
+                                setValue(nameof<AppointmentDto>("promoId"), undefined)
+                            }
+                        }}
+                        variant={"gray"}
+                    />
+                </Flex>
+            }
             <AppointerPriceList 
                 onClick={(v) => {
                     setDuration(v.duration)
@@ -158,7 +153,7 @@ export const Appointer = ({mutate, values, promoId}: FormProps) => {
             ))}
             
         </Stepper>
-        <Flex mt={2} justifyContent={"space-between"}>
+        <Flex mt={2} mb={4} justifyContent={"space-between"}>
             {steps.map(({title}) => <Text w="80px" textAlign={"center"} fontSize={14} key={title}>{title}</Text>)}
         </Flex>
         <CustomForm

@@ -28,7 +28,7 @@ namespace BeautyQueenApi.Services.TokenService
 
             if(user == null)
             {
-                user = new User(request.Login, request.Password, "Клиент", request.PunchMapId, null);
+                user = new User(request.Login, BCrypt.Net.BCrypt.HashPassword(AuthOptions.INIT_USER_PASSWORD), "Клиент", request.PunchMapId, null);
 
                 _context.User.Add(user);
 

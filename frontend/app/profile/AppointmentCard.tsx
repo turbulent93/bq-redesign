@@ -1,4 +1,5 @@
 import { AppointmentDto } from "@/services/client";
+import { DATE_FORMAT } from "@/utils/constants";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import moment from "moment";
 
@@ -51,23 +52,23 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
                     textTransform={"uppercase"}
                 >
                     {
-                        weekDays[moment(props.schedule?.date, "DD.MM.YYYY HH:mm:ss").day() - 1]
+                        weekDays[moment(props.schedule?.date, DATE_FORMAT).day() - 1]
                     }
                 </Text>
                 <Text
                     textAlign={"center"}
                 >
                     {
-                        moment(props.schedule?.date, "DD.MM.YYYY HH:mm:ss").date()
+                        moment(props.schedule?.date, DATE_FORMAT).date()
                         + " "
-                        + months[moment(props.schedule?.date, "DD.MM.YYYY HH:mm:ss").month()]
+                        + months[moment(props.schedule?.date, DATE_FORMAT).month()]
                     },
                 </Text>
                 <Text
                     textAlign={"center"}
                 >
                     {
-                        moment(props.schedule?.date, "DD.MM.YYYY HH:mm:ss").year()
+                        moment(props.schedule?.date, DATE_FORMAT).year()
                     }
                 </Text>
             </Box>

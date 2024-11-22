@@ -2,7 +2,7 @@ import { CustomForm } from "@/components/CustomForm";
 import { CustomInput } from "@/components/CustomInput";
 import { PartialUserUpdateDto } from "@/services/client";
 import { usersClient } from "@/services/services";
-import { PROMO_TYPE_BONUS } from "@/utils/constants";
+import { DATE_FORMAT, PROMO_TYPE_BONUS } from "@/utils/constants";
 import { nameof } from "@/utils/nameof";
 import { useAuth } from "@/utils/useAuth";
 import { Box, Button, Container, Flex, Link, Modal, ModalContent, ModalOverlay, Text, useDisclosure } from "@chakra-ui/react";
@@ -61,13 +61,13 @@ export const ProfileHeader = () => {
                     {
                         data
                             ?.appointments
-                            ?.filter(i => moment(i.schedule?.date, "DD.MM.YYYY HH:mm:ss").isSameOrAfter(moment().month(-3))
+                            ?.filter(i => moment(i.schedule?.date, DATE_FORMAT).isSameOrAfter(moment().month(-3))
                                 && i.paidWithBonuses == 0)
                             .reduce((c, i) => c + i.service?.bonusCount!, 0)!
                         + data
                             ?.promos
-                            ?.filter(i => (!i.startDate || moment(i.startDate, "DD.MM.YYYY HH:mm:ss").isSameOrBefore(moment()))
-                                && (!i.endDate || moment(i.endDate, "DD.MM.YYYY HH:mm:ss").isSameOrAfter(moment()))
+                            ?.filter(i => (!i.startDate || moment(i.startDate, DATE_FORMAT).isSameOrBefore(moment()))
+                                && (!i.endDate || moment(i.endDate, DATE_FORMAT).isSameOrAfter(moment()))
                                 && i.type == PROMO_TYPE_BONUS)
                             .reduce((c, i) => c + (i?.bonusCount || 0), 0)!
                         - data

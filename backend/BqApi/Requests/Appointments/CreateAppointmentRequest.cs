@@ -4,6 +4,7 @@ using BqApi.Constants;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace BeautyQueenApi.Requests.Appointments
 {
@@ -37,9 +38,12 @@ namespace BeautyQueenApi.Requests.Appointments
                     await _context.SaveChangesAsync(cancellationToken);
                 }
 
+                TimeOnly.TryParseExact(request.StartAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly startAt);
+                TimeOnly.TryParseExact(request.EndAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly endAt);
+
                 Appointment? item = new(user!.Id,
-                    TimeOnly.Parse(request.StartAt),
-                    TimeOnly.Parse(request.EndAt),
+                    startAt,
+                    endAt,
                     request.EmployeeId,
                     request.ScheduleId,
                     request.ServiceId,

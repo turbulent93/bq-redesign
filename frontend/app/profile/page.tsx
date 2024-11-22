@@ -12,17 +12,30 @@ import { Content } from "../Content";
 import { useAuth } from "@/utils/useAuth";
 import { useEffect, useMemo } from "react";
 import { ProfileHeader } from "./ProfileHeader";
+import { DATE_FORMAT, TIME_FORMAT } from "@/utils/constants";
 
 export default function Page() {
     const {user: data} = useAuth()
     
     const upcomingAppointments = useMemo(() => data
         ?.appointments
-        ?.filter(i => moment().isSameOrBefore(moment(i.schedule?.date, "DD.MM.YYYY HH:mm:ss"))), [data])
+        ?.filter(i => moment().isSameOrBefore(moment(i.schedule?.date, DATE_FORMAT))), [data])
+        ?.sort((a, b) => {
+            const aDate = moment(`${a.schedule?.date} ${a.startAt}`, `${DATE_FORMAT} ${TIME_FORMAT}`)
+            const bDate = moment(`${b.schedule?.date} ${b.startAt}`, `${DATE_FORMAT} ${TIME_FORMAT}`)
+
+            return aDate.isAfter(bDate) ? -1 : aDate.isSame(bDate) ? 0 : 1
+        })
     
     const pastAppointments = useMemo(() => data
         ?.appointments
-        ?.filter(i => moment().isSameOrAfter(moment(i.schedule?.date, "DD.MM.YYYY HH:mm:ss"))), [data])
+        ?.filter(i => moment().isSameOrAfter(moment(i.schedule?.date, DATE_FORMAT))), [data])
+        ?.sort((a, b) => {
+            const aDate = moment(`${a.schedule?.date} ${a.startAt}`, `${DATE_FORMAT} ${TIME_FORMAT}`)
+            const bDate = moment(`${b.schedule?.date} ${b.startAt}`, `${DATE_FORMAT} ${TIME_FORMAT}`)
+
+            return aDate.isAfter(bDate) ? -1 : aDate.isSame(bDate) ? 0 : 1
+        })
 
     return <Content type={"register"}>
         <ProfileHeader />
@@ -33,6 +46,7 @@ export default function Page() {
                         ...data?.punchMap!
                     }
                     items={data?.punchMap?.punchMapPromos}
+                    showProgress
                 />
             }
             {

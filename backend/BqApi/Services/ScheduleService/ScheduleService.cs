@@ -7,6 +7,7 @@ using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Parlot.Fluent;
+using System.Globalization;
 
 namespace BqApi.Services.ScheduleService
 {
@@ -20,8 +21,8 @@ namespace BqApi.Services.ScheduleService
             var weekendDaysCount = 0;
             var isWorkDay = true;
 
-            var startDate = DateOnly.Parse(request.StartDate);
-            var endDate = DateOnly.Parse(request.EndDate);
+            DateOnly.TryParseExact(request.StartDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly startDate);
+            DateOnly.TryParseExact(request.EndDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly endDate);
 
             List<int> items = [];
 
@@ -36,12 +37,15 @@ namespace BqApi.Services.ScheduleService
                 {
                     if (curSchedule == null)
                     {
+                        TimeOnly.TryParseExact(request.StartAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly startAt);
+                        TimeOnly.TryParseExact(request.EndAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly endAt);
+
                         _context.Schedule.Add(new Schedule
                         {
                             EmployeeId = request.EmployeeId,
                             Date = curDate,
-                            StartAt = TimeOnly.Parse(request.StartAt),
-                            EndAt = TimeOnly.Parse(request.EndAt)
+                            StartAt = startAt,
+                            EndAt = endAt
                         });
                     }
                     if (workDaysCount == request.WorkDays && request.FillType != "ONLY_WORK_DAYS")

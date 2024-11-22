@@ -1,5 +1,6 @@
 ﻿using BeautyQueenApi.Requests.Schedules;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Text.Json.Serialization;
 
 namespace BeautyQueenApi.Models
@@ -19,9 +20,13 @@ namespace BeautyQueenApi.Models
 
         public void Update(CreateOrUpdateScheduleRequest request)
         {
-            Date = DateOnly.Parse(request.Date);
-            StartAt = TimeOnly.Parse(request.StartAt);
-            EndAt = TimeOnly.Parse(request.EndAt);
+            DateOnly.TryParseExact(request.Date, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly date);
+            TimeOnly.TryParseExact(request.StartAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly startAt);
+            TimeOnly.TryParseExact(request.EndAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly endAt);
+
+            Date = date;
+            StartAt = startAt;
+            EndAt = endAt;
             EmployeeId = request.EmployeeId;
         }
     }

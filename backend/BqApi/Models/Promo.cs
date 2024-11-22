@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using BeautyQueenApi.Requests.Promos;
 using BeautyQueenApi.Requests.Services;
 using BqApi.Models;
@@ -25,10 +26,13 @@ namespace BeautyQueenApi.Models
 
         public void Update(PromoDto request)
         {
+            var isStartDateCorrect = DateOnly.TryParseExact(request.StartDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly startDate);
+            var isEndDateCorrect = DateOnly.TryParseExact(request.EndDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly endDate);
+
             Title = request.Title;
             Description = request.Description;
-            StartDate = request.StartDate != null && request.StartDate != "" ? DateOnly.Parse(request.StartDate) : null;
-            EndDate = request.EndDate != null && request.EndDate != "" ? DateOnly.Parse(request.EndDate) : null;
+            StartDate = isStartDateCorrect ? startDate : null;
+            EndDate = isEndDateCorrect ? endDate : null;
             ImageId = request.ImageId;
             ShowOnHomePage = request.ShowOnHomePage;
             Type = request.Type;

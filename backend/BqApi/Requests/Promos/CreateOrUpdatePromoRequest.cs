@@ -4,6 +4,7 @@ using BqApi.Constants;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace BeautyQueenApi.Requests.Promos
 {
@@ -50,10 +51,18 @@ namespace BeautyQueenApi.Requests.Promos
                 }
                 else
                 {
+
+                    var isStartDateCorrect = DateOnly.TryParseExact(request.StartDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly startDate);
+                    var isEndDateCorrect = DateOnly.TryParseExact(request.EndDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly endDate);
+
                     item = new(request.Title,
                         request.Description,
-                        request.StartDate != null && request.StartDate != "" ? DateOnly.Parse(request.StartDate) : null,
-                        request.EndDate != null && request.EndDate != "" ? DateOnly.Parse(request.EndDate) : null,
+                        isStartDateCorrect
+                            ? startDate
+                            : null,
+                        isEndDateCorrect
+                            ? endDate
+                            : null,
                         request.BonusCount,
                         request.Type,
                         request.ImageId,

@@ -4,6 +4,7 @@ using BqApi.Constants;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace BeautyQueenApi.Requests.Schedules
 {
@@ -26,12 +27,16 @@ namespace BeautyQueenApi.Requests.Schedules
                     item.Update(request);
                 } else
                 {
+                    DateOnly.TryParseExact(request.Date, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly date);
+                    TimeOnly.TryParseExact(request.StartAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly startAt);
+                    TimeOnly.TryParseExact(request.EndAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly endAt);
+
                     item = new()
                     {
                         EmployeeId = request.EmployeeId,
-                        Date = DateOnly.Parse(request.Date),
-                        StartAt = TimeOnly.Parse(request.StartAt),
-                        EndAt = TimeOnly.Parse(request.EndAt)
+                        Date = date,
+                        StartAt = startAt,
+                        EndAt = endAt
                     };
 
                     _context.Schedule.Add(item);

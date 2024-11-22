@@ -1,6 +1,7 @@
 import { UpdateScheduleForm } from "@/app/dashboard/schedules/UpdateScheduleForm"
 import { AppointmentDto, ScheduleTimeDto } from "@/services/client"
 import { schedulesClient } from "@/services/services"
+import { TIME_FORMAT } from "@/utils/constants"
 import { nameof } from "@/utils/nameof"
 import { Box, Flex, Grid, GridItem, Modal, ModalCloseButton, ModalContent, ModalOverlay, Spinner, Text, useDisclosure, useToast } from "@chakra-ui/react"
 import moment from "moment"
@@ -14,8 +15,8 @@ const DEFAULT_END_HOUR ="22:00"
 
 const getTimeItems = (startAt: string, endAt: string) => {
     const items: ScheduleTimeDto[] = []
-    const startHour = moment(startAt, "HH:mm").hour()
-    const endHour = moment(endAt, "HH:mm").hour()
+    const startHour = moment(startAt, TIME_FORMAT).hour()
+    const endHour = moment(endAt, TIME_FORMAT).hour()
     const cur = moment({hours: startHour, minutes: 0})
 
     for (let i = 0; i < endHour - startHour; i++) {
@@ -53,35 +54,13 @@ const TimePickerContent = ({scheduleId, duration, goToServiceStep, goToNext}: Ti
     useEffect(() => {
         if(!selectedValue) return
 
-        const startAt = moment(selectedValue, "HH:mm")
+        const startAt = moment(selectedValue, TIME_FORMAT)
         const endAt = startAt.add(duration!, "minutes")
 
         const requiredSlotsCount = endAt.hours() - startAt.hours()
-        const firstRangeHour = startAt.hours()
-        const lastRangeHour = startAt.hours() + requiredSlotsCount
 
-        // const isTimeAllowed = !(lastRangeHour > END_WORK_HOUR) && data?.every(i => {
-        //     const hour = moment(i.time, "HH:mm").hours()
-
-        //     if(hour >= firstRangeHour && hour <= lastRangeHour) {
-        //         return i.isAvailable
-        //     }
-        //     return true
-        // })
-
-        // if(isTimeAllowed) {
-        //     setValue(nameof<AppointmentDto>("startAt"), selectedValue)
-        //     setValue(nameof<AppointmentDto>("endAt"), endAt.format("HH:mm"))
-        //     goToNext()
-        // } else {
-        //     toast({
-        //         title: "Не хватает времни для исполнения услуги до начала следующей записи или конца рабочего дня",
-        //         status: "error",
-        //         isClosable: true
-        //     })
-        // }
         setValue(nameof<AppointmentDto>("startAt"), selectedValue)
-        setValue(nameof<AppointmentDto>("endAt"), endAt.format("HH:mm"))
+        setValue(nameof<AppointmentDto>("endAt"), endAt.format(TIME_FORMAT))
         goToNext()
     }, [selectedValue])
 

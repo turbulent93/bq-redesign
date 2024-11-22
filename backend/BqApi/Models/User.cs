@@ -34,7 +34,7 @@ namespace BeautyQueenApi.Models
 
         public void AddStep()
         {
-            StepsCount = StepsCount + 1;
+            StepsCount = StepsCount != null ? StepsCount + 1 : 1;
         }
 
         public void PartialUpdate(string? phone, int? punchMapId)

@@ -19,6 +19,7 @@ import { TimeSelect } from "@/components/TimeSelect"
 import { useRouter } from "next/navigation"
 import { useFormContext } from "react-hook-form"
 import { useAuth } from "@/utils/useAuth"
+import { DATE_FORMAT } from "@/utils/constants"
 
 const fillTypes = [
     {
@@ -44,8 +45,8 @@ export default function Page() {
     const curDate = moment()
     const router = useRouter()
 
-    const [startDate, setStartDate] = useState<SchedulerValue | undefined>({date: curDate.format("YYYY-MM-DD")})
-    const [endDate, setEndDate] = useState<SchedulerValue | undefined>({date: curDate.endOf("month").format("YYYY-MM-DD")})
+    const [startDate, setStartDate] = useState<SchedulerValue | undefined>({date: curDate.format(DATE_FORMAT)})
+    const [endDate, setEndDate] = useState<SchedulerValue | undefined>({date: curDate.endOf("month").format(DATE_FORMAT)})
     const [removeApplications, setRemoveApplications] = useState(false)
     const [isConfirmed, setIsConfirmed] = useState(false)
 

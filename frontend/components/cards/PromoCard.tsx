@@ -94,7 +94,10 @@ export const PromoCard = ({id, image, title, description, type, register, startD
                 textColor={"white"}
                 isDisabled={!!user?.promos?.find(i => i.id == id)}
                 _disabled={{
-                    opacity: "0.8"
+                    opacity: 1
+                }}
+                _hover={{
+                    opacity: 1
                 }}
                 onClick={() => type == PROMO_TYPE_BONUS
                     ? isAuth && !user?.promos?.find(i => i.id == id)
@@ -103,13 +106,13 @@ export const PromoCard = ({id, image, title, description, type, register, startD
                     : undefined }
             >
                 {
-                    type == PROMO_TYPE_BONUS
-                        ? !!user?.promos?.find(i => i.id == id)
-                            ? <IoCheckmark size={24} />
-                            : "Использовать"
-                        : <Link href={`/appointment?promoId=${id}`}>
-                            Записаться
-                        </Link>
+                    !!user?.promos?.find(i => i.id == id)
+                        ? <IoCheckmark size={24} /> :
+                            type == PROMO_TYPE_BONUS ? 
+                                "Использовать"
+                                : <Link href={`/appointment?promoId=${id}`}>
+                                    Записаться
+                                </Link>
                 }
             </Button>
         </Box>

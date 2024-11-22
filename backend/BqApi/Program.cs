@@ -1,8 +1,11 @@
 using BeautyQueenApi.Constants;
 using BeautyQueenApi.Data;
+using BeautyQueenApi.Models;
+using BeautyQueenApi.Requests.Appointments;
 using BeautyQueenApi.Services.TokenService;
 using BeautyQueenApi.Services.UploadService;
 using BqApi.Codegen;
+using BqApi.Requests.Users;
 using BqApi.Services.ScheduleService;
 using BqApi.Services.StatisticService;
 using BqApi.TgBot;
@@ -64,6 +67,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 var config = TypeAdapterConfig.GlobalSettings;
 
 config.Scan(Assembly.GetExecutingAssembly());
+
+config.NewConfig<Appointment, AppointmentDto>()
+    .Map(dest => dest.Schedule!.Date, src => src.Schedule.Date.ToString("dd.MM.yyyy"));
+
+
+config.NewConfig<User, UserDto>()
+    .Map(dest => dest.Password, src => "");
 
 builder.Services.AddSingleton(config);
 //builder.Services.AddScoped<IMapper, ServiceMapper>();

@@ -9,6 +9,7 @@ import { useState } from "react"
 import { SchedulerProps } from "./Scheduler"
 import { useAuth } from "@/utils/useAuth"
 import { useSchedulesQuery } from "./useSchedulesQuery"
+import { DATE_FORMAT } from "@/utils/constants"
 
 const weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
 
@@ -18,22 +19,6 @@ type DatePickerProps = {
     decreaseMonth: () => void
     increaseMonth: () => void
 } & SchedulerProps
-
-// const getContent = (i: ScheduleDayDto, isAppointment: boolean) => {
-//     if(!isAppointment) {
-//         return `${moment(i.startAt, "HH:mm").hours()} - ${moment(i.endAt, "HH:mm").hours()}`
-//     }
-
-//     if(i.slotsCount == 0) {
-//         return
-//     } else if(i.slotsCount == 1) {
-//         return `${i.slotsCount} место`
-//     } else if(i.slotsCount < 5) {
-//         return `${i.slotsCount} места`
-//     } else {
-//         return `${i.slotsCount} мест`
-//     }
-// }
 
 const isToday = (year: number, month: number, day: number) => {
     const curDate = new Date()
@@ -102,7 +87,7 @@ export const DatePicker = ({
     const {data, isLoading} = useSchedulesQuery({month, year, employeeId: user?.employee?.id, duration, contentType})
 
     const {mutate: createMutate} = useMutation((day: number) => schedulesClient.create({
-        date: moment(new Date(year, month - 1, day)).format("YYYY-MM-DD"),
+        date: moment(new Date(year, month - 1, day)).format(DATE_FORMAT),
         employeeId: user?.employee?.id!,
         startAt: "10:00",
         endAt: "18:00"
@@ -115,7 +100,7 @@ export const DatePicker = ({
     // const {isOpen, onOpen, onClose} = useDisclosure()
 
     const onChangeHandler = (day: number, scheduleId?: number) => {
-        onChange({date: moment({year, month: month - 1, day}).format("YYYY-MM-DD"), scheduleId})
+        onChange({date: moment({year, month: month - 1, day}).format(DATE_FORMAT), scheduleId})
     }
 
     const handler = (item: ScheduleDayDto) => {

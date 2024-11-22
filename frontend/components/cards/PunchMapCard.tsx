@@ -48,7 +48,7 @@ export const PunchMapCard = ({columnsCount, stepsCount, items, onOpen, id, regis
                     Array.from(Array(stepsCount).keys()).map(i => <Flex key={i} alignItems={"center"} flexDir={"column"} h={"70px"}>
                         <Flex
                             borderRadius={"100%"}
-                            border={(!user?.stepsCount || i + 1 > user?.stepsCount) ? "1px" : undefined}
+                            border={(!showProgress || (!user?.stepsCount || i + 1 > user?.stepsCount)) ? "1px" : undefined}
                             borderColor={"gray.200"}
                             w="40px"
                             h="40px"

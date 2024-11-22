@@ -1,6 +1,7 @@
 ﻿using BeautyQueenApi.Data;
 using BqApi.Requests.Statistic;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace BqApi.Services.StatisticService
@@ -31,13 +32,17 @@ namespace BqApi.Services.StatisticService
 
             if (request.StartDate != null)
             {
-                var date = DateOnly.Parse(request.StartDate);
+                DateOnly.TryParseExact(request.StartDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly startDate);
+
+                var date = startDate;
                 apps = apps.Where(x => x.Schedule.Date >= date).ToList();
             }
 
             if (request.EndDate != null)
             {
-                apps = apps.Where(x => x.Schedule.Date <= DateOnly.Parse(request.EndDate)).ToList();
+                DateOnly.TryParseExact(request.EndDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly endDate);
+
+                apps = apps.Where(x => x.Schedule.Date <= endDate).ToList();
             }
 
             var statistics = apps
@@ -77,13 +82,17 @@ namespace BqApi.Services.StatisticService
 
             if (request.StartDate != null)
             {
-                var date = DateOnly.Parse(request.StartDate);
+                DateOnly.TryParseExact(request.StartDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly startDate);
+
+                var date = startDate;
                 apps = apps.Where(x => x.Schedule.Date >= date).ToList();
             }
 
             if (request.EndDate != null)
             {
-                apps = apps.Where(x => x.Schedule.Date <= DateOnly.Parse(request.EndDate)).ToList();
+                DateOnly.TryParseExact(request.EndDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly endDate);
+
+                apps = apps.Where(x => x.Schedule.Date <= endDate).ToList();
             }
 
             var statistics = apps
@@ -123,13 +132,17 @@ namespace BqApi.Services.StatisticService
 
             if (request.StartDate != null)
             {
-                var date = DateOnly.Parse(request.StartDate);
+                DateOnly.TryParseExact(request.StartDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly startDate);
+
+                var date = startDate;
                 apps = apps.Where(x => x.Schedule.Date >= date).ToList();
             }
 
             if (request.EndDate != null)
             {
-                apps = apps.Where(x => x.Schedule.Date <= DateOnly.Parse(request.EndDate)).ToList();
+                DateOnly.TryParseExact(request.EndDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly endDate);
+
+                apps = apps.Where(x => x.Schedule.Date <= endDate).ToList();
             }
 
             var statistics = apps
@@ -170,13 +183,17 @@ namespace BqApi.Services.StatisticService
 
             if (request.StartDate != null)
             {
-                var date = DateOnly.Parse(request.StartDate);
+                DateOnly.TryParseExact(request.StartDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly startDate);
+
+                var date = startDate;
                 apps = apps.Where(x => x.Schedule.Date >= date).ToList();
             }
 
             if (request.EndDate != null)
             {
-                apps = apps.Where(x => x.Schedule.Date <= DateOnly.Parse(request.EndDate)).ToList();
+                DateOnly.TryParseExact(request.EndDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly endDate);
+
+                apps = apps.Where(x => x.Schedule.Date <= endDate).ToList();
             }
 
             return apps.Sum(i => i.Service.Price);

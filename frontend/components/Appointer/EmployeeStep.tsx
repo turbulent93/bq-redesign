@@ -3,6 +3,7 @@
 import { ColumnType, CustomTable } from "@/components/Table/Table";
 import { AppointmentDto, EmployeeDto, ServiceDto, UpcomigAppointment, UserDto } from "@/services/client";
 import { usersClient } from "@/services/services";
+import { DATE_FORMAT } from "@/utils/constants";
 import { nameof } from "@/utils/nameof";
 import { Avatar, Box, Button, Container, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
 import moment from "moment";
@@ -26,10 +27,8 @@ type EmployeeStepProps = {
 const weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
 
 const getUpcomingDate = (items: UpcomigAppointment[]) => {
-    const date = moment(items[0].date, "DD.MM.YYYY HH:mm:ss")
+    const date = moment(items[0].date, DATE_FORMAT)
     const diff = moment().diff(date, "days")
-    
-    // console.log(moment().format("DD.MM.YYYY HH:mm:ss"), items[0].date, date.format("DD.MM.YYYY HH:mm:ss"), diff)
 
     if(diff == 0) {
         return "сегодня"

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { defaultTheme, Select } from "chakra-react-select"
 import { Controller, useFormContext } from "react-hook-form"
 import moment from "moment"
+import { TIME_FORMAT } from "@/utils/constants"
 
 type TimeSelectProps = {
     name: string
@@ -31,32 +32,24 @@ export const TimeSelect = ({label, name, defaultValue}: TimeSelectProps) => {
     const hours = getHours()
     const minutes = getTimes()
 
-    const defaultTime = moment(defaultValue, "HH:mm")
-
     const getHour = (value: string) => {
-        // const hour = value
-        //     ? moment(value, "HH:mm").hours()
-        //     : defaultTime.hours()
-        const hour = moment(value, "HH:mm").hours()
+        const hour = moment(value, TIME_FORMAT).hours()
     
         return hours.find(i => i.value == String(hour))
     }
 
     const setHour = (value: string, hoursToAdd: number) => {
-        return moment(value, "HH:mm").set("hour", hoursToAdd).format("HH:mm")
+        return moment(value, TIME_FORMAT).set("hour", hoursToAdd).format(TIME_FORMAT)
     }
 
     const getMinutes = (value: string) => {
-        // const minute = value
-        //     ? moment(value, "HH:mm").minutes()
-        //     : defaultTime.minutes()
-        const minute = moment(value, "HH:mm").minutes()
+        const minute = moment(value, TIME_FORMAT).minutes()
 
         return minutes.find(i => i.value == (minute == 0 ? "00" : String(minute)))
     }
 
     const setMinutes = (value: string, minutesToAdd: number) => {
-        return moment(value, "HH:mm").set("minutes", minutesToAdd).format("HH:mm")
+        return moment(value, TIME_FORMAT).set("minutes", minutesToAdd).format(TIME_FORMAT)
     }
 
     return <>

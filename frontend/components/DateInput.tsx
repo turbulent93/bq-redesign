@@ -7,6 +7,7 @@ import { useState } from "react"
 import { useSchedulesQuery } from "./Scheduler/useSchedulesQuery"
 import moment from "moment"
 import { useAuth } from "@/utils/useAuth"
+import { DATE_FORMAT } from "@/utils/constants"
 
 type DateInputProps = {
     value?: SchedulerValue
@@ -35,7 +36,7 @@ export const DateInput = ({value, onChange, label, disabled}: DateInputProps) =>
                         year: curDate.year(),
                         month: curDate.month(),
                         day: first.day
-                    }).format("YYYY-MM-DD")
+                    }).format(DATE_FORMAT)
                 })
             }
         }
