@@ -83,6 +83,7 @@ export const PunchMapCard = ({columnsCount, stepsCount, items, onOpen, id, regis
                             }
                             <Text
                                 fontSize={12}
+                                ml={showProgress && user?.stepsCount! < i.step ? "28px" : undefined}
                                 // w="160px"
                             >*{i.step} - {i.promo?.description || promos?.find(p => p.id == i.promoId)?.description}</Text>
                             {

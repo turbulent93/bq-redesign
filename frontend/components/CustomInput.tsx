@@ -3,7 +3,7 @@ import { useEffect } from "react"
 import { Controller, useFormContext } from "react-hook-form"
 import { FaPhone } from "react-icons/fa"
 
-const mask = (value: string) => {
+const phoneMask = (value: string) => {
     const phone = value.replace(/^8|[^_^\d]/g, "")
 
     if(phone.length == 0) {
@@ -19,6 +19,18 @@ const mask = (value: string) => {
     }
 
     return "8 (" + phone.slice(0, 3) + ") " + phone.slice(3, 6) + "-" + phone.slice(6, 10)
+}
+
+const numberMask = (value: string, max?: number, min?: number) => {
+    const number = value.match(/\d+/g)
+
+    if(!number || number.length == 0) return ""
+
+    if(max && Number(number[0]) > max) return max
+
+    if(min && Number(number[0]) < min) return min
+
+    return number[0]
 }
 
 type CustomInputProps = {
@@ -72,8 +84,8 @@ export const CustomInput = ({label, name, rightElement, type, required, forceRes
                     name={name}
                     rules={{required: "*Обязательное поле"}}
                     render={({field}) => <NumberInput
-                        value={field.value}
-                        onChange={field.onChange}
+                        value={field.value || ""}
+                        onChange={v => field.onChange(numberMask(v, max, min))}
                         mb={2}
                         max={max}
                         min={min}
@@ -100,7 +112,7 @@ export const CustomInput = ({label, name, rightElement, type, required, forceRes
                         isInvalid={!!errors[name]}
                         errorBorderColor="red.300"
                         value={field.value || ""}
-                        onChange={e => field.onChange(mask(e.target.value))}
+                        onChange={e => field.onChange(phoneMask(e.target.value))}
                         variant={variant}
                         focusBorderColor={focusBorderColor}
                         color={color}

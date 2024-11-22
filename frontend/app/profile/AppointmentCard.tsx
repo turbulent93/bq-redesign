@@ -19,7 +19,7 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
         mb={3}
     >
         {
-            props.service?.bonusCount! > 0 && <Box
+            props.service?.bonusCount! > 0 && props.paidWithBonuses == 0 && <Box
                 fontSize={12}
                 position={"absolute"}
                 top={-1}

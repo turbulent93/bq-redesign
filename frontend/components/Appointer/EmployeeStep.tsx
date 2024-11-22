@@ -90,28 +90,34 @@ export default function EmployeeStep({goToNext, goBack, goToPhone, duration}: Em
                         borderColor={"gray.300"}
                         borderRadius={"md"}
                         mb={3}
-                        maxW={"326px"}
+                        // maxW={"326px"}
                     >
-                    <Flex mb={2} alignItems={"center"}>
+                    <Flex mb={2} alignItems={"start"}>
                         <Avatar
                             src={`${SERVER_URL}/${i.file?.path}`}
                             // w="30px"
                             // h="30px"
                             mr={2}
                         />
-                        <Box>
+                        <Box w="100%" position={"relative"}>
                             <Text color={"gray.700"} fontSize={20}>
                                 {i.fullName}
                             </Text>
+                            {/* <Box position={"relative"}> */}
                             <Text
+                                position={"absolute"}
+                                left={0}
+                                right={0}
+                                bottom={-5}
                                 color={"gray.500"} 
                                 whiteSpace={"nowrap"}
-                                overflow={"hidden"}
                                 textOverflow={"ellipsis"}
-                                maxW="240px"
+                                overflow={"hidden"}
+                                // maxW={"80%"}
                             >
                                 {i.specializations?.map(s => s.name).join(", ")}
-                            </Text>
+                                </Text>
+                            {/* </Box> */}
                         </Box>
                         {/* <Button
                             leftIcon={<AiOutlineSchedule size={20} />}
