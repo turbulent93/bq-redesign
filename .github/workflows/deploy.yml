@@ -15,6 +15,7 @@ jobs:
         KEY: ${{ secrets.SSHKEY }}
         script: |
           cd /var/www/bq-redesign/frontend
+          echo ${{ secrets.PWD }} | sudo -S git pull
           echo ${{ secrets.PWD }} | sudo -S npm i
           echo ${{ secrets.PWD }} | sudo -S npm run build
           cd ../backend/BqApi
