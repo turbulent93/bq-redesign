@@ -16,6 +16,7 @@ jobs:
         script: |
           cd /var/www/bq-redesign
           echo ${{ secrets.PWD }} | sudo -S npm i --prefix frontend
+          echo ${{ secrets.PWD }} | sudo -S npm run build --prefix frontend
           cd backend/BqApi
           echo ${{ secrets.PWD }} | sudo -S dotnet build
           echo ${{ secrets.PWD }} | sudo -S dotnet publish -c Release
