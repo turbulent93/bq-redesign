@@ -14,10 +14,10 @@ jobs:
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.SSHKEY }}
         script: |
-          cd /var/www/bq-redesign
-          echo ${{ secrets.PWD }} | sudo -S npm i --prefix frontend
-          echo ${{ secrets.PWD }} | sudo -S npm run build --prefix frontend
-          cd backend/BqApi
+          cd /var/www/bq-redesign/frontend
+          echo ${{ secrets.PWD }} | sudo -S npm i
+          echo ${{ secrets.PWD }} | sudo -S npm run build
+          cd ../backend/BqApi
           echo ${{ secrets.PWD }} | sudo -S dotnet build
           echo ${{ secrets.PWD }} | sudo -S dotnet publish -c Release
           echo ${{ secrets.PWD }} | sudo -S dotnet dotnet-ef database update
