@@ -31,13 +31,6 @@ export const Content = ({children, type = "login"} : {children: React.ReactNode,
     const pathname = usePathname()
 	const vh = useWindowSize()
 
-	useEffect(() => {
-		// setVh(window.innerHeight)
-		// console.log(window.innerHeight, window.innerHeight - 146)
-		if(vh)
-			console.log(vh - 9)
-	}, [vh])
-
 	if(isLoading) {
 		return <Flex w="100vw" h="100vh" alignItems={"center"} justifyContent={"center"}>
 			<Spinner />
@@ -59,7 +52,7 @@ export const Content = ({children, type = "login"} : {children: React.ReactNode,
 	if(type != "login") return children
 
 	return <Container
-		// h={`${vh}px`}
+		h={`${vh}px`}
 		// overflowY="hidden"
 		// minH="100%"
 		// overflow={"hidden"}
