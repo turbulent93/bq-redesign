@@ -4,7 +4,7 @@ using BqApi.Models.Audit;
 
 namespace BeautyQueenApi.Models
 {
-    public class Service(string name, int price, int duration, int specializationId, int groupId, int bonusCount, int paidAmountWithBonuses) : TrackedEntity
+    public class Service(string name, int price, int duration, int specializationId, int groupId, int bonusCount, int paidAmountWithBonuses)// : TrackedEntity
     {
         [Key]
         public int Id { get; set; }

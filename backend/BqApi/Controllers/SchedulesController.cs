@@ -12,6 +12,13 @@ namespace BeautyQueenApi.Controllers
     {
         private readonly ISender _mediator = mediator;
 
+        [HttpPost("nearest")]
+        [AllowAnonymous]
+        public async Task<ActionResult<ScheduleDto?>> Nearest(GetNearestScheduleRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+
         [HttpPost("get")]
         [AllowAnonymous]
         public async Task<ActionResult<List<ScheduleDayDto>>> Get(GetSchedulesRequest request)

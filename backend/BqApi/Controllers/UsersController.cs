@@ -20,13 +20,6 @@ namespace BeautyQueenApi.Controllers
             return await _mediator.Send(request);
         }
 
-        [HttpPost("employees/get")]
-        [AllowAnonymous]
-        public async Task<ActionResult<PaginationResponse<EmployeeDto>>> GetEmployees(GetEmployeesRequest request)
-        {
-            return await _mediator.Send(request);
-        }
-
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> View(int id)
         {
@@ -57,12 +50,6 @@ namespace BeautyQueenApi.Controllers
         public async Task<ActionResult<UserDto>> Remove(int id)
         {
             return await _mediator.Send(new RemoveUserRequest { Id = id });
-        }
-
-        [HttpDelete("employee/{id}")]
-        public async Task<ActionResult<EmployeeDto>> RemoveEmployee(int id)
-        {
-            return await _mediator.Send(new RemoveEmployeeRequest { Id = id });
         }
     }
 }

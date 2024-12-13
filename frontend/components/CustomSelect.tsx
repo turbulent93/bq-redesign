@@ -1,6 +1,6 @@
 import { Text } from "@chakra-ui/react"
 import { Select } from "chakra-react-select"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { Controller, useFormContext } from "react-hook-form"
 
 type CustomSelectItem = {label: string, value: any}
@@ -14,8 +14,12 @@ type CustomSelectProps = {
     multiple?: boolean
 }
 
-export const CustomSelect = ({options, label, name, required, multiple}: CustomSelectProps) => {
-    const {control, formState: {errors}} = useFormContext()
+export const CustomSelect = ({options, label, name, required, multiple ,defaultValue}: CustomSelectProps) => {
+    const {control, formState: {errors}, reset, getValues} = useFormContext()
+
+    useEffect(() => {
+        reset({...getValues(), [name]: defaultValue})
+    }, [defaultValue])
 
     return <>
         <Text mb='8px'>{label}</Text>

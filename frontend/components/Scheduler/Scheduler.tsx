@@ -19,6 +19,7 @@ export type SchedulerProps = {
     selectedSchedules?: number[]
     duration?: number
     selectFirst?: boolean
+    userId?: number
 }
 
 export const Scheduler = ({isMonthPickerVisible = true, ...props}: SchedulerProps) => {

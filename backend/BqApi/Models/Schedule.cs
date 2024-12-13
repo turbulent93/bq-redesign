@@ -14,7 +14,7 @@ namespace BeautyQueenApi.Models
         public TimeOnly EndAt { get; set; }
         public int EmployeeId { get; set; }
 
-        public Employee Employee { get; set; } = null!;
+        public User Employee { get; set; } = null!;
 
         public List<Appointment>? Appointments { get; set; }
 

@@ -106,7 +106,7 @@ export const CustomInput = ({label, name, rightElement, type, required, forceRes
                 type == "phone" ? <Controller
                     name={name}
                     control={control}
-                    rules={{required: "*Обязательное поле"}}
+                    rules={{required: "*Обязательное поле", minLength: 16}}
                     render={({field}) => <Input
                         placeholder="Не заполнено"
                         isInvalid={!!errors[name]}
@@ -141,7 +141,7 @@ export const CustomInput = ({label, name, rightElement, type, required, forceRes
                     color="red.300"
                     fontSize={12}
                     mb={3}
-                >{String(errors[name]?.message)}</Text> :
+                >{String(errors[name]?.type == "minLength" ? "*Некорректный номер телефона" : errors[name]?.message)}</Text> :
                 undefined
         }
     </>

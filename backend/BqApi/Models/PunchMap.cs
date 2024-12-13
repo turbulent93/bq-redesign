@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BqApi.Models
 {
-    public class PunchMap(int? employeeId, int stepsCount, int columnsCount) : TrackedEntity
+    public class PunchMap(int? employeeId, int stepsCount, int columnsCount)// : TrackedEntity
     {
         [Key]
         public int Id { get; set; }
@@ -15,7 +15,8 @@ namespace BqApi.Models
         public int StepsCount { get; set; } = stepsCount;
         public int ColumnsCount { get; set; } = columnsCount;
 
-        public Employee Employee { get; set; } = null!;
+        public User Employee { get; set; } = null!;
+        public List<User> Clients { get; set; } = null!;
         public List<PunchMapPromo> PunchMapPromos { get; set; } = null!;
 
         public void Update(PunchMapDto request)

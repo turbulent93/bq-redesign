@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BqApi.Models
 {
-    public class Gallery(int imageId, int serviceId) : TrackedEntity
+    public class Gallery(int imageId, int serviceId)// : TrackedEntity
     {
         [Key]
         public int Id { get; set; }

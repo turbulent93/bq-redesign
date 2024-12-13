@@ -110,3 +110,17 @@ export const appointmentRoutes: RouteType[] = [
         Icon: AiOutlineSchedule
     },
 ]
+
+export const userRoutes: RouteType[] = [
+    {
+        title: "Пользователи",
+        href: "/dashboard/users",
+        Icon: AiOutlineUser,
+        protected: true
+    },
+    {
+        title: "Мастера",
+        href: "/dashboard/employees",
+        Icon: AiOutlineUser
+    },
+]

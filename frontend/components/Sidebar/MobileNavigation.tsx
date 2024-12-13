@@ -55,7 +55,7 @@ export const MobileNavigation = () => {
                     >
                     <Flex bgColor={"gray.700"} color={"white"} borderRadius={"lg"} px={3} py={2} my={2}>
                         <Avatar
-                            src={!!user?.employee?.file?.path ? `${SERVER_URL}/${user?.employee?.file?.path}` : undefined}
+                            src={!!user?.avatar?.path ? `${SERVER_URL}/${user?.avatar?.path}` : undefined}
                             w="40px"
                             h="40px"
                             />
@@ -64,7 +64,7 @@ export const MobileNavigation = () => {
                                 as="h3"
                                 fontSize={"15px"}
                                 whiteSpace={"nowrap"}
-                                >{user?.employee?.fullName || user?.login}</Heading>
+                                >{user?.fullName || user?.login}</Heading>
                             <Text
                                 color="gray"
                                 fontSize={"12px"}
@@ -91,7 +91,7 @@ export const MobileNavigation = () => {
         >
             {
                 routes
-                    .filter(i => i.protected ? isAdmin : true)
+                    // .filter(i => i.protected ? isAdmin : true)
                     .map(({Icon, href, title}) => <Link
                         borderRadius={8}
                         // _hover={{ textDecor: 'none', backgroundColor: "gray.300" }}

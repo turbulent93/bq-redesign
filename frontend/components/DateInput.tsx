@@ -8,6 +8,7 @@ import { useSchedulesQuery } from "./Scheduler/useSchedulesQuery"
 import moment from "moment"
 import { useAuth } from "@/utils/useAuth"
 import { DATE_FORMAT } from "@/utils/constants"
+import { CustomModal } from "./CustomModal"
 
 type DateInputProps = {
     value?: SchedulerValue
@@ -25,7 +26,7 @@ export const DateInput = ({value, onChange, label, disabled}: DateInputProps) =>
     useSchedulesQuery({
         month: curDate.month() + 1,
         year: curDate.year(),
-        employeeId: user?.employee?.id,
+        employeeId: user?.id,
         onSuccess: (data) => {
             const first = data.find(i => i.scheduleId && i.day >= curDate.date())
 
@@ -57,24 +58,21 @@ export const DateInput = ({value, onChange, label, disabled}: DateInputProps) =>
                 <AiOutlineSchedule />
             </InputRightElement>
         </InputGroup>
-        <Modal isOpen={isOpen} onClose={onClose} isCentered>
-            <ModalOverlay
-                bg='blackAlpha.300'
-                backdropFilter='blur(10px) hue-rotate(90deg)'
+        <CustomModal
+            isOpen={isOpen}
+            onClose={onClose}
+        >
+            <ModalCloseButton />
+            <Scheduler
+                isDatePick
+                contentType="WORK_TIME"
+                value={value}
+                onChange={(value) => {
+                    onChange(value)
+                    onClose()
+                }}
+                selectFirst
             />
-            <ModalContent mx={4}>
-                <ModalCloseButton />
-                <Scheduler
-                    isDatePick
-                    contentType="WORK_TIME"
-                    value={value}
-                    onChange={(value) => {
-                        onChange(value)
-                        onClose()
-                    }}
-                    selectFirst
-                />
-            </ModalContent>
-        </Modal>
+        </CustomModal>
     </>
 }

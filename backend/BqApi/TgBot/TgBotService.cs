@@ -22,7 +22,7 @@ namespace BqApi.TgBot
                 if (authCode == null)
                     return;
 
-                var item = await _context.Employee.FirstOrDefaultAsync(i => i.AuthTgCode == authCode);
+                var item = await _context.User.FirstOrDefaultAsync(i => i.AuthTgCode == authCode);
 
                 if (item == null)
                     return;

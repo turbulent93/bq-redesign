@@ -9,6 +9,7 @@ import { useEffect, useState } from "react"
 import { Controller, useFormContext } from "react-hook-form"
 import { FaExternalLinkAlt } from "react-icons/fa"
 import { useQuery } from "react-query"
+import { CustomModal } from "../CustomModal"
 
 const DEFAULT_START_HOUR = "8:00"
 const DEFAULT_END_HOUR ="22:00"
@@ -70,12 +71,12 @@ const TimePickerContent = ({scheduleId, duration, goToServiceStep, goToNext}: Ti
     //     setValue(nameof<AppointmentDto>("endAt"), undefined)
     // }, [scheduleId])
 
-    if(isLoading || !data)
+    if(isLoading)
         return  <Flex w="100%" justifyContent={"center"} alignItems="center" mt={4}>
             <Spinner />
         </Flex>
 
-    if(!duration) {
+    if(!duration || !data) {
         return <Flex
             w="100%"
             justifyContent={"center"}
@@ -132,14 +133,11 @@ export const TimePicker = (props: TimePickerProps) => {
         return <TimePickerContent {...props} />
     }
 
-    return <Modal isOpen={isOpen} onClose={onClose} isCentered >
-        <ModalOverlay
-            bg='blackAlpha.300'
-            backdropFilter='blur(10px) hue-rotate(90deg)'
-        />
-        <ModalContent mx={4} h="300px" overflowY={"scroll"}>
-            <ModalCloseButton />
-            <TimePickerContent {...props} />
-        </ModalContent>
-    </Modal>
+    return <CustomModal
+        isOpen={isOpen}
+        onClose={onClose}
+    >
+        <ModalCloseButton />
+        <TimePickerContent {...props} />
+    </CustomModal>
 }

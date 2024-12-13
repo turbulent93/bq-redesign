@@ -4,7 +4,10 @@ import { UserDto } from "@/services/client";
 import { usersClient } from "@/services/services";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { ClientForm } from "../ClientForm";
+import { CLIENT_ROLE_NAME } from "@/utils/constants";
 import { Form } from "../Form";
+import { MasterForm } from "../MasterForm";
 
 export default function Page() {
 	const searchParams = useSearchParams()
@@ -24,16 +27,16 @@ export default function Page() {
         () => usersClient.view(Number(id)), {
 			select: (data) => ({
 				...data,
-				employee: data.employee
-					? {
-						...data.employee,
-						specializationIds: data?.employee?.specializations?.map(i => Number(i.id)) || []
-					}
-					: undefined
-			}),
-			onSuccess: (data) => console.log(data)
+				specializationIds: data?.specializations?.map(i => Number(i.id)) || []
+			})
 		}
     )
 
-	return <Form mutate={mutate} values={data} />
+	if(data?.role == CLIENT_ROLE_NAME) {
+		return <ClientForm mutate={mutate} values={data} />
+	}
+
+	return <MasterForm mutate={mutate} values={data ? {...data,
+		specializationIds: data?.specializations?.map(i => Number(i.id)) || []
+	} : undefined} />
 }

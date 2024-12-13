@@ -6,7 +6,7 @@ export default function ProfileLayout({
     children: React.ReactNode
   }) {
     return (
-      <Content type="register">
+      <Content type="client">
         {children}
       </Content>
     )

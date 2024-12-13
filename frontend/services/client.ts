@@ -1065,6 +1065,58 @@ export class SchedulesClient {
 
     }
 
+    nearest(request: GetNearestScheduleRequest, cancelToken?: CancelToken): Promise<ScheduleDto> {
+        let url_ = this.baseUrl + "/api/schedules/nearest";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processNearest(_response);
+        });
+    }
+
+    protected processNearest(response: AxiosResponse): Promise<ScheduleDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return Promise.resolve<ScheduleDto>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<ScheduleDto>(null as any);
+    }
+
     get(request: GetSchedulesRequest, cancelToken?: CancelToken): Promise<ScheduleDayDto[]> {
         let url_ = this.baseUrl + "/api/schedules/get";
         url_ = url_.replace(/[?&]$/, "");
@@ -2943,58 +2995,6 @@ export class UsersClient {
         return Promise.resolve<PaginationResponseOfUserDto>(null as any);
     }
 
-    getEmployees(request: GetEmployeesRequest, cancelToken?: CancelToken): Promise<PaginationResponseOfEmployeeDto> {
-        let url_ = this.baseUrl + "/api/users/employees/get";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(request);
-
-        let options_: AxiosRequestConfig = {
-            data: content_,
-            method: "POST",
-            url: url_,
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processGetEmployees(_response);
-        });
-    }
-
-    protected processGetEmployees(response: AxiosResponse): Promise<PaginationResponseOfEmployeeDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = JSON.parse(resultData200);
-            return Promise.resolve<PaginationResponseOfEmployeeDto>(result200);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<PaginationResponseOfEmployeeDto>(null as any);
-    }
-
     view(id: number, cancelToken?: CancelToken): Promise<UserDto> {
         let url_ = this.baseUrl + "/api/users/{id}";
         if (id === undefined || id === null)
@@ -3258,57 +3258,6 @@ export class UsersClient {
         }
         return Promise.resolve<UserDto>(null as any);
     }
-
-    removeEmployee(id: number, cancelToken?: CancelToken): Promise<EmployeeDto> {
-        let url_ = this.baseUrl + "/api/users/employee/{id}";
-        if (id === undefined || id === null)
-            throw new Error("The parameter 'id' must be defined.");
-        url_ = url_.replace("{id}", encodeURIComponent("" + id));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: AxiosRequestConfig = {
-            method: "DELETE",
-            url: url_,
-            headers: {
-                "Accept": "application/json"
-            },
-            cancelToken
-        };
-
-        return this.instance.request(options_).catch((_error: any) => {
-            if (isAxiosError(_error) && _error.response) {
-                return _error.response;
-            } else {
-                throw _error;
-            }
-        }).then((_response: AxiosResponse) => {
-            return this.processRemoveEmployee(_response);
-        });
-    }
-
-    protected processRemoveEmployee(response: AxiosResponse): Promise<EmployeeDto> {
-        const status = response.status;
-        let _headers: any = {};
-        if (response.headers && typeof response.headers === "object") {
-            for (const k in response.headers) {
-                if (response.headers.hasOwnProperty(k)) {
-                    _headers[k] = response.headers[k];
-                }
-            }
-        }
-        if (status === 200) {
-            const _responseText = response.data;
-            let result200: any = null;
-            let resultData200  = _responseText;
-            result200 = JSON.parse(resultData200);
-            return Promise.resolve<EmployeeDto>(result200);
-
-        } else if (status !== 200 && status !== 204) {
-            const _responseText = response.data;
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-        }
-        return Promise.resolve<EmployeeDto>(null as any);
-    }
 }
 
 export interface PaginationResponseOfAppointmentDto {
@@ -3328,30 +3277,36 @@ export interface AppointmentDto {
     paidWithBonuses?: number | undefined;
     promoId?: number | undefined;
     createdBy: number;
-    employee?: EmployeeDto | undefined;
+    employee?: UserDto | undefined;
     schedule?: ScheduleDto | undefined;
     service?: ServiceDto | undefined;
 }
 
-export interface EmployeeDto {
+export interface UserDto {
     id?: number | undefined;
-    fullName: string;
-    userId: number;
-    fileId: number;
+    login: string;
+    password?: string | undefined;
+    newPassword?: string | undefined;
+    role: string;
+    punchMapId?: number | undefined;
+    stepsCount?: number | undefined;
+    fullName?: string | undefined;
+    avatarId?: number | undefined;
     notificationsEnabled?: boolean | undefined;
     authTgCode?: string | undefined;
     tgChatId?: string | undefined;
     specializationIds: number[];
     specializations?: SpecializationDto[] | undefined;
-    file?: FileDto | undefined;
+    avatar?: FileDto | undefined;
+    punchMap?: PunchMapDto | undefined;
+    employeeAppointments?: AppointmentDto[] | undefined;
+    clientAppointments?: AppointmentDto[] | undefined;
+    master?: AppointmentDto[] | undefined;
+    promos?: PromoDto[] | undefined;
     upcomingAppointments: UpcomigAppointment[];
 }
 
-export interface TrackedEntity {
-    createdBy: number;
-}
-
-export interface SpecializationDto extends TrackedEntity {
+export interface SpecializationDto {
     id?: number | undefined;
     name: string;
 }
@@ -3360,6 +3315,57 @@ export interface FileDto {
     id: number;
     path: string;
     name: string;
+}
+
+export interface PunchMapDto {
+    id?: number | undefined;
+    employeeId?: number | undefined;
+    stepsCount: number;
+    columnsCount: number;
+    punchMapPromos: PunchMapPromoDto[];
+}
+
+export interface PunchMapPromoDto {
+    id?: number | undefined;
+    punchMapId: number;
+    promoId: number;
+    step: number;
+    promo?: PromoDto | undefined;
+}
+
+export interface PromoDto {
+    id?: number | undefined;
+    title: string;
+    description: string;
+    startDate?: string | undefined;
+    endDate?: string | undefined;
+    bonusCount?: number | undefined;
+    type?: string | undefined;
+    imageId: number;
+    showOnHomePage: boolean;
+    image?: FileDto | undefined;
+    promoServices: PromoServiceDto[];
+}
+
+export interface PromoServiceDto {
+    id?: number | undefined;
+    promoId: number;
+    serviceId: number;
+    discount: number;
+    service?: ServiceDto | undefined;
+}
+
+export interface ServiceDto {
+    id?: number | undefined;
+    name: string;
+    price: number;
+    duration: number;
+    specializationId: number;
+    groupId: number;
+    bonusCount: number;
+    paidAmountWithBonuses: number;
+    createdBy: number;
+    specialization?: SpecializationDto | undefined;
 }
 
 export interface UpcomigAppointment {
@@ -3375,19 +3381,6 @@ export interface ScheduleDto {
     startAt: string;
     endAt: string;
     employeeId: number;
-}
-
-export interface ServiceDto {
-    id?: number | undefined;
-    name: string;
-    price: number;
-    duration: number;
-    specializationId: number;
-    groupId: number;
-    bonusCount: number;
-    paidAmountWithBonuses: number;
-    createdBy: number;
-    specialization?: SpecializationDto | undefined;
 }
 
 export interface PaginationRequest {
@@ -3432,28 +3425,6 @@ export interface PaginationResponseOfPromoDto {
     list: PromoDto[];
 }
 
-export interface PromoDto {
-    id?: number | undefined;
-    title: string;
-    description: string;
-    startDate?: string | undefined;
-    endDate?: string | undefined;
-    bonusCount?: number | undefined;
-    type?: string | undefined;
-    imageId: number;
-    showOnHomePage: boolean;
-    image?: FileDto | undefined;
-    promoServices: PromoServiceDto[];
-}
-
-export interface PromoServiceDto {
-    id?: number | undefined;
-    promoId: number;
-    serviceId: number;
-    discount: number;
-    service?: ServiceDto | undefined;
-}
-
 export interface GetPromoRequest extends PaginationRequest {
     showOnHomePage?: boolean | undefined;
     onlyCurrent?: boolean | undefined;
@@ -3468,26 +3439,14 @@ export interface PaginationResponseOfPunchMapDto {
     list: PunchMapDto[];
 }
 
-export interface PunchMapDto {
-    id?: number | undefined;
-    employeeId?: number | undefined;
-    stepsCount: number;
-    columnsCount: number;
-    punchMapPromos: PunchMapPromoDto[];
-}
-
-export interface PunchMapPromoDto {
-    id?: number | undefined;
-    punchMapId: number;
-    promoId: number;
-    step: number;
-    promo?: PromoDto | undefined;
-}
-
 export interface GetPunchMapRequest extends PaginationRequest {
 }
 
 export interface CreateOrUpdatePunchMapRequest extends PunchMapDto {
+}
+
+export interface GetNearestScheduleRequest {
+    employeeId: number;
 }
 
 export interface ScheduleDayDto {
@@ -4881,20 +4840,6 @@ export interface CheckResultDto {
     currentUser?: UserDto | undefined;
 }
 
-export interface UserDto {
-    id?: number | undefined;
-    login: string;
-    password?: string | undefined;
-    newPassword?: string | undefined;
-    role: string;
-    punchMapId?: number | undefined;
-    stepsCount?: number | undefined;
-    employee?: EmployeeDto | undefined;
-    punchMap?: PunchMapDto | undefined;
-    appointments?: AppointmentDto[] | undefined;
-    promos?: PromoDto[] | undefined;
-}
-
 export interface PaginationResponseOfUserDto {
     totalPages: number;
     totalCount: number;
@@ -4902,20 +4847,10 @@ export interface PaginationResponseOfUserDto {
 }
 
 export interface GetUsersRequest extends PaginationRequest {
-    isNotEmployee?: boolean | undefined;
-}
-
-export interface PaginationResponseOfEmployeeDto {
-    totalPages: number;
-    totalCount: number;
-    list: EmployeeDto[];
-}
-
-export interface GetEmployeesRequest extends PaginationRequest {
-    serviceId?: number | undefined;
+    role?: string | undefined;
     withUpcomingAppointments?: boolean | undefined;
-    scheduleId?: number | undefined;
     duration?: number | undefined;
+    serviceId?: number | undefined;
 }
 
 export interface CreateOrUpdateUserRequest extends UserDto {

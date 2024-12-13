@@ -74,7 +74,8 @@ export const DatePicker = ({
     duration,
     isDatePick,
     contentType = "SLOTS",
-    selectedSchedules
+    selectedSchedules,
+    userId
 }: DatePickerProps) => {
     const queryClient = useQueryClient()
     
@@ -84,11 +85,11 @@ export const DatePicker = ({
 
     // const [selectedDate, setSelectedDate] = useState<number | undefined>()
 
-    const {data, isLoading} = useSchedulesQuery({month, year, employeeId: user?.employee?.id, duration, contentType})
+    const {data, isLoading} = useSchedulesQuery({month, year, employeeId: userId, duration, contentType})
 
     const {mutate: createMutate} = useMutation((day: number) => schedulesClient.create({
         date: moment(new Date(year, month - 1, day)).format(DATE_FORMAT),
-        employeeId: user?.employee?.id!,
+        employeeId: userId!,
         startAt: "10:00",
         endAt: "18:00"
     }), {

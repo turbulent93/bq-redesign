@@ -8,13 +8,14 @@ import { useAuth } from "@/utils/useAuth";
 import { Button, Container, Flex, Link } from "@chakra-ui/react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
 import { BsArrowLeft } from "react-icons/bs";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
 const Content = () => {
 	const searchParams = useSearchParams()
 	const promoId = searchParams.get("promoId")
+    const phone = searchParams.get("phone")
 
 	const queryClient = useQueryClient()
     const router = useRouter()
@@ -41,6 +42,7 @@ const Content = () => {
         <Appointer
             mutate={mutate}
             promoId={promoId ? Number(promoId) : undefined}
+            phone={phone != null ? phone : undefined}
         />
     </Flex>
 }

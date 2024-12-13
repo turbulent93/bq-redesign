@@ -3,6 +3,7 @@ using System;
 using BeautyQueenApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BqApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241207131606_UniteEmployeeAndUser")]
+    partial class UniteEmployeeAndUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,6 +34,9 @@ namespace BqApi.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ClientId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CreatedBy")
                         .HasColumnType("integer");
 
                     b.Property<int>("EmployeeId")
@@ -205,6 +211,9 @@ namespace BqApi.Migrations
                     b.Property<int>("BonusCount")
                         .HasColumnType("integer");
 
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Duration")
                         .HasColumnType("integer");
 
@@ -241,6 +250,9 @@ namespace BqApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -257,6 +269,9 @@ namespace BqApi.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -316,7 +331,8 @@ namespace BqApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AvatarId");
+                    b.HasIndex("AvatarId")
+                        .IsUnique();
 
                     b.HasIndex("Login")
                         .IsUnique();
@@ -333,6 +349,9 @@ namespace BqApi.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ImageId")
                         .HasColumnType("integer");
@@ -361,6 +380,9 @@ namespace BqApi.Migrations
                     b.Property<int>("ColumnsCount")
                         .HasColumnType("integer");
 
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("EmployeeId")
                         .HasColumnType("integer");
 
@@ -381,6 +403,9 @@ namespace BqApi.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -548,8 +573,8 @@ namespace BqApi.Migrations
             modelBuilder.Entity("BeautyQueenApi.Models.User", b =>
                 {
                     b.HasOne("BqApi.Models.UploadedFile", "Avatar")
-                        .WithMany()
-                        .HasForeignKey("AvatarId");
+                        .WithOne("Employee")
+                        .HasForeignKey("BeautyQueenApi.Models.User", "AvatarId");
 
                     b.HasOne("BqApi.Models.PunchMap", "PunchMap")
                         .WithMany("Clients")
@@ -661,6 +686,8 @@ namespace BqApi.Migrations
 
             modelBuilder.Entity("BqApi.Models.UploadedFile", b =>
                 {
+                    b.Navigation("Employee");
+
                     b.Navigation("Gallery");
 
                     b.Navigation("Promo");

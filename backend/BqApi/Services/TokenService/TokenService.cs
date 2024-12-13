@@ -26,40 +26,54 @@ namespace BeautyQueenApi.Services.TokenService
             User? user = _context.User
                 .FirstOrDefault(x => x.Login == request.Login);
 
-            if(user == null)
+            if(user != null)
             {
-                user = new User(request.Login, BCrypt.Net.BCrypt.HashPassword(AuthOptions.INIT_USER_PASSWORD), "Клиент", request.PunchMapId, null);
-
-                _context.User.Add(user);
-
-                await _context.SaveChangesAsync();
-
-                if (request.PunchMapId != null)
-                {
-                    var promo = await _context.Promo.FirstOrDefaultAsync(i => i.Id == request.PromoId)
-                        ?? throw new Exception(ErrorMessages.PROMO_ERROR);
-
-                    user.Promos.Add(promo);
-                }
-
-                await _context.SaveChangesAsync();
+                throw new Exception("Номер телефона занят");
             }
 
-            if (request.Password == null)
-            {
-                return new TokenDto();
-            } else
-            {
-                return await GetTokens(user);
-            }
+            user = new User(
+                request.Login,
+                BCrypt.Net.BCrypt.HashPassword(request.Password),
+                RoleNames.CLIENT_ROLE_NAME,
+                request.PunchMapId,
+                null,
+                null,
+                null);
+
+            _context.User.Add(user);
+
+            await _context.SaveChangesAsync();
+
+            return await GetTokens(user);
+
+            //if (request.PunchMapId != null)
+            //{
+            //    var promo = await _context.Promo.FirstOrDefaultAsync(i => i.Id == request.PromoId)
+            //        ?? throw new Exception(ErrorMessages.PROMO_ERROR);
+
+            //    user.Promos.Add(promo);
+            //}
+
+            //await _context.SaveChangesAsync();
+
+            //if (request.Password == null)
+            //{
+            //    return new TokenDto();
+            //} else
+            //{
+            //}
         }
 
         public async Task<TokenDto> Login(TokenRequest request)
         {
             User? user = _context.User
-                .Include(i => i.Employee)
                 .FirstOrDefault(x => x.Login == request.Login)
                     ?? throw new Exception(ErrorMessages.AUTHENTICATE_ERROR);
+
+            //if(user.Password == null)
+            //{
+            //    return await Register(request);
+            //}
            
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
             {
@@ -92,7 +106,6 @@ namespace BeautyQueenApi.Services.TokenService
 
             User? user = await _context
                     .User
-                    .Include(i => i.Employee)
                     .FirstOrDefaultAsync(x => x.Id == claims.Id)
                 ?? throw new Exception(ErrorMessages.USER_ERROR);
 
@@ -129,13 +142,11 @@ namespace BeautyQueenApi.Services.TokenService
 
             var user = await _context
                 .User
-                .Include(i => i.Employee)
-                .ThenInclude(i => i!.Specializations)
-                .Include(i => i.Employee)
-                .ThenInclude(i => i!.File)
-                .Include(i => i.Appointments)
+                .Include(i => i.Specializations)
+                .Include(i => i.Avatar)
+                .Include(i => i.ClientAppointments)
                 .ThenInclude(i => i.Service)
-                .Include(i => i.Appointments)
+                .Include(i => i.ClientAppointments)
                 .ThenInclude(i => i.Schedule)
                 .Include(i => i.PunchMap)
                 .ThenInclude(i => i!.PunchMapPromos)
@@ -164,7 +175,6 @@ namespace BeautyQueenApi.Services.TokenService
             List<Claim> claims =
             [
                 new Claim("Id", user.Id.ToString()),
-                new Claim("EmployeeId", user?.Employee != null ? user.Employee?.Id.ToString()! : ""),
                 new Claim(ClaimTypes.Role, user?.Role!)
             ];
 
@@ -208,12 +218,12 @@ namespace BeautyQueenApi.Services.TokenService
 
             var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
 
-            var employeeId = GetClaim(principal.Claims, CustomClaimTypes.EmployeeId);
+            //var employeeId = GetClaim(principal.Claims, CustomClaimTypes.EmployeeId);
 
             return new ClaimsResult
             {
                 Id = Int32.Parse(GetClaim(principal.Claims, CustomClaimTypes.Id)),
-                EmployeeId = employeeId != "" ? Int32.Parse(employeeId) : null
+                //EmployeeId = employeeId != "" ? Int32.Parse(employeeId) : null
             };
         }
 

@@ -4,7 +4,7 @@ using BqApi.Models.Audit;
 
 namespace BeautyQueenApi.Models
 {
-    public class ServiceGroup(string name) : TrackedEntity
+    public class ServiceGroup(string name)// : TrackedEntity
     {
         [Key]
         public int Id { get; set; }

@@ -18,27 +18,15 @@ namespace BeautyQueenApi.Requests.Users
                 CreateOrUpdateUserRequest request, CancellationToken cancellationToken
             )
             {
-                var user = await CreateOrUpdateUser(request, cancellationToken);
-                if(request.Employee != null)
-                {
-                    request.Employee.UserId = (int)user.Id!;
-                    await CreateOrUpdateEmployee(request.Employee, cancellationToken);
-                }
-
-                return user;
-            }
-            private async Task<UserDto> CreateOrUpdateUser(UserDto request, CancellationToken cancellationToken)
-            {
                 User? item;
                 if (request.Id != null)
                 {
                     item = await _context
                         .User
-                        .Include(i => i.Employee)
                         .FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken)
                             ?? throw new Exception(ErrorMessages.USER_ERROR);
 
-                    if(request.Password != null && request.NewPassword != null)
+                    if (request.Password != null && request.NewPassword != null)
                     {
                         if (!BCrypt.Net.BCrypt.Verify(request.Password, item.Password))
                         {
@@ -48,14 +36,19 @@ namespace BeautyQueenApi.Requests.Users
                             BCrypt.Net.BCrypt.HashPassword(request.NewPassword),
                             request.Role,
                             request.PunchMapId,
-                            request.StepsCount);
-                    } else
+                            request.StepsCount,
+                            request.FullName,
+                            request.AvatarId);
+                    }
+                    else
                     {
                         item.Update(request.Login,
                             null,
                             request.Role,
                             request.PunchMapId,
-                            request.StepsCount);
+                            request.StepsCount,
+                            request.FullName,
+                            request.AvatarId);
                     }
                 }
                 else
@@ -65,7 +58,9 @@ namespace BeautyQueenApi.Requests.Users
                         request.Password != null ? BCrypt.Net.BCrypt.HashPassword(request.Password) : null,
                         request.Role,
                         request.PunchMapId,
-                        request.StepsCount
+                        request.StepsCount,
+                        request.FullName,
+                        request.AvatarId
                     );
 
                     _context.User.Add(item);
@@ -73,42 +68,37 @@ namespace BeautyQueenApi.Requests.Users
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                return item.Adapt<UserDto>();
-            }
+                _context.Entry(item).Collection(i => i.Specializations).Load();
 
-            private async Task<EmployeeDto> CreateOrUpdateEmployee(EmployeeDto request, CancellationToken cancellationToken)
-            {
-                Employee? item;
-                if (request.Id != null)
+                foreach (var i in request.SpecializationIds)
                 {
-                    item = await _context
-                            .Employee
-                            .Include(i => i.Specializations)
-                            .FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken)
-                        ?? throw new Exception(ErrorMessages.MASTER_ERROR);
+                    if(item.Specializations.FirstOrDefault(s => s.Id == i) == null)
+                    {
+                        var specialization = await _context.Specialization.FirstOrDefaultAsync(s => s.Id == i, cancellationToken)
+                            ?? throw new Exception(ErrorMessages.SPECIALIZATION_ERROR);
 
-                    item.Update(request);
-
-                    //item.Specializations.Clear();
-
-                    item.Specializations = [.. _context
-                        .Specialization
-                        .Where(i => request.SpecializationIds.Contains(i.Id))];
+                        item.Specializations.Add(specialization);
+                    }
                 }
-                else
+
+                var specializationsToRemove = new List<Specialization>();
+
+                foreach(var i in item.Specializations)
                 {
-                    item = new(request.FullName, request.UserId, request.FileId);
+                    if(!request.SpecializationIds.Contains(i.Id))
+                    {
+                        specializationsToRemove.Add(i);
+                    }
+                }
 
-                    _context.Employee.Add(item);
-
-                    item.Specializations = [.. _context
-                        .Specialization
-                        .Where(i => request.SpecializationIds.Contains(i.Id))];
+                foreach(var i in specializationsToRemove)
+                {
+                    item.Specializations.Remove(i);
                 }
 
                 await _context.SaveChangesAsync(cancellationToken);
 
-                return item.Adapt<EmployeeDto>();
+                return item.Adapt<UserDto>();
             }
         }
     }

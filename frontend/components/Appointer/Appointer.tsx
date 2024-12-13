@@ -1,7 +1,7 @@
 "use client"
 
 import { CustomForm } from "@/components/CustomForm"
-import { AppointmentDto, EmployeeDto, ServiceDto } from "@/services/client"
+import { AppointmentDto, ServiceDto } from "@/services/client"
 import { Box, Container, Flex, Grid, Step, StepDescription, StepIcon, StepIndicator, StepNumber, Stepper, StepSeparator, StepStatus, StepTitle, Switch, Text, useSteps } from "@chakra-ui/react"
 import EmployeeStep from "./EmployeeStep"
 import ServiceStep from "./ServiceStep"
@@ -22,6 +22,7 @@ type FormProps = {
     mutate: (item: AppointmentDto) => void,
     values?: AppointmentDto
     promoId?: number
+    phone?: string
 }
 
 const steps = [
@@ -36,6 +37,7 @@ type ContentProps = {
     goToNext: () => void
     setActiveStep: (value: number) => void
     promoId?: number
+    phone?: string
 }
 
 const AppointerPriceList = ({onClick, promoId}: {onClick: (v: ServiceDto) => void, promoId?: number}) => {
@@ -64,7 +66,7 @@ const AppointerPriceList = ({onClick, promoId}: {onClick: (v: ServiceDto) => voi
     />
 }
 
-const Content = ({index, goToNext, setActiveStep, promoId}: ContentProps) => {
+const Content = ({index, goToNext, setActiveStep, promoId, phone}: ContentProps) => {
     const [duration, setDuration] = useState<number>()
     const [usePromo, setUsePromo] = useState(true)
 
@@ -114,11 +116,11 @@ const Content = ({index, goToNext, setActiveStep, promoId}: ContentProps) => {
             goToNext={goToNext}
         />
     } else {
-        return <PhoneStep promoId={promoId}/>
+        return <PhoneStep promoId={promoId} phone={phone}/>
     }
 }
 
-export const Appointer = ({mutate, values, promoId}: FormProps) => {
+export const Appointer = ({mutate, values, promoId, phone}: FormProps) => {
     const { activeStep, goToNext, setActiveStep } = useSteps({
         index: 1,
         count: steps.length,
@@ -168,6 +170,7 @@ export const Appointer = ({mutate, values, promoId}: FormProps) => {
                 goToNext={goToNext}
                 setActiveStep={setActiveStep}
                 promoId={promoId}
+                phone={phone}
             />
         </CustomForm>
     </Container>

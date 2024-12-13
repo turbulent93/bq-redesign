@@ -1,4 +1,5 @@
 import { CustomForm } from "@/components/CustomForm"
+import { CustomModal } from "@/components/CustomModal"
 import { CustomSelect } from "@/components/CustomSelect"
 import { PunchMapPromoDto } from "@/services/client"
 import { promosClient } from "@/services/services"
@@ -36,40 +37,34 @@ export const PunchMapPromoForm = ({currentItem, items, setItems, isOpen, onClose
         >Удалить</Button>
     }
 
-    return <Modal
+    return <CustomModal
         isOpen={isOpen}
         onClose={onClose}
-        isCentered
     >
-        <ModalOverlay
-            bg='blackAlpha.300'
-        />
-        <ModalContent mx={4} borderRadius={"md"} overflow={"hidden"} py={6}>
-            <ModalCloseButton />
-            <Text fontSize={18} ml={4} mb={2} fontWeight="bold">
-                Добавить акцию
-            </Text>
-            <CustomForm
-                submitText={currentItem?.promoId ? "Обновить" : "Добавить"}
-                onSubmit={(value) => {
-                    if(currentItem?.promoId) {
-                        setItems([...items.map(i => i.step == currentItem.step ? {...value} : i)])
-                    } else {
-                        setItems([...items, {...value, step: currentItem?.step}])
-                    }
-                    onClose()
-                }}
-                buttons={[
-                    RemovePunchMapPromoButton
-                ]}
-                values={currentItem}
-            >
-                <CustomSelect
-                    name={nameof<PunchMapPromoDto>("promoId")}
-                    options={promos}
-                    label="Промо"
-                />
-            </CustomForm>
-        </ModalContent>
-    </Modal>
+        <ModalCloseButton />
+        <Text fontSize={18} ml={4} mb={2} fontWeight="bold">
+            Добавить акцию
+        </Text>
+        <CustomForm
+            submitText={currentItem?.promoId ? "Обновить" : "Добавить"}
+            onSubmit={(value) => {
+                if(currentItem?.promoId) {
+                    setItems([...items.map(i => i.step == currentItem.step ? {...value} : i)])
+                } else {
+                    setItems([...items, {...value, step: currentItem?.step}])
+                }
+                onClose()
+            }}
+            buttons={[
+                RemovePunchMapPromoButton
+            ]}
+            values={currentItem}
+        >
+            <CustomSelect
+                name={nameof<PunchMapPromoDto>("promoId")}
+                options={promos}
+                label="Промо"
+            />
+        </CustomForm>
+    </CustomModal>
 }

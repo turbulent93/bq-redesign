@@ -1,23 +1,31 @@
 'use client';
 
 import { ColumnType, CustomTable } from "@/components/Table/Table";
-import { ServiceDto, UserDto } from "@/services/client";
+import { ServiceDto, SpecializationDto, UserDto } from "@/services/client";
 import { usersClient } from "@/services/services";
 import { nameof } from "@/utils/nameof";
 import { Avatar, Box, Button, Container, Flex, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import {ADMIN_ROLE_NAME} from "@/utils/constants"
+import {ADMIN_ROLE_NAME, CLIENT_ROLE_NAME, ROLE_NAMES} from "@/utils/constants"
 import { DashboardHeader } from "@/components/DashboardHeader";
+import { useAuth } from "@/utils/useAuth";
+import { DashboardNavigation } from "@/components/DashboardNavigation";
+import { serviceRoutes, userRoutes } from "@/components/Sidebar/routes";
+import { Filter, FilterItem } from "@/components/Filter";
 
 const SERVER_URL = process.env.SERVER_URL!
 
 const columns: ColumnType[] = [
     {
-        title: "Фото",
-        name: nameof<UserDto>("employee"),
-        convertContent: (value) => <Avatar src={`${SERVER_URL}/${value?.file?.path}`} w="30px" h="30px"/>
+        title: "",
+        name: nameof<UserDto>("avatar"),
+        convertContent: (value) => <Avatar 
+            src={!!value?.path ? `${SERVER_URL}/${value?.path}` : undefined}
+            w="30px"
+            h="30px"
+        />,
     },
     {
         title: "Логин",
@@ -39,32 +47,23 @@ const columns: ColumnType[] = [
         >{value}</Box>
     },
     {
-        title: "Имя",
-        name: nameof<UserDto>("employee"),
-        convertContent: (value) => value?.fullName
+        title: "Фио",
+        name: nameof<UserDto>("fullName")
     },
     {
         title: "Специализации",
-        name: nameof<UserDto>("employee"),
-        convertContent: (value) => <Flex gap={2} maxW={"200px"} flexWrap={"wrap"}>
-            {
-                value?.specializations.map((i: ServiceDto) => <Text
-                    bgColor={"gray.100"}
-                    borderRadius={"4px"}
-                    px={2}
-                    py={1}
-                    textColor={"gray.500"}
-                    fontWeight={"bold"}
-                    fontSize={12}
-                    textAlign={"center"}
-                    key={i.id}
-                    whiteSpace={"nowrap"}
-                    overflow={"hidden"}
-                    textOverflow={"ellipsis"}
-                    maxW={"200px"}
-                >{i.name}</Text>)
-            }
-        </Flex>
+        name: nameof<UserDto>("specializations"),
+        convertContent: (value) => <Flex flexDir={"column"}>{
+            value.map((i: SpecializationDto, index: number) => <Text
+                key={index}
+            >
+                {
+                    index == value.length - 1
+                        ? i.name
+                        : i.name + ","
+                }
+            </Text>)
+        }</Flex>
     },
     {
         title: "Действия",
@@ -77,8 +76,12 @@ const columns: ColumnType[] = [
 const abbreviatedColumns: ColumnType[] = [
     {
         title: "",
-        name: nameof<UserDto>("employee"),
-        convertContent: (value) => <Avatar src={`${SERVER_URL}/${value?.file?.path}`} w="30px" h="30px"/>
+        name: nameof<UserDto>("avatar"),
+        convertContent: (value) => <Avatar 
+            src={!!value?.path ? `${SERVER_URL}/${value?.path}` : undefined}
+            w="30px"
+            h="30px"
+        />,
     },
     {
         title: "Логин",
@@ -93,10 +96,16 @@ const abbreviatedColumns: ColumnType[] = [
 ]
 
 export default function ServicesPage() {
+    const {isAdmin} = useAuth()
+    
+    const [abbreviatedTable, setAbbreviatedTable] = useState(false)
+    const roleItems = ROLE_NAMES.map(i => ({value: i, label: i}))
+    const [role, setRole] = useState<FilterItem>()
+    
     const [page, setPage] = useState<number>(1)
     const {data} = useQuery(
-        ["get users", page],
-        () => usersClient.get({page: page, size: 10})
+        ["get users", page, role?.value],
+        () => usersClient.get({page: page, size: 10, role: isAdmin ? role?.value : CLIENT_ROLE_NAME})
     )
 
     const queryClient = useQueryClient()
@@ -106,8 +115,6 @@ export default function ServicesPage() {
             queryClient.invalidateQueries(["get users", page])
         }
     })
-    
-    const [abbreviatedTable, setAbbreviatedTable] = useState(false)
 
     return (
         <Container maxW="800px">
@@ -116,6 +123,13 @@ export default function ServicesPage() {
                 abbreviatedTable={abbreviatedTable}
                 setAbbreviatedTable={setAbbreviatedTable}
             />
+            {
+                isAdmin && <Filter
+                    items={roleItems}
+                    value={role}
+                    setValue={setRole}
+                />
+            }
             <CustomTable
                 columns={abbreviatedTable ? abbreviatedColumns : columns}
                 data={data}

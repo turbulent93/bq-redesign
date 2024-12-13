@@ -6,12 +6,12 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { BsPencilFill } from "react-icons/bs"
 import { IoExitOutline } from "react-icons/io5"
-import { Form } from "./Form"
+import { Form } from "../users/Form"
 import { AiOutlineUser } from "react-icons/ai"
 import { ADMIN_ROLE_NAME } from "@/utils/constants"
 import { FaTelegramPlane } from "react-icons/fa"
 import { useMutation, useQueryClient } from "react-query"
-import { EmployeeDto, UserDto } from "@/services/client"
+import { UserDto } from "@/services/client"
 import { usersClient } from "@/services/services"
 
 const SERVER_URL = process.env.SERVER_URL!
@@ -30,23 +30,18 @@ export default function ServicesPage() {
 	})
 
     useEffect(() => {
-        if(user?.employee)
-            setNotificationsEnabled(!!user?.employee?.notificationsEnabled && !!user?.employee?.tgChatId)
+        if(user)
+            setNotificationsEnabled(!!user?.notificationsEnabled && !!user?.tgChatId)
     }, [user])
 
     useEffect(() => {
-        if(notificationsEnabled != user?.employee?.notificationsEnabled && user?.employee?.notificationsEnabled != undefined) {
-            if(notificationsEnabled && !user?.employee?.tgChatId) {
-                window.open(`https://telegram.me/bq_kg_bot?start=${user?.employee?.authTgCode}`)
+        if(notificationsEnabled != user?.notificationsEnabled && user?.notificationsEnabled != undefined) {
+            if(notificationsEnabled && !user?.tgChatId) {
+                window.open(`https://telegram.me/bq_kg_bot?start=${user?.authTgCode}`)
             }
 
             mutate({
-                ...user,
-                employee: {
-                    ...user?.employee,
-                    notificationsEnabled,
-                    specializationIds: user?.employee?.specializations?.map(i => i.id)
-                } as EmployeeDto
+                ...user
             } as UserDto)
         }
     }, [notificationsEnabled])
@@ -85,10 +80,10 @@ export default function ServicesPage() {
         </Box>
         {
             isUpdate
-                ? <Form/>
+                ? <Form mutate={mutate} values={user} />
                 : <>
                     <Avatar
-                        src={!!user?.employee?.file?.path ? `${SERVER_URL}/${user?.employee?.file?.path}` : undefined}
+                        src={!!user?.avatar?.path ? `${SERVER_URL}/${user?.avatar?.path}` : undefined}
                         w={"160px"}
                         h={"160px"}
                         // objectFit={'cover'}
@@ -97,7 +92,7 @@ export default function ServicesPage() {
                     />
                     <Text fontSize={20} fontWeight={"bold"} mb={1}>
                         {
-                            user?.employee?.fullName
+                            user?.fullName
                         }
                     </Text>
                     {/* <Flex gap={4}>
@@ -116,7 +111,7 @@ export default function ServicesPage() {
                     </Flex> */}
                     <Text mb={3}>
                         {
-                            user?.employee?.specializations?.map(i => i.name).join(", ")
+                            user?.specializations?.map(i => i.name).join(", ")
                         }
                     </Text>
                     <Flex

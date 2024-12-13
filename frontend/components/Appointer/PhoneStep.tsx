@@ -11,8 +11,8 @@ import { useFormContext } from "react-hook-form"
 import { useQuery } from "react-query"
 import { servicesClient } from "@/services/services"
 
-export const PhoneStep = ({promoId}: {promoId?: number}) => {
-    const {user: data} = useAuth()
+export const PhoneStep = ({promoId, phone}: {promoId?: number, phone?: string}) => {
+    const {user, isAuth} = useAuth()
 
     const {watch} = useFormContext()
 
@@ -22,25 +22,25 @@ export const PhoneStep = ({promoId}: {promoId?: number}) => {
         ["view service", serviceId],
         () => servicesClient.view(serviceId), {
             onSuccess: (data) => console.log(data),
-            enabled: !!serviceId
+            enabled: !!serviceId && isAuth
         }
     )
 
-    const bonusCount = useMemo(() => data
-            ?.appointments
+    const bonusCount = useMemo(() => user
+            ?.clientAppointments
             ?.filter(i => moment(i.schedule?.date, DATE_FORMAT).isSameOrAfter(moment().month(-3))
                 && i.paidWithBonuses == 0)
             .reduce((c, i) => c + i.service?.bonusCount!, 0)!
-        + data
+        + user
             ?.promos
             ?.filter(i => (!i.startDate || moment(i.startDate, DATE_FORMAT).isSameOrBefore(moment()))
                 && (!i.endDate || moment(i.endDate, DATE_FORMAT).isSameOrAfter(moment()))
                 && i.type == PROMO_TYPE_BONUS)
             .reduce((c, i) => c + (i?.bonusCount || 0), 0)!
-        - data
-            ?.appointments
+        - user
+            ?.clientAppointments
             ?.filter(i => i.paidWithBonuses && i.paidWithBonuses > 0)
-            .reduce((c, i) => c + i.paidWithBonuses!, 0)!, [data])
+            .reduce((c, i) => c + i.paidWithBonuses!, 0)!, [user])
 
     const availableBonusCount = useMemo(() => service?.paidAmountWithBonuses
         ? service?.paidAmountWithBonuses >= bonusCount
@@ -50,7 +50,7 @@ export const PhoneStep = ({promoId}: {promoId?: number}) => {
     [service, bonusCount])
 
     return <>
-        <CustomInput name="phone" label="Телефон" defaultValue={data?.role == CLIENT_ROLE_NAME ? data?.login : ""} type="phone"/>
+        <CustomInput name="phone" label="Телефон" defaultValue={phone ? phone : user?.role == CLIENT_ROLE_NAME ? user?.login : ""} type="phone"/>
         {
             !promoId && availableBonusCount > 0 && <CustomInput 
                 label={`Доступно ${availableBonusCount} бонусов. Использовать:`}

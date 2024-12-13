@@ -5,21 +5,48 @@ import { usersClient } from "@/services/services";
 import { DATE_FORMAT, PROMO_TYPE_BONUS } from "@/utils/constants";
 import { nameof } from "@/utils/nameof";
 import { useAuth } from "@/utils/useAuth";
-import { Box, Button, Container, Flex, Link, Modal, ModalContent, ModalOverlay, Text, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Container, Flex, Link, Modal, ModalContent, ModalOverlay, Text, useDisclosure, useToast } from "@chakra-ui/react";
 import moment from "moment";
 import { BsPencilFill } from "react-icons/bs";
 import { TbArrowBarToLeft } from "react-icons/tb";
 import { useMutation, useQueryClient } from "react-query";
+import { BonusCount } from "./BonusCount";
+import { CustomModal } from "@/components/CustomModal";
+import { IoExitOutline } from "react-icons/io5";
+
+const LogoutButton = () => {
+    const {logout} = useAuth()
+
+    return <Button
+        bgColor={"red.300"}
+        color="white"
+        onClick={logout}
+        leftIcon={<IoExitOutline/>}
+        ml={3}
+    >
+        <Text>
+            Выйти
+        </Text>
+    </Button>
+}
 
 export const ProfileHeader = () => {
-    const {user: data} = useAuth()
+    const {user} = useAuth()
     const {isOpen, onOpen, onClose} = useDisclosure()
     const queryClient = useQueryClient()
+    const toast = useToast()
 
-    const {mutate} = useMutation((item: PartialUserUpdateDto) => usersClient.partialUpdate(data?.id!, item), {
+    const {mutate} = useMutation((item: PartialUserUpdateDto) => usersClient.partialUpdate(user?.id!, item), {
 		onSuccess: () => {
 			queryClient.invalidateQueries({queryKey: "check"})
             onClose()
+        },
+        onError: () => {
+            toast({
+                position: "top",
+                status: "error",
+                title: "Номер телефона занят"
+            })
         }
 	})
 
@@ -45,53 +72,20 @@ export const ProfileHeader = () => {
                         fontWeight={"bold"}
                     >
                         {
-                            data?.login
+                            user?.login
                         }
                     </Text>
                 </Flex>
-                <Box
-                    px={2}
-                    py={1}
-                    borderRadius={"md"}
-                    // bgGradient='linear(to-br, gray.700, red.500)'
-                    bgColor={"gray.700"}
-                    color="white"
-                    shadow={"lg"}
-                >
-                    {
-                        data
-                            ?.appointments
-                            ?.filter(i => moment(i.schedule?.date, DATE_FORMAT).isSameOrAfter(moment().month(-3))
-                                && i.paidWithBonuses == 0)
-                            .reduce((c, i) => c + i.service?.bonusCount!, 0)!
-                        + data
-                            ?.promos
-                            ?.filter(i => (!i.startDate || moment(i.startDate, DATE_FORMAT).isSameOrBefore(moment()))
-                                && (!i.endDate || moment(i.endDate, DATE_FORMAT).isSameOrAfter(moment()))
-                                && i.type == PROMO_TYPE_BONUS)
-                            .reduce((c, i) => c + (i?.bonusCount || 0), 0)!
-                        - data
-                            ?.appointments
-                            ?.filter(i => i.paidWithBonuses && i.paidWithBonuses > 0)
-                            .reduce((c, i) => c + i.paidWithBonuses!, 0)!
-                    } бонусов
-                </Box>
+                <BonusCount data={user} />
             </Flex>
         </Flex>
-        <Modal
+        <CustomModal
             isOpen={isOpen}
             onClose={onClose}
-            isCentered
         >
-            <ModalOverlay
-                bg='blackAlpha.300'
-                backdropFilter='blur(10px)'
-            />
-            <ModalContent mx={4} borderRadius={"md"} overflow={"hidden"}>
-                <CustomForm onSubmit={mutate} submitText="Обновить">
-                    <CustomInput name={nameof<PartialUserUpdateDto>("phone")} label={"Телефон"} type="phone"/>
-                </CustomForm>
-            </ModalContent>
-        </Modal>
+            <CustomForm onSubmit={mutate} submitText="Обновить" values={{phone: user?.login}} buttons={[LogoutButton]}>
+                <CustomInput name={nameof<PartialUserUpdateDto>("phone")} label={"Телефон"} type="phone"/>
+            </CustomForm>
+        </CustomModal>
     </Container>
 }

@@ -16,6 +16,7 @@ import { BsFillTrashFill, BsPencilFill } from "react-icons/bs";
 import { CiCirclePlus } from "react-icons/ci";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Form } from "./Form";
+import { CustomModal } from "@/components/CustomModal";
 
 const SERVER_URL = process.env.SERVER_URL!
 
@@ -142,16 +143,10 @@ export default function Page() {
                 perPage={6}
                 total={data?.totalCount}
             />
-        <Modal
+       <CustomModal
             isOpen={isOpen}
             onClose={onClose}
-            isCentered
         >
-            <ModalOverlay
-                bg='blackAlpha.300'
-                backdropFilter='blur(10px)'
-            />
-            <ModalContent mx={4} borderRadius={"md"} overflow={"hidden"} py={4}>
                 <ModalCloseButton />
                 <Form
                     mutate={(values) => {
@@ -160,7 +155,6 @@ export default function Page() {
                     }}
                     values={currentItem}
                 />
-            </ModalContent>
-        </Modal>
+        </CustomModal>
     </>
 }

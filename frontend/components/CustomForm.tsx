@@ -24,12 +24,12 @@ export const CustomForm = ({onSubmit, children, values, buttons, submitText, max
         methods.reset(values)
     }, [values])
 
-    return <Container maxW={maxW ?? "600px"} my={my} px={px}>
+    return <Container maxW={maxW ?? "600px"} my={my ?? 4} px={px}>
         <FormProvider {...methods}>
             <form onSubmit={methods.handleSubmit(onSubmit)}>
                 {children}
-                <Button mt={2} type="submit" display={!isSubmitVisible ? "none" : undefined} w={submitW}>
-                    {submitText ?? values ? "Обновить" : "Добавить"}
+                <Button type="submit" display={!isSubmitVisible ? "none" : undefined} w={submitW}>
+                    {submitText ? submitText : values ? "Обновить" : "Добавить"}
                 </Button>
                 {
                     buttons && buttons.map((Btn, index) => <Btn key={index}/>)

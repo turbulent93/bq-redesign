@@ -1,5 +1,6 @@
 import { setTokens } from "@/api/api.handler"
 import { CustomForm } from "@/components/CustomForm"
+import { CustomModal } from "@/components/CustomModal"
 import { PhoneInput } from "@/components/PhoneInput"
 import { TokenRequest, UserDto } from "@/services/client"
 import { tokensClient, usersClient } from "@/services/services"
@@ -26,19 +27,12 @@ export const FastRegisterModal = ({isOpen, onClose, punchMapId, promoId}: FastRe
         }
     })
 
-    return <Modal
+    return <CustomModal
         isOpen={isOpen}
         onClose={onClose}
-        isCentered
     >
-        <ModalOverlay
-            bg='blackAlpha.300'
-            backdropFilter='blur(10px)'
-        />
-        <ModalContent mx={4} borderRadius={"md"} overflow={"hidden"}>
-            <CustomForm onSubmit={mutate} submitText="Начать" my={3}>
-                <PhoneInput name={nameof<TokenRequest>("login")}/>
-            </CustomForm>
-        </ModalContent>
-    </Modal>
+        <CustomForm onSubmit={mutate} submitText="Начать" my={3}>
+            <PhoneInput name={nameof<TokenRequest>("login")}/>
+        </CustomForm>
+    </CustomModal>
 }

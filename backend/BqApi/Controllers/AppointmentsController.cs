@@ -32,6 +32,7 @@ namespace BeautyQueenApi.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<AppointmentDto>> Create(CreateAppointmentRequest request)
         {
             return await _mediator.Send(request);

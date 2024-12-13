@@ -8,6 +8,7 @@ using BqApi.Services.TokenService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Hosting;
 using System.Security.Claims;
 
 namespace BeautyQueenApi.Data
@@ -19,7 +20,6 @@ namespace BeautyQueenApi.Data
     {
         private readonly IHttpContextAccessor _accessor = accessor;
 
-        public DbSet<Employee> Employee { get; set; }
         public DbSet<Service> Service { get; set; }
         public DbSet<Specialization> Specialization { get; set; }
         public DbSet<Schedule> Schedule { get; set; }
@@ -53,6 +53,28 @@ namespace BeautyQueenApi.Data
             }
 
             return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Appointment>()
+                .HasOne(i => i.Employee)
+                .WithMany(i => i.EmployeeAppointments)
+                .HasForeignKey(i => i.EmployeeId);
+
+            modelBuilder.Entity<Appointment>()
+                .HasOne(i => i.Client)
+                .WithMany(i => i.ClientAppointments)
+                .HasForeignKey(i => i.ClientId);
+
+            modelBuilder.Entity<User>()
+                .HasOne(i => i.PunchMap)
+                .WithMany(i => i.Clients)
+                .HasForeignKey(i => i.PunchMapId);
+
+            modelBuilder.Entity<PunchMap>()
+                .HasOne(i => i.Employee)
+                .WithMany(i => i.PunchMaps)
+                .HasForeignKey(i => i.EmployeeId);
         }
     }
 }

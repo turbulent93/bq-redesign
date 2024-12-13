@@ -12,6 +12,7 @@ import Cropper, { ReactCropperElement } from "react-cropper"
 import "cropperjs/dist/cropper.css";
 import { BsFillTrashFill } from "react-icons/bs";
 import { FileDto } from "@/services/client";
+import { CustomModal } from "./CustomModal";
 
 type FileUploadProps = {
     name: string
@@ -218,30 +219,25 @@ export const FileUpload = ({name, multiple, aspectRatio = 1}: FileUploadProps) =
                 }
             </Grid>
         }
-        <Modal isOpen={isOpen} onClose={onClose} isCentered>
-            <ModalOverlay
-                bg='blackAlpha.300'
-                backdropFilter='blur(10px) hue-rotate(90deg)'
-            />
-            <ModalContent>
-                <ModalCloseButton zIndex={100}/>
-                <ModalBody>
-                    {
-                        curImage != undefined && images[curImage] != undefined && <Cropper
-                            style={{ width: "100%", marginTop: "40px", maxHeight: "600px" }}
-                            // initialAspectRatio={1}
-                            src={images[curImage].path}
-                            ref={cropperRef}
-                            // viewMode={1}
-                            // guides={true}
-                            aspectRatio={aspectRatio}
-                            // minCropBoxHeight={10}
-                            // minCropBoxWidth={10}
-                            // background={false}
-                            // responsive={true}
-                        />
-                    }
-                </ModalBody>
+        <CustomModal
+            isOpen={isOpen}
+            onClose={onClose}
+        >
+            {
+                curImage != undefined && images[curImage] != undefined && <Cropper
+                    style={{ width: "100%", marginTop: "40px", maxHeight: "600px" }}
+                    // initialAspectRatio={1}
+                    src={images[curImage].path}
+                    ref={cropperRef}
+                    // viewMode={1}
+                    // guides={true}
+                    aspectRatio={aspectRatio}
+                    // minCropBoxHeight={10}
+                    // minCropBoxWidth={10}
+                    // background={false}
+                    // responsive={true}
+                />
+            }
             <Flex>
                 <Button
                     onClick={toNext}
@@ -260,8 +256,6 @@ export const FileUpload = ({name, multiple, aspectRatio = 1}: FileUploadProps) =
                     Отправить
                 </Button>
             </Flex>
-    
-        </ModalContent>
-        </Modal>
+        </CustomModal>
     </Box>
 }

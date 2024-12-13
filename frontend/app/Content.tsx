@@ -26,7 +26,7 @@ function useWindowSize() {
 	return windowSize;
 }
 
-export const Content = ({children, type = "login"} : {children: React.ReactNode, type: "register" | "login"}) => {
+export const Content = ({children, type} : {children: React.ReactNode, type: "dashboard" | "client"}) => {
 	const {isAuth, isLoading, isAdmin, user} = useAuth()
     const pathname = usePathname()
 	const vh = useWindowSize()
@@ -41,15 +41,15 @@ export const Content = ({children, type = "login"} : {children: React.ReactNode,
 		return <LoginForm type={type} />
 	}
 
-	// if((pathname.includes("users") && !isAdmin)
-	// 	|| (pathname.includes("dashboard") && user?.role == "Клиент"))
-	// {
-	// 	return <Text fontSize={24} fontWeight={"bold"} color={"gray.600"} mt={14} textAlign={"center"}>
-	// 		Страница не найдена
-	// 	</Text>
-	// }
+	if((pathname.includes("users") && !isAdmin)
+		|| (pathname.includes("dashboard") && user?.role == "Клиент"))
+	{
+		return <Text fontSize={24} fontWeight={"bold"} color={"gray.600"} mt={14} textAlign={"center"}>
+			Страница не найдена
+		</Text>
+	}
 
-	if(type != "login") return children
+	if(type != "dashboard") return children
 
 	return <Container
 		h={`${vh}px`}

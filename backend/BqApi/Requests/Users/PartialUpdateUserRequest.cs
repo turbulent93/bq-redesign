@@ -21,7 +21,6 @@ namespace BeautyQueenApi.Requests.Users
             {
                 var item = await _context
                     .User
-                    .Include(i => i.Employee)
                     .Include(i => i.Promos)
                     .FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken)
                         ?? throw new Exception(ErrorMessages.USER_ERROR);

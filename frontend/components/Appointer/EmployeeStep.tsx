@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnType, CustomTable } from "@/components/Table/Table";
-import { AppointmentDto, EmployeeDto, ServiceDto, UpcomigAppointment, UserDto } from "@/services/client";
+import { AppointmentDto, ServiceDto, UpcomigAppointment, UserDto } from "@/services/client";
 import { usersClient } from "@/services/services";
 import { DATE_FORMAT } from "@/utils/constants";
 import { nameof } from "@/utils/nameof";
@@ -47,7 +47,7 @@ export default function EmployeeStep({goToNext, goBack, goToPhone, duration}: Em
     const [page, setPage] = useState<number>(1)
     const {data, isLoading} = useQuery(
         ["get employees", page, serviceId],
-        () => usersClient.getEmployees({page: page, size: 10, withUpcomingAppointments: true, duration, serviceId}), {
+        () => usersClient.get({page: page, size: 10, withUpcomingAppointments: true, duration, serviceId}), {
             enabled: !!serviceId && !!duration
         }
     )
@@ -94,7 +94,7 @@ export default function EmployeeStep({goToNext, goBack, goToPhone, duration}: Em
                     >
                     <Flex mb={2} alignItems={"start"}>
                         <Avatar
-                            src={`${SERVER_URL}/${i.file?.path}`}
+                            src={`${SERVER_URL}/${i.avatar?.path}`}
                             // w="30px"
                             // h="30px"
                             mr={2}

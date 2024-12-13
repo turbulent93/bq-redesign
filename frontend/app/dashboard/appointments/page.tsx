@@ -1,8 +1,8 @@
 'use client';
 
 import { ColumnType, CustomTable } from "@/components/Table/Table";
-import { AppointmentDto, EmployeeDto, ScheduleDto, ServiceDto, UserDto } from "@/services/client";
-import { appointmentsClient } from "@/services/services";
+import { AppointmentDto, ScheduleDto, ServiceDto, UserDto } from "@/services/client";
+import { appointmentsClient, schedulesClient } from "@/services/services";
 import { nameof } from "@/utils/nameof";
 import { Box, Button, Container, Flex, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react";
 import Link from "next/link";
@@ -15,6 +15,8 @@ import { useAuth } from "@/utils/useAuth";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardNavigation } from "@/components/DashboardNavigation";
 import { appointmentRoutes, serviceRoutes } from "@/components/Sidebar/routes";
+import { EmployeeFilter } from "@/components/EmployeeFilter";
+import { MASTER_ROLE_NAME } from "@/utils/constants";
 
 const columns: ColumnType[] = [
     {
@@ -64,8 +66,17 @@ const abbreviatedColumns: ColumnType[] = [
 
 export default function Page() {
     const {user, isAdmin} = useAuth()
-
+    const [userId, setUserId] = useState<number | undefined>()
     const [schedulerValue, setSchedulerValue] = useState<SchedulerValue>()
+
+    const {} = useQuery(
+        ["get nearest schedule", user?.role == MASTER_ROLE_NAME ? !!user?.id : !!userId],
+        () => schedulesClient.nearest({employeeId: user?.role == MASTER_ROLE_NAME ? user?.id! : userId!}), {
+            enabled: user?.role == MASTER_ROLE_NAME ? !!user?.id : !!userId,
+            onSuccess: (data) => setSchedulerValue(data ? {date: data.date, scheduleId: data.id} : undefined)
+        }
+    )
+
     const [tab, setTab] = useState<number>()
 
     const [page, setPage] = useState<number>(1)
@@ -76,10 +87,10 @@ export default function Page() {
                 page: page,
                 size: 5,
             } : {}),
-            employeeId: user?.employee?.id!,
+            employeeId: user?.role == MASTER_ROLE_NAME ? user?.id! : userId!,
             scheduleId: schedulerValue?.scheduleId
         }), {
-            enabled: !!schedulerValue?.scheduleId
+            enabled: !!schedulerValue?.scheduleId && (user?.role == MASTER_ROLE_NAME ? !!user?.id : !!userId)
         }
     )
 
@@ -106,6 +117,10 @@ export default function Page() {
                 addUrl="appointments/add"
                 abbreviatedTable={abbreviatedTable}
                 setAbbreviatedTable={setAbbreviatedTable}
+            />
+            <EmployeeFilter
+                userId={userId}
+                setUserId={setUserId}
             />
             <DateInput value={schedulerValue} onChange={setSchedulerValue}/>
             <Tabs tabIndex={tab} onChange={setTab}>

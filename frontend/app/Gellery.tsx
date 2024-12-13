@@ -1,3 +1,4 @@
+import { CustomModal } from "@/components/CustomModal"
 import { GalleryDto } from "@/services/client"
 import { Grid, Image, Modal, ModalCloseButton, ModalContent, ModalOverlay, Text, useDisclosure } from "@chakra-ui/react"
 import { useState } from "react"
@@ -35,21 +36,14 @@ export const Gallery = ({items}: GalleryProps) => {
                     }}/>)
             }
         </Grid>
-        <Modal
+        <CustomModal
             isOpen={isOpen}
             onClose={onClose}
-            isCentered
+            onClick={onClose}
         >
-            <ModalOverlay
-                bg='blackAlpha.300'
-                backdropFilter='blur(10px)'
-            />
-            <ModalContent mx={4} borderRadius={"md"} overflow={"hidden"} onClick={onClose}>
-                {/* <ModalCloseButton /> */}
-                {
-                    currentItem && items && <Image src={`${SERVER_URL}/${currentItem.image.path}`} />
-                }
-            </ModalContent>
-        </Modal>
+            {
+                currentItem && items && <Image src={`${SERVER_URL}/${currentItem.image.path}`} />
+            }
+        </CustomModal>
     </>
 }

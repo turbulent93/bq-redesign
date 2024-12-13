@@ -6,7 +6,7 @@ import { useQuery } from "react-query";
 import { PriceList } from "./PriceList";
 import { Hero } from "./Hero";
 
-export const Footer = ({showMap = true}: {showMap?: boolean}) => {
+export const Footer = ({showMap = false}: {showMap?: boolean}) => {
     return  <>
         <Box position={"relative"} overflow={"hidden"}>
 			{

@@ -26,14 +26,16 @@ namespace BeautyQueenApi.Requests.Appointments
                     user = new User(
                         request.Phone,
                         null,
-                        "Клиент",
+                        RoleNames.CLIENT_ROLE_NAME,
+                        null,
+                        null,
                         null,
                         null
                     );
 
                     _context.User.Add(user);
 
-                    _context.Entry(user).Collection(i => i.Promos).Load();
+                    //_context.Entry(user).Collection(i => i.Promos).Load();
 
                     await _context.SaveChangesAsync(cancellationToken);
                 }
@@ -41,7 +43,7 @@ namespace BeautyQueenApi.Requests.Appointments
                 TimeOnly.TryParseExact(request.StartAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly startAt);
                 TimeOnly.TryParseExact(request.EndAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly endAt);
 
-                Appointment? item = new(user!.Id,
+                Appointment? item = new(user.Id,
                     startAt,
                     endAt,
                     request.EmployeeId,
@@ -71,7 +73,7 @@ namespace BeautyQueenApi.Requests.Appointments
 
                 user.AddStep();
 
-                user.Appointments.Add(item);
+                user.ClientAppointments.Add(item);
 
                 await _context.SaveChangesAsync(cancellationToken);
 
