@@ -33,7 +33,6 @@ const LoginButton = () => {
     })
 
     return <Button
-        colorScheme="blackAlpha"
         w="100%"
         mt={2}
         type="submit"
@@ -64,6 +63,7 @@ const RegisterButton = () => {
     })
 
     return <Button
+        colorScheme="blackAlpha"
         w="100%"
         mt={2}
         type="submit"
@@ -114,7 +114,7 @@ export const LoginForm = ({type}: {type?: "dashboard" | "client"}) => {
                 isSubmitVisible={false}
                 // submitText={"Войти"}
                 // submitW="100%"
-                buttons={type == "client" ? [RegisterButton, LoginButton, HomeButton] : [LoginButton]}
+                buttons={type == "client" ? [LoginButton, RegisterButton, HomeButton] : [LoginButton]}
                 my={0}
                 px={0}
             >
