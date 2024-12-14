@@ -1,8 +1,9 @@
 import { PartialUserUpdateDto } from "@/services/client"
 import { usersClient } from "@/services/services"
-import { PROMO_TYPE_BONUS } from "@/utils/constants"
+import { PROMO_TYPE_BONUS, PROMO_TYPE_DISCOUNT, PROMO_TYPE_INVITE } from "@/utils/constants"
 import { useAuth } from "@/utils/useAuth"
-import { Box, Button, Image, Link, Text } from "@chakra-ui/react"
+import { Box, Button, Image, Link, Text, useClipboard, useToast } from "@chakra-ui/react"
+import { FaRegCopy } from "react-icons/fa"
 import { IoCheckmark } from "react-icons/io5"
 import { useMutation, useQueryClient } from "react-query"
 
@@ -17,16 +18,74 @@ type PromoCardProps = {
     endDate?: string
 }
 
+type ButtonProps = Pick<PromoCardProps, "type" | "id">
+
+const ButtonContent = ({type, id}: ButtonProps & {hasCopied: boolean}) => {
+    const {user} = useAuth()
+
+    if(type == PROMO_TYPE_INVITE && user?.invitePromoId == id) {
+        // if(hasCopied) {
+        //     return "Скипировано"
+        // }
+        return "Скопировать ссылку для записи"
+    }
+
+    if(!!user?.promos?.find(i => i.id == id)) {
+        return <IoCheckmark size={24} />
+    }
+
+    if(type == PROMO_TYPE_DISCOUNT) {
+        return <Link href={`/appointment?promoId=${id}`}>
+            Записаться
+        </Link>
+    }
+
+    return "Использовать"    
+}
+
 export const PromoCard = ({id, image, title, description, type, register, startDate, endDate}: PromoCardProps) => {
     const {isAuth, user} = useAuth()
 
     const queryClient = useQueryClient()
+
+    const toast = useToast()
+    const {onCopy, setValue, hasCopied} = useClipboard('')
 
     const {mutate, isLoading} = useMutation((item: PartialUserUpdateDto) => usersClient.partialUpdate(Number(item.id), item), {
 		onSuccess: () => {
 			queryClient.invalidateQueries({queryKey: "check"})
         }
 	})
+
+    const handler = () => {
+        if(type == PROMO_TYPE_DISCOUNT) return
+
+        if(!isAuth) register?.()
+
+        if(type == PROMO_TYPE_INVITE) {
+            if(user?.invitePromoId == id) {
+                setValue(`https://bg-kurgan.ru/appointment?inviterId=${user?.id}`)
+                onCopy()
+                toast({
+                    title: "Ссылка скопирована",
+                    // status: "info",
+                    position: "top",
+                    colorScheme: "gray"
+                })
+            } else {
+                mutate({id: user?.id!, promoId: id})
+            }
+        }
+
+        if(!user?.promos?.find(i => i.id == id)) {
+            mutate({id: user?.id!, promoId: id})
+        } else {
+            toast({
+                title: "Акция уже была использована",
+                status: "info"
+            })
+        }
+    }
 
     return <Box
         // borderRadius={"md"}
@@ -90,7 +149,7 @@ export const PromoCard = ({id, image, title, description, type, register, startD
                 _focus={{
                     bgGradient: 'linear(to-br, gray.700, red.500)'
                 }}
-                w={"160px"}
+                minW={"160px"}
                 textColor={"white"}
                 isDisabled={!!user?.promos?.find(i => i.id == id)}
                 _disabled={{
@@ -99,21 +158,10 @@ export const PromoCard = ({id, image, title, description, type, register, startD
                 _hover={{
                     opacity: 1
                 }}
-                onClick={() => type == PROMO_TYPE_BONUS
-                    ? isAuth && !user?.promos?.find(i => i.id == id)
-                        ? mutate({id: user?.id!, promoId: id})
-                        : register?.()
-                    : undefined }
+                onClick={handler}
+                rightIcon={user?.invitePromoId == id ? hasCopied ? <Box color="gray.300"><IoCheckmark /></Box> : <FaRegCopy /> : undefined}
             >
-                {
-                    !!user?.promos?.find(i => i.id == id)
-                        ? <IoCheckmark size={24} /> :
-                            type == PROMO_TYPE_BONUS ? 
-                                "Использовать"
-                                : <Link href={`/appointment?promoId=${id}`}>
-                                    Записаться
-                                </Link>
-                }
+                <ButtonContent type={type} id={id} hasCopied={hasCopied} />
             </Button>
         </Box>
     </Box>

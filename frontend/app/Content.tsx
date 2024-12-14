@@ -51,19 +51,30 @@ export const Content = ({children, type} : {children: React.ReactNode, type: "da
 
 	if(type != "dashboard") return children
 
-	return <Container
+	return <>
+	<Container
 		h={`${vh}px`}
 		// overflowY="hidden"
 		// minH="100%"
 		// overflow={"hidden"}
-		minHeight={"100vh"}
+		// minHeight={"100vh"}
 		p={0}
-		overflow={"hidden"}
+		// overflow={"hidden"}
+		position={"relative"}
+		// bgColor={"gray.300"}
+		pt={"80px"}
 	>
 		{/* <Sidebar /> */}
-		<Box w="100%" overflowY={"auto"} pt={"80px"} pb={"76px"}>
+		<Box
+			h={vh ? `${vh - 156}px` : undefined}
+			w="100%"
+			overflowY={"auto"}
+			// mt={"80px"}
+			// pb={"76px"}
+		>
 			{children}
 		</Box>
 		<MobileNavigation />
 	</Container>
+	</>
 }

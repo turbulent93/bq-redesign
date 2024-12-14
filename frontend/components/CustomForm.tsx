@@ -29,7 +29,7 @@ export const CustomForm = ({onSubmit, children, values, buttons, submitText, max
             <form onSubmit={methods.handleSubmit(onSubmit)}>
                 {children}
                 <Button type="submit" display={!isSubmitVisible ? "none" : undefined} w={submitW}>
-                    {submitText ? submitText : values ? "Обновить" : "Добавить"}
+                    {submitText ? submitText : values?.id ? "Обновить" : "Добавить"}
                 </Button>
                 {
                     buttons && buttons.map((Btn, index) => <Btn key={index}/>)

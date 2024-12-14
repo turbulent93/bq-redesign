@@ -1,6 +1,9 @@
 import { Box, FormErrorMessage, Input, InputGroup, InputLeftElement, InputRightElement, Text, Textarea } from "@chakra-ui/react"
 import { useFormContext } from "react-hook-form"
 import { DateInput } from "./DateInput"
+import { useEffect } from "react"
+import { DATE_FORMAT } from "@/utils/constants"
+import moment from "moment"
 
 type CustomInputProps = {
     label: string
@@ -9,7 +12,11 @@ type CustomInputProps = {
 }
 
 export const FormDateInput = ({label, name, required}: CustomInputProps) => {
-    const {formState: {errors}, setValue, watch, getValues} = useFormContext()
+    const {formState: {errors}, setValue, watch, reset, getValues} = useFormContext()
+
+    // useEffect(() => {
+    //     reset({...getValues(), [name]: moment().format(DATE_FORMAT)})
+    // }, [])
 
     return <>
         <Text mb='8px'>{label}</Text>

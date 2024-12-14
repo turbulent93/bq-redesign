@@ -22,8 +22,12 @@ namespace BqApi.Requests.Users
         public bool? NotificationsEnabled { get; set; }
         public string? AuthTgCode { get; set; }
         public string? TgChatId { get; set; }
-        public List<int> SpecializationIds { get; set; } = [];
+        public int? InviterId { get; set; }
+        public int? InvitePromoId { get; set; }
 
+        public PromoDto? InvitePromo { get; set; } = null!;
+        public List<UserDto>? InvitedUsers { get; set; } = null!;
+        public List<int> SpecializationIds { get; set; } = [];
         public List<SpecializationDto>? Specializations { get; set; } = null!;
         public FileDto? Avatar { get; set; } = null!;
         public PunchMapDto? PunchMap { get; set; }

@@ -16,6 +16,7 @@ const Content = () => {
 	const searchParams = useSearchParams()
 	const promoId = searchParams.get("promoId")
     const phone = searchParams.get("phone")
+    const inviterId = searchParams.get("inviterId")
 
 	const queryClient = useQueryClient()
     const router = useRouter()
@@ -43,6 +44,7 @@ const Content = () => {
             mutate={mutate}
             promoId={promoId ? Number(promoId) : undefined}
             phone={phone != null ? phone : undefined}
+            inviterId={inviterId ? Number(inviterId) : undefined}
         />
     </Flex>
 }

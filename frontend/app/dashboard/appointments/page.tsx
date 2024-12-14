@@ -102,11 +102,11 @@ export default function Page() {
         }
     })
 
-    const actionsDisabled = (value: AppointmentDto) => {
-        return !isAdmin
-            ? value.createdBy != user?.id
-            : false
-    }
+    // const actionsDisabled = (value: AppointmentDto) => {
+    //     return !isAdmin
+    //         ? value.createdBy != user?.id
+    //         : false
+    // }
     
     const [abbreviatedTable, setAbbreviatedTable] = useState(false)
 
@@ -135,12 +135,13 @@ export default function Page() {
                 <TabPanel>
                     <CustomTable
                         columns={abbreviatedTable ? abbreviatedColumns : columns}
+                        scroll={!abbreviatedTable}
                         data={data}
                         updatePath="appointments/update"
                         removeMutate={mutate}
                         page={page}
                         setPage={setPage}
-                        actionsDisabled={actionsDisabled}
+                        // actionsDisabled={actionsDisabled}
                     />
                 </TabPanel>
             </TabPanels>

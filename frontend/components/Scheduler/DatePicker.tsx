@@ -75,7 +75,8 @@ export const DatePicker = ({
     isDatePick,
     contentType = "SLOTS",
     selectedSchedules,
-    userId
+    userId,
+    selectFirst
 }: DatePickerProps) => {
     const queryClient = useQueryClient()
     

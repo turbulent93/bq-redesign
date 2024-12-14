@@ -57,6 +57,7 @@ export default function Page() {
             </Button>
             <CustomTable
                 columns={columns}
+                scroll={false}
                 data={data}
                 updatePath="punch-maps/update"
                 removeMutate={mutate}

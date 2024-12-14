@@ -9,7 +9,15 @@ using System.ComponentModel.DataAnnotations;
 namespace BeautyQueenApi.Models
 {
     [Index(nameof(Login), IsUnique = true)]
-    public class User(string login, string? password, string role, int? punchMapId, int? stepsCount, string? fullName, int? avatarId)
+    public class User(string login,
+        string? password,
+        string role,
+        int? punchMapId,
+        int? stepsCount,
+        string? fullName,
+        int? avatarId,
+        int? inviterId = null,
+        int? invitePromoId = null)
     {
         [Key]
         public int Id { get; set; }
@@ -25,7 +33,12 @@ namespace BeautyQueenApi.Models
         public bool NotificationsEnabled { get; set; } = false;
         public string AuthTgCode { get; set; } = Guid.NewGuid().ToString();
         public string? TgChatId { get; set; }
+        public int? InviterId { get; set; } = inviterId;
+        public int? InvitePromoId { get; set; } = invitePromoId;
 
+        public Promo InvitePromo { get; set; } = null!;
+        public User Inviter { get; set; } = null!;
+        public List<User> InvitedUsers { get; set; } = null!;
         public List<Specialization> Specializations { get; set; } = null!;
         public UploadedFile? Avatar { get; set; }
         public PunchMap? PunchMap { get; set; } = null!;
@@ -34,15 +47,16 @@ namespace BeautyQueenApi.Models
         public List<Promo> Promos { get; set; } = null!;
         public List<PunchMap>? PunchMaps { get; set; } = null!;
 
-        public void Update(string login, string? password, string role, int? punchMapId, int? stepsCount, string? fullName, int? avatarId) {
-            Login = login;
-            if(password != null)
-                Password = password;
-            Role = role;
-            PunchMapId = punchMapId;
-            StepsCount = stepsCount;
-            FullName = fullName;
-            AvatarId = avatarId;
+        public void Update(UserDto request, string? newPassword = null) {
+            Login = request.Login;
+            if(newPassword != null)
+                Password = newPassword;
+            Role = request.Role;
+            PunchMapId = request.PunchMapId;
+            StepsCount = request.StepsCount;
+            FullName = request.FullName;
+            AvatarId = request.AvatarId;
+            InviterId = request.InviterId;
         }
 
         public void AddStep()
@@ -50,12 +64,14 @@ namespace BeautyQueenApi.Models
             StepsCount = StepsCount != null ? StepsCount + 1 : 1;
         }
 
-        public void PartialUpdate(string? phone, int? punchMapId)
+        public void PartialUpdate(string? phone, int? punchMapId, int? invitePromoId)
         {
             if(phone != null)
                 Login = phone;
             if(punchMapId != null)
                 PunchMapId = punchMapId;
+            if(invitePromoId != null)
+                InvitePromoId = invitePromoId;
         }
 
         public void UpdateChatId(string chatId)

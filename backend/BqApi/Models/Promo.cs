@@ -20,6 +20,7 @@ namespace BeautyQueenApi.Models
         public int ImageId { get; set; } = imageId;
         public bool ShowOnHomePage { get; set; } = showOnHomePage;
 
+        public List<User> InvitePromoUsers { get; set; } = null!;
         public List<PromoService> PromoServices { get; set; } = null!;
         public UploadedFile Image { get; set; } = null!;
         public List<User> Users { get; set; } = null!;

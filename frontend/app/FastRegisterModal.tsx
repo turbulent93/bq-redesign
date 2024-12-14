@@ -18,7 +18,7 @@ type FastRegisterModalProps = {
 export const FastRegisterModal = ({isOpen, onClose, punchMapId, promoId}: FastRegisterModalProps) => {
     const queryClient = useQueryClient()
 
-    const {mutate} = useMutation((data: TokenRequest) => tokensClient.register({login: data.login, punchMapId, promoId}), {
+    const {mutate} = useMutation((data: TokenRequest) => tokensClient.fastRegister({login: data.login, punchMapId, promoId}), {
         onSuccess: (data) => {
             console.log(data)
             setTokens(data)

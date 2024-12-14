@@ -39,6 +39,7 @@ export const MobileNavigation = () => {
                 borderBottom={"1px"}
                 borderColor={"gray.300"}
                 // h="60px"
+                bgColor={"white"}
             >
                 <Box
                     textColor={"gray.700"}

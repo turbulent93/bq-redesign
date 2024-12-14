@@ -15,7 +15,7 @@ namespace BeautyQueenApi.Requests.Appointments
         public string Phone { get; set; } = null!;
         public int? PaidWithBonuses { get; set; }
         public int? PromoId { get; set; }
-        public int CreatedBy { get; set; }
+        public int? InviterId { get; set; }
 
         public UserDto? Employee { get; set; }
         public ScheduleDto? Schedule { get; set; }

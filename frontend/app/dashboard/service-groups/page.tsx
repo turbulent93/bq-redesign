@@ -49,6 +49,7 @@ export default function Page() {
         </Button>
         <CustomTable
             columns={columns}
+            scroll={false}
             data={data}
             updatePath="service-groups/update"
             removeMutate={mutate}

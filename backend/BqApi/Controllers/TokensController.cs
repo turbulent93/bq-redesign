@@ -22,6 +22,13 @@ namespace BeautyQueenApi.Controllers
             return await _tokenService.Register(request);
         }
 
+        [HttpPost("fast-register")]
+        [AllowAnonymous]
+        public async Task<ActionResult<TokenDto>> FastRegister(TokenRequest request)
+        {
+            return await _tokenService.FastRegister(request);
+        }
+
         [HttpPost("login")]
         [AllowAnonymous]
         public async Task<ActionResult<TokenDto>> Login(TokenRequest request)

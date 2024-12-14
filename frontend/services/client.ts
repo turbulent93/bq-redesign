@@ -2605,6 +2605,58 @@ export class TokensClient {
         return Promise.resolve<TokenDto>(null as any);
     }
 
+    fastRegister(request: TokenRequest, cancelToken?: CancelToken): Promise<TokenDto> {
+        let url_ = this.baseUrl + "/api/tokens/fast-register";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processFastRegister(_response);
+        });
+    }
+
+    protected processFastRegister(response: AxiosResponse): Promise<TokenDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return Promise.resolve<TokenDto>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<TokenDto>(null as any);
+    }
+
     login(request: TokenRequest, cancelToken?: CancelToken): Promise<TokenDto> {
         let url_ = this.baseUrl + "/api/tokens/login";
         url_ = url_.replace(/[?&]$/, "");
@@ -3276,7 +3328,7 @@ export interface AppointmentDto {
     phone: string;
     paidWithBonuses?: number | undefined;
     promoId?: number | undefined;
-    createdBy: number;
+    inviterId?: number | undefined;
     employee?: UserDto | undefined;
     schedule?: ScheduleDto | undefined;
     service?: ServiceDto | undefined;
@@ -3295,6 +3347,10 @@ export interface UserDto {
     notificationsEnabled?: boolean | undefined;
     authTgCode?: string | undefined;
     tgChatId?: string | undefined;
+    inviterId?: number | undefined;
+    invitePromoId?: number | undefined;
+    invitePromo?: PromoDto | undefined;
+    invitedUsers?: UserDto[] | undefined;
     specializationIds: number[];
     specializations?: SpecializationDto[] | undefined;
     avatar?: FileDto | undefined;
@@ -3304,33 +3360,6 @@ export interface UserDto {
     master?: AppointmentDto[] | undefined;
     promos?: PromoDto[] | undefined;
     upcomingAppointments: UpcomigAppointment[];
-}
-
-export interface SpecializationDto {
-    id?: number | undefined;
-    name: string;
-}
-
-export interface FileDto {
-    id: number;
-    path: string;
-    name: string;
-}
-
-export interface PunchMapDto {
-    id?: number | undefined;
-    employeeId?: number | undefined;
-    stepsCount: number;
-    columnsCount: number;
-    punchMapPromos: PunchMapPromoDto[];
-}
-
-export interface PunchMapPromoDto {
-    id?: number | undefined;
-    punchMapId: number;
-    promoId: number;
-    step: number;
-    promo?: PromoDto | undefined;
 }
 
 export interface PromoDto {
@@ -3345,6 +3374,12 @@ export interface PromoDto {
     showOnHomePage: boolean;
     image?: FileDto | undefined;
     promoServices: PromoServiceDto[];
+}
+
+export interface FileDto {
+    id: number;
+    path: string;
+    name: string;
 }
 
 export interface PromoServiceDto {
@@ -3366,6 +3401,27 @@ export interface ServiceDto {
     paidAmountWithBonuses: number;
     createdBy: number;
     specialization?: SpecializationDto | undefined;
+}
+
+export interface SpecializationDto {
+    id?: number | undefined;
+    name: string;
+}
+
+export interface PunchMapDto {
+    id?: number | undefined;
+    employeeId?: number | undefined;
+    stepsCount: number;
+    columnsCount: number;
+    punchMapPromos: PunchMapPromoDto[];
+}
+
+export interface PunchMapPromoDto {
+    id?: number | undefined;
+    punchMapId: number;
+    promoId: number;
+    step: number;
+    promo?: PromoDto | undefined;
 }
 
 export interface UpcomigAppointment {
@@ -3459,7 +3515,7 @@ export interface ScheduleDayDto {
 }
 
 export interface GetSchedulesRequest {
-    employeeId: number;
+    employeeId?: number | undefined;
     year?: number | undefined;
     month?: number | undefined;
     duration?: number | undefined;

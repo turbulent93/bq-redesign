@@ -20,7 +20,7 @@ namespace BeautyQueenApi.Requests.Schedules
     }
 
     public class GetSchedulesRequest : IRequest<List<ScheduleDayDto>> {
-        public int EmployeeId { get; set; }
+        public int? EmployeeId { get; set; }
         public int? Year { get; set; }
         public int? Month { get; set; }
         public int? Duration { get; set; }
@@ -62,7 +62,8 @@ namespace BeautyQueenApi.Requests.Schedules
                             .Schedule
                             .FirstOrDefaultAsync(i => i.Date.Year == curDate.Year
                                 && i.Date.Month == curDate.Month
-                                && i.Date.Day == curDate.Day, cancellationToken);
+                                && i.Date.Day == curDate.Day
+                                && (request.EmployeeId == null || i.EmployeeId == request.EmployeeId), cancellationToken);
 
                         //int count = 0;
 
@@ -90,7 +91,8 @@ namespace BeautyQueenApi.Requests.Schedules
                             .Schedule
                             .FirstOrDefaultAsync(i => i.Date.Year == curDate.Year
                                 && i.Date.Month == curDate.Month
-                                && i.Date.Day == curDate.Day, cancellationToken);
+                                && i.Date.Day == curDate.Day
+                                && (request.EmployeeId == null || i.EmployeeId == request.EmployeeId), cancellationToken);
 
                     //var count = 0;
 
@@ -117,7 +119,8 @@ namespace BeautyQueenApi.Requests.Schedules
                             .Schedule
                             .FirstOrDefaultAsync(i => i.Date.Year == curDate.Year
                                 && i.Date.Month == curDate.Month
-                                && i.Date.Day == curDate.Day, cancellationToken);
+                                && i.Date.Day == curDate.Day
+                                && (request.EmployeeId == null || i.EmployeeId == request.EmployeeId), cancellationToken);
 
                     //int count = 0;
 

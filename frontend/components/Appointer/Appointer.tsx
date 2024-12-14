@@ -17,12 +17,14 @@ import { PriceList } from "@/app/PriceList"
 import { serviceGroupClient } from "@/services/services"
 import { useQuery } from "react-query"
 import { CustomSwitch } from "../CustomSwitch"
+import { AppointerContent } from "./AppointerContent"
 
 type FormProps = {
     mutate: (item: AppointmentDto) => void,
     values?: AppointmentDto
     promoId?: number
     phone?: string
+    inviterId?: number
 }
 
 const steps = [
@@ -32,95 +34,7 @@ const steps = [
     { title: 'Телефон', Icon: FaPhone },
 ]
 
-type ContentProps = {
-    index: number
-    goToNext: () => void
-    setActiveStep: (value: number) => void
-    promoId?: number
-    phone?: string
-}
-
-const AppointerPriceList = ({onClick, promoId}: {onClick: (v: ServiceDto) => void, promoId?: number}) => {
-    const {setValue, reset, getValues} = useFormContext()
-
-    useEffect(() => {
-        reset({...getValues(), [nameof<AppointmentDto>("promoId")]: promoId})
-    }, [promoId])
-
-    const {data: serviceGroups, isLoading: isServiceGroupsLoading} = useQuery(
-        ["get service-groups", promoId],
-        () => serviceGroupClient.get({promoId: promoId ? promoId : undefined}), {
-			select: (data) => data.list
-			// onSuccess: (data) => console.log(data)
-		}
-    )
-
-    return <PriceList
-        onClick={(v) => {
-            onClick(v)
-            setValue(nameof<AppointmentDto>("serviceId"), v.id)
-            // console.log("set service", v.id)
-        }}
-        viewTitle={false}
-        items={serviceGroups}
-    />
-}
-
-const Content = ({index, goToNext, setActiveStep, promoId, phone}: ContentProps) => {
-    const [duration, setDuration] = useState<number>()
-    const [usePromo, setUsePromo] = useState(true)
-
-    const {setValue} = useFormContext()
-
-    if(index == 1) {
-        return <>
-            {
-                !!promoId && <Flex mb={4} alignItems={"center"} justifyContent={"center"}>
-                    <Text mr={4}>
-                        Использовать акцию
-                    </Text>
-                    <Switch
-                        isChecked={usePromo}
-                        onChange={(e) => {
-                            setUsePromo(e.target.checked)
-                            if(e.target.checked) {
-                                setValue(nameof<AppointmentDto>("promoId"), promoId)
-                            } else {
-                                setValue(nameof<AppointmentDto>("promoId"), undefined)
-                            }
-                        }}
-                        variant={"gray"}
-                    />
-                </Flex>
-            }
-            <AppointerPriceList 
-                onClick={(v) => {
-                    setDuration(v.duration)
-                    
-                    goToNext()
-                }}
-                promoId={usePromo ? promoId : undefined}
-            />
-        </>
-    } else if(index == 2) {
-        return <EmployeeStep
-            goToNext={goToNext}
-            goBack={() => setActiveStep(1)}
-            goToPhone={() => setActiveStep(4)}
-            duration={duration}
-        />
-    } else if(index == 3) {
-        return <ScheduleStep
-            duration={duration}
-            goToServiceStep={() => setActiveStep(1)}
-            goToNext={goToNext}
-        />
-    } else {
-        return <PhoneStep promoId={promoId} phone={phone}/>
-    }
-}
-
-export const Appointer = ({mutate, values, promoId, phone}: FormProps) => {
+export const Appointer = ({mutate, values, promoId, phone, inviterId}: FormProps) => {
     const { activeStep, goToNext, setActiveStep } = useSteps({
         index: 1,
         count: steps.length,
@@ -165,12 +79,13 @@ export const Appointer = ({mutate, values, promoId, phone}: FormProps) => {
             isSubmitVisible={activeStep == 4}
             submitText="Записаться"
         >
-            <Content
+            <AppointerContent
                 index={activeStep}
                 goToNext={goToNext}
                 setActiveStep={setActiveStep}
                 promoId={promoId}
                 phone={phone}
+                inviterId={inviterId}
             />
         </CustomForm>
     </Container>

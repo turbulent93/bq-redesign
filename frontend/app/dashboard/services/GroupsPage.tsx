@@ -46,6 +46,7 @@ export default function GroupsPage() {
             </Button>
         <CustomTable
             columns={columns}
+            scroll={false}
             data={data}
             updatePath="services/groups/update"
             removeMutate={mutate}

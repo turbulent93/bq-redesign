@@ -21,6 +21,58 @@ namespace BeautyQueenApi.Services.TokenService
     {
         private readonly ApplicationDbContext _context = context;
 
+
+        public async Task<TokenDto> FastRegister(TokenRequest request)
+        {
+            User? user = await _context.User
+                .Include(i => i.Promos)
+                .FirstOrDefaultAsync(x => x.Login == request.Login);
+
+            int? invitePromoId = null;
+
+            if (request.PromoId != null)
+            {
+                var promo = await _context.Promo.FirstOrDefaultAsync(i => i.Id == request.PromoId)
+                    ?? throw new Exception(ErrorMessages.PROMO_ERROR);
+
+                if (promo.Type == PromoTypes.PROMO_TYPE_INVITE)
+                {
+                    invitePromoId = promo.Id;
+                }
+            }
+
+            if (user == null)
+            {
+                user = new User(
+                    request.Login,
+                    null,
+                    RoleNames.CLIENT_ROLE_NAME,
+                    null,
+                    null,
+                    null,
+                    null,
+                    null,
+                    invitePromoId);
+
+                await _context.User.AddAsync(user);
+            }
+
+            if (request.PromoId != null)
+            {
+                var promo = await _context.Promo.FirstOrDefaultAsync(i => i.Id == request.PromoId)
+                    ?? throw new Exception(ErrorMessages.PROMO_ERROR);
+
+                if (promo.Type != PromoTypes.PROMO_TYPE_INVITE && !user.Promos.Contains(promo))
+                {
+                    user.Promos.Add(promo);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            
+            return await GetTokens(user);
+        }
+
         public async Task<TokenDto> Register(TokenRequest request)
         {
             User? user = _context.User
@@ -152,6 +204,8 @@ namespace BeautyQueenApi.Services.TokenService
                 .ThenInclude(i => i!.PunchMapPromos)
                 .ThenInclude(i => i.Promo)
                 .Include(i => i.Promos)
+                .Include(i => i.InvitePromo)
+                .Include(i => i.InvitedUsers)
                 .FirstOrDefaultAsync(i => i.Id == claims.Id)
                     ?? throw new Exception(ErrorMessages.USER_ERROR);
 

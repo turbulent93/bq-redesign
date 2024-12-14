@@ -10,6 +10,7 @@ namespace BeautyQueenApi.Services.TokenService
     {
         public Task<TokenDto> Login(TokenRequest request);
         public Task<TokenDto> Register(TokenRequest request);
+        public Task<TokenDto> FastRegister(TokenRequest request);
         public Task<TokenDto> Refresh(TokenDto request);
         public Task<CheckResultDto> Check(TokenDto request);
         public string GetClaim(IEnumerable<Claim> claims, string claimType);

@@ -75,6 +75,13 @@ namespace BeautyQueenApi.Data
                 .HasOne(i => i.Employee)
                 .WithMany(i => i.PunchMaps)
                 .HasForeignKey(i => i.EmployeeId);
+
+
+            modelBuilder.Entity<User>()
+                .HasOne(i => i.InvitePromo)
+                .WithMany(i => i.InvitePromoUsers)
+                .HasForeignKey(i => i.InvitePromoId)
+                .IsRequired(false);
         }
     }
 }

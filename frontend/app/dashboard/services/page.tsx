@@ -95,6 +95,7 @@ export default function ServicesPage() {
             />
             <CustomTable
                 columns={abbreviatedTable ? abbreviatedColumns : columns}
+                scroll={!abbreviatedTable}
                 data={data}
                 updatePath="services/update"
                 removeMutate={mutate}

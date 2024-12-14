@@ -15,13 +15,12 @@ export const useSchedulesQuery = ({month, year, employeeId, duration, contentTyp
     const {data, isLoading} = useQuery(
         ["get schedules", month, year, employeeId],
         () => schedulesClient.get({
-            employeeId: employeeId!,
+            employeeId,
             month,
             year,
             duration,
             contentType
         }), {
-            enabled: !!employeeId,
             refetchInterval: false,
             onSuccess
         })

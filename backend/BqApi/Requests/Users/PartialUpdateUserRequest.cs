@@ -25,15 +25,23 @@ namespace BeautyQueenApi.Requests.Users
                     .FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken)
                         ?? throw new Exception(ErrorMessages.USER_ERROR);
 
-                item.PartialUpdate(request.Phone, request.PunchMapId);
+                int? invitePromoId = null;
 
-                if (request.PromoId != null && item.Promos.FirstOrDefault(i => i.Id == request.PromoId) == null)
+                if (request.PromoId != null)
                 {
                     var promo = await _context.Promo.FirstOrDefaultAsync(i => i.Id == request.PromoId, cancellationToken)
                         ?? throw new Exception(ErrorMessages.PROMO_ERROR);
 
-                    item.Promos.Add(promo);
+                    if(promo.Type == PromoTypes.PROMO_TYPE_INVITE)
+                    {
+                        invitePromoId = promo.Id;
+                    } else if(!item.Promos.Contains(promo))
+                    {
+                        item.Promos.Add(promo);
+                    }
                 }
+
+                item.PartialUpdate(request.Phone, request.PunchMapId, invitePromoId);
 
                 await _context.SaveChangesAsync(cancellationToken);
 

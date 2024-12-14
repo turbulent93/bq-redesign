@@ -30,7 +30,8 @@ namespace BeautyQueenApi.Requests.Appointments
                         null,
                         null,
                         null,
-                        null
+                        null,
+                        request.InviterId
                     );
 
                     _context.User.Add(user);
@@ -74,6 +75,20 @@ namespace BeautyQueenApi.Requests.Appointments
                 user.AddStep();
 
                 user.ClientAppointments.Add(item);
+
+                if(request.InviterId != null && user.Id != request.InviterId)
+                {
+                    var inviter = await _context
+                        .User
+                        .Include(i => i.InvitedUsers)
+                        .FirstOrDefaultAsync(i => i.Id == request.InviterId, cancellationToken)
+                            ?? throw new Exception(ErrorMessages.USER_ERROR);
+
+                    if(!inviter.InvitedUsers.Contains(user))
+                    {
+                        inviter.InvitedUsers.Add(user);
+                    }
+                }
 
                 await _context.SaveChangesAsync(cancellationToken);
 

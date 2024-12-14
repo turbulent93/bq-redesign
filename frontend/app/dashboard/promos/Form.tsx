@@ -39,6 +39,7 @@ export const Form = ({mutate, values = {type: PROMO_TYPES[0]} as PromoDto}: Form
     }, [currentService])
 
     useEffect(() => {
+        console.log(values)
         if(values.promoServices)
             setPromoServices(values?.promoServices)
     }, [values])
@@ -82,10 +83,12 @@ export const Form = ({mutate, values = {type: PROMO_TYPES[0]} as PromoDto}: Form
                 currentService={currentService}
                 setCurrentService={setCurrentService}
             />
-            <CustomSwitch
-                name={nameof<PromoDto>("showOnHomePage")}
-                label={"Показывать на главной странице"}
-            />
+            <Box py={3} borderTop={"1px"} borderBottom={"1px"} borderColor={"gray.300"} mb={3} mt={1}>
+                <CustomSwitch
+                    name={nameof<PromoDto>("showOnHomePage")}
+                    label={"Показывать на главной странице"}
+                />
+            </Box>
         </CustomForm>
         <PromoServiceForm
             isOpen={isOpen}

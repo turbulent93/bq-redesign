@@ -10,6 +10,7 @@ import { useMemo } from "react"
 import { useFormContext } from "react-hook-form"
 import { useQuery } from "react-query"
 import { servicesClient } from "@/services/services"
+import { countBonuses } from "@/utils/countBonuses"
 
 export const PhoneStep = ({promoId, phone}: {promoId?: number, phone?: string}) => {
     const {user, isAuth} = useAuth()
@@ -26,21 +27,7 @@ export const PhoneStep = ({promoId, phone}: {promoId?: number, phone?: string}) 
         }
     )
 
-    const bonusCount = useMemo(() => user
-            ?.clientAppointments
-            ?.filter(i => moment(i.schedule?.date, DATE_FORMAT).isSameOrAfter(moment().month(-3))
-                && i.paidWithBonuses == 0)
-            .reduce((c, i) => c + i.service?.bonusCount!, 0)!
-        + user
-            ?.promos
-            ?.filter(i => (!i.startDate || moment(i.startDate, DATE_FORMAT).isSameOrBefore(moment()))
-                && (!i.endDate || moment(i.endDate, DATE_FORMAT).isSameOrAfter(moment()))
-                && i.type == PROMO_TYPE_BONUS)
-            .reduce((c, i) => c + (i?.bonusCount || 0), 0)!
-        - user
-            ?.clientAppointments
-            ?.filter(i => i.paidWithBonuses && i.paidWithBonuses > 0)
-            .reduce((c, i) => c + i.paidWithBonuses!, 0)!, [user])
+    const bonusCount = useMemo(() => countBonuses(user), [user])
 
     const availableBonusCount = useMemo(() => service?.paidAmountWithBonuses
         ? service?.paidAmountWithBonuses >= bonusCount

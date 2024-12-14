@@ -57,6 +57,7 @@ export default function ServicesPage() {
             </Button>
             <CustomTable
                 columns={columns}
+                scroll={false}
                 data={data}
                 updatePath="specializations/update"
                 removeMutate={mutate}

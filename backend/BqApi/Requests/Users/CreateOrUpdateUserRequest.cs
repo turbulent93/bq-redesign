@@ -32,23 +32,11 @@ namespace BeautyQueenApi.Requests.Users
                         {
                             throw new Exception(ErrorMessages.AUTHENTICATE_ERROR);
                         }
-                        item.Update(request.Login,
-                            BCrypt.Net.BCrypt.HashPassword(request.NewPassword),
-                            request.Role,
-                            request.PunchMapId,
-                            request.StepsCount,
-                            request.FullName,
-                            request.AvatarId);
+                        item.Update(request, BCrypt.Net.BCrypt.HashPassword(request.NewPassword));
                     }
                     else
                     {
-                        item.Update(request.Login,
-                            null,
-                            request.Role,
-                            request.PunchMapId,
-                            request.StepsCount,
-                            request.FullName,
-                            request.AvatarId);
+                        item.Update(request);
                     }
                 }
                 else

@@ -20,29 +20,6 @@ type DateInputProps = {
 export const DateInput = ({value, onChange, label, disabled}: DateInputProps) => {
     const {isOpen, onOpen, onClose} = useDisclosure()
 
-    const {user} = useAuth()
-    const curDate = moment()
-
-    useSchedulesQuery({
-        month: curDate.month() + 1,
-        year: curDate.year(),
-        employeeId: user?.id,
-        onSuccess: (data) => {
-            const first = data.find(i => i.scheduleId && i.day >= curDate.date())
-
-            if(first) {
-                onChange({
-                    scheduleId: first.scheduleId,
-                    date: moment({
-                        year: curDate.year(),
-                        month: curDate.month(),
-                        day: first.day
-                    }).format(DATE_FORMAT)
-                })
-            }
-        }
-    })
-
     return <>
         {
             label && <Text mb='8px'>{label}</Text>
