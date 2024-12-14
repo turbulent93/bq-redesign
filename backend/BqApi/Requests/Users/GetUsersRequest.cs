@@ -45,7 +45,11 @@ namespace BeautyQueenApi.Requests.Users
                 if (request.WithUpcomingAppointments == true && request.Duration != null)
                 {
                     var responseItems = (await items.ToListAsync(cancellationToken)).Adapt<List<UserDto>>();
-                    
+                    var dateNow = DateOnly.FromDateTime(DateTime.Now);
+                    var timeNow = TimeOnly.FromDateTime(DateTime.Now);
+
+                    timeNow = timeNow.AddMinutes(10 - (timeNow.Minute % 10));
+
                     foreach (var item in responseItems)
                     {
                         var schedules = await _context
@@ -59,7 +63,9 @@ namespace BeautyQueenApi.Requests.Users
 
                         for (int i = 0; i < schedules.Count; i++)
                         {
-                            var at = (await _scheduleService.GetAvailableTime(schedules[i].Id, (int)request.Duration))
+                            TimeOnly? startTime = schedules[i].Date.Equals(dateNow) ? timeNow : null;
+
+                            var at = (await _scheduleService.GetAvailableTime(schedules[i].Id, (int)request.Duration, startTime))
                                 .Where(i => i.IsAvailable)
                                 .Select(std => {
                                     TimeOnly.TryParseExact(std.Time, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly time);

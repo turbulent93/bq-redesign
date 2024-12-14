@@ -10,10 +10,10 @@ import { useEffect, useState } from "react"
 import "cropperjs/dist/cropper.css";
 import { ProfileHeader } from "./profile/ProfileHeader"
 
-function useWindowSize() {
-	const [windowSize, setWindowSize] = useState<number>();
+export function useWindowSize() {
+	const [windowSize, setWindowSize] = useState<{w?: number, h?: number}>({});
   
-	const handler = () => setWindowSize(window.innerHeight)
+	const handler = () => setWindowSize({w: window.innerWidth, h: window.innerHeight})
 
 	useEffect(() => {
 	  	window.addEventListener("resize", handler)
@@ -29,7 +29,7 @@ function useWindowSize() {
 export const Content = ({children, type} : {children: React.ReactNode, type: "dashboard" | "client"}) => {
 	const {isAuth, isLoading, isAdmin, user} = useAuth()
     const pathname = usePathname()
-	const vh = useWindowSize()
+	const {h: vh} = useWindowSize()
 
 	if(isLoading) {
 		return <Flex w="100vw" h="100vh" alignItems={"center"} justifyContent={"center"}>

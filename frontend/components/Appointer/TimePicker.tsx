@@ -10,6 +10,7 @@ import { Controller, useFormContext } from "react-hook-form"
 import { FaExternalLinkAlt } from "react-icons/fa"
 import { useQuery } from "react-query"
 import { CustomModal } from "../CustomModal"
+import { useWindowSize } from "@/app/Content"
 
 const DEFAULT_START_HOUR = "8:00"
 const DEFAULT_END_HOUR ="22:00"
@@ -76,7 +77,7 @@ const TimePickerContent = ({scheduleId, duration, goToServiceStep, goToNext}: Ti
             <Spinner />
         </Flex>
 
-    if(!duration || !data) {
+    if(!duration) {
         return <Flex
             w="100%"
             justifyContent={"center"}
@@ -94,26 +95,32 @@ const TimePickerContent = ({scheduleId, duration, goToServiceStep, goToNext}: Ti
         </Flex>
     }
 
+    if(!scheduleId || !data) return
+
     return <Grid
-            templateColumns={"repeat(3, 1fr)"}
+            templateColumns={"repeat(4, 1fr)"}
             mt={[10, 24]}
             gap={3}
             w="100%"
+            px={3}
             mb={1}
             userSelect={"none"}
-            h={`${Math.floor(data.length / 4)}px`}
+            // h={`${Math.floor(data.length / 4)}px`}
+            // h="400px"
         >
             {
                 data?.map(i => <GridItem
-                    h="40px"
+                    h="50px"
                     py={2}
-                    textAlign={"center"}
+                    display={"flex"}
+                    alignItems={"center"}
+                    justifyContent={"center"}
                     key={i.time}
                     bgColor={startAtChanged == i.time ? "blue.100" : undefined}
                     opacity={!i.isAvailable ? "0.5" : undefined}
                     cursor={i.isAvailable ? "pointer" : undefined}
-                    borderRadius={5}
-                    onClick={() => setSelectedValue(i.time)}
+                    borderRadius={"md"}
+                    onClick={() => i.isAvailable && setSelectedValue(i.time)}
                 >{i.time}</GridItem>)
             }
         </Grid>
@@ -122,22 +129,22 @@ const TimePickerContent = ({scheduleId, duration, goToServiceStep, goToNext}: Ti
 export const TimePicker = (props: TimePickerProps) => {
     const {isOpen, onOpen, onClose} = useDisclosure()
 
-    const width = window?.innerWidth
+    const {w} = useWindowSize()
 
     useEffect(() => {
         if(props.scheduleId) 
             onOpen()
     }, [props.scheduleId])
 
-    if(width > 420) {
-        return <TimePickerContent {...props} />
+    if(w && w < 700) {
+        return <CustomModal
+            isOpen={isOpen}
+            onClose={onClose}
+        >
+            <ModalCloseButton />
+            <TimePickerContent {...props} />
+        </CustomModal>
     }
-
-    return <CustomModal
-        isOpen={isOpen}
-        onClose={onClose}
-    >
-        <ModalCloseButton />
-        <TimePickerContent {...props} />
-    </CustomModal>
+    
+    return <TimePickerContent {...props} />
 }

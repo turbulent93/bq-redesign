@@ -27,6 +27,7 @@ namespace BeautyQueenApi.Controllers
         }
 
         [HttpPost("times/get")]
+        [AllowAnonymous]
         public async Task<ActionResult<List<ScheduleTimeDto>>> GetTimes(GetScheduleTimesRequest request)
         {
             return await _mediator.Send(request);
