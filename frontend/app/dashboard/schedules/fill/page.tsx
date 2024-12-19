@@ -19,7 +19,8 @@ import { TimeSelect } from "@/components/TimeSelect"
 import { useRouter } from "next/navigation"
 import { useFormContext } from "react-hook-form"
 import { useAuth } from "@/utils/useAuth"
-import { DATE_FORMAT } from "@/utils/constants"
+import { ADMIN_ROLE_NAME, DATE_FORMAT, MASTER_ROLE_NAME } from "@/utils/constants"
+import { EmployeeFilter } from "@/components/EmployeeFilter"
 
 const fillTypes = [
     {
@@ -37,6 +38,7 @@ const fillTypes = [
 ]
 
 export default function Page() {
+    const [userId, setUserId] = useState<number | undefined>()
     const {user} = useAuth()
     const startWorkTime = "10:00"
     const endWorkTime = "18:00"
@@ -64,18 +66,18 @@ export default function Page() {
 
         return schedulesClient.fill({
             ...item,
-            employeeId: user?.id!,
+            employeeId: user?.role == MASTER_ROLE_NAME ? user?.id! : userId!,
             startDate: startDate?.date!,
             endDate: endDate?.date!,
             removeApplications: removeApplications ? isConfirmed : false
         })
     }, {
-		onSuccess: () => {
-            if(!isConfirmed) {
+		onSuccess: (data) => {
+            if(!isConfirmed && data.length > 0) {
                 setIsConfirmed(true)
             } else {
                 queryClient.invalidateQueries({queryKey: "get applications"})
-                router.push("/dahsboard/schedules")
+                router.push("/dashboard/schedules")
             }
         }
 	})
@@ -89,8 +91,20 @@ export default function Page() {
         //     endDate: endDate?.date!,
         //     removeApplications: removeApplications ? isConfirmed : false
         // })}
+        values={{
+            weekendDays: 2,
+            workDays: 2,
+            startAt: user?.startWorkTime || "9:00",
+            endAt: user?.endWorkTime || "18:00"
+        }}
         my={2}
     >
+        {
+            user?.role == ADMIN_ROLE_NAME && <EmployeeFilter
+                userId={userId}
+                setUserId={setUserId}
+            />
+        }
         <DateInput
             label="Дата начала"
             value={startDate}
@@ -128,7 +142,7 @@ export default function Page() {
         >
             <Divider border={"1px"} borderColor={"gray.200"}/>
             <Flex alignItems={"end"} my={4}>
-                <Text>Удалять заявки вне расписания?</Text>
+                <Text>Удалять записи вне расписания?</Text>
                 <Switch
                     isChecked={removeApplications}
                     onChange={(e) => setRemoveApplications(e.target.checked)}

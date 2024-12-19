@@ -3406,6 +3406,8 @@ export interface UserDto {
     tgChatId?: string | undefined;
     inviterId?: number | undefined;
     invitePromoId?: number | undefined;
+    startWorkTime?: string | undefined;
+    endWorkTime?: string | undefined;
     invitePromo?: PromoDto | undefined;
     invitedUsers?: UserDto[] | undefined;
     specializationIds: number[];
@@ -4965,7 +4967,7 @@ export interface PaginationResponseOfUserDto {
 }
 
 export interface GetUsersRequest extends PaginationRequest {
-    role?: string | undefined;
+    roles?: string[] | undefined;
     withUpcomingAppointments?: boolean | undefined;
     duration?: number | undefined;
     serviceId?: number | undefined;

@@ -29,7 +29,7 @@ export const AppointmentsToRemove = ({data}: AppointmentsToRemoveProps) => {
 
     if(!data) return
 
-    return <Card>
+    return <Card mb={3}>
         <CardBody>
             <Text>При заполнении будут удалены следующие записи: </Text>
             <Scheduler

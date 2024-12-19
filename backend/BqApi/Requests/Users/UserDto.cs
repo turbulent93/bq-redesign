@@ -24,6 +24,8 @@ namespace BqApi.Requests.Users
         public string? TgChatId { get; set; }
         public int? InviterId { get; set; }
         public int? InvitePromoId { get; set; }
+        public string? StartWorkTime { get; set; }
+        public string? EndWorkTime { get; set; }
 
         public PromoDto? InvitePromo { get; set; } = null!;
         public List<UserDto>? InvitedUsers { get; set; } = null!;

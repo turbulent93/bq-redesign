@@ -11,7 +11,7 @@ using System.Globalization;
 namespace BeautyQueenApi.Requests.Users
 {
     public class GetUsersRequest : PaginationRequest, IRequest<PaginationResponse<UserDto>> {
-        public string? Role { get; set; } = null!;
+        public List<string>? Roles { get; set; } = null!;
         public bool? WithUpcomingAppointments { get; set; }
         public int? Duration { get; set; }
         public int? ServiceId { get; set; }
@@ -39,9 +39,9 @@ namespace BeautyQueenApi.Requests.Users
                     promo = await _context.Promo.FirstOrDefaultAsync(i => i.Id == request.PromoId, cancellationToken);
                 }
 
-                if (request.Role != null)
+                if (request.Roles != null && request.Roles.Count > 0)
                 {
-                    items = items.Where(i => i.Role == request.Role);
+                    items = items.Where(i => request.Roles.Contains(i.Role));
                 }
 
                 if (request.ServiceId != null)

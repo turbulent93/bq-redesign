@@ -67,16 +67,29 @@ namespace BqApi.Services.ScheduleService
                             .Appointment
                             .FirstOrDefaultAsync(i => i.ScheduleId == curSchedule!.Id);
 
-                        if (appointment != null)
+                        if(request.RemoveApplications)
                         {
-                            if(request.RemoveApplications)
-                            {
-                                _context.Schedule.Remove(curSchedule);
-                            } else
-                            {
-                                items.Add(curSchedule.Id);
-                            }
+
                         }
+
+                        if(appointment == null || !request.RemoveApplications)
+                        {
+                            _context.Schedule.Remove(curSchedule);
+                        } else if(appointment != null && request.RemoveApplications)
+                        {
+                            items.Add(curSchedule.Id);
+                        }
+
+                        //if (appointment != null)
+                        //{
+                        //    if(request.RemoveApplications)
+                        //    {
+                        //        _context.Schedule.Remove(curSchedule);
+                        //    } else
+                        //    {
+                        //        items.Add(curSchedule.Id);
+                        //    }
+                        //}
                     }
                     if (weekendDaysCount == request.WeekendDays && request.FillType != "ONLY_WEEKEND_DAYS")
                     {

@@ -4,12 +4,13 @@ import { CustomForm } from "@/components/CustomForm"
 import { CustomInput } from "@/components/CustomInput"
 import { CustomSelect } from "@/components/CustomSelect"
 import { FileUpload } from "@/components/FileUpload"
+import { TimeSelect } from "@/components/TimeSelect"
 import { UserDto } from "@/services/client"
 import { specializationsClient, usersClient } from "@/services/services"
 import { CLIENT_ROLE_NAME, MASTER_ROLE_NAME } from "@/utils/constants"
 import { nameof } from "@/utils/nameof"
 import { useAuth } from "@/utils/useAuth"
-import { Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react"
+import { Box, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
@@ -17,9 +18,10 @@ import { useMutation, useQuery, useQueryClient } from "react-query"
 type FormProps = {
     mutate: (item: UserDto) => void,
     values?: UserDto
+    isRoleVisible?: boolean
 }
 
-export const MasterForm = ({mutate, values}: FormProps) => {
+export const MasterForm = ({mutate, values, isRoleVisible = false}: FormProps) => {
     // const {user} = useAuth()
 
     const [resetPassword, setResetPassword] = useState(false)
@@ -54,13 +56,15 @@ export const MasterForm = ({mutate, values}: FormProps) => {
             name={nameof<UserDto>("avatarId")}
             // employeeId={user?.id}
         />
-        <CustomSelect
-            label="Роль"
-            name={nameof<UserDto>("role")}
-            required
-            options={roles}
-            defaultValue={roles[0]}
-        />
+        {
+            isRoleVisible && <CustomSelect
+                label="Роль"
+                name={nameof<UserDto>("role")}
+                required
+                options={roles}
+                defaultValue={roles[0]}
+            />
+        }
         <CustomInput
             label="Имя"
             name={nameof<UserDto>("fullName")}
@@ -78,6 +82,19 @@ export const MasterForm = ({mutate, values}: FormProps) => {
             //         ?.filter(i => user?.specializations?.map(i => i.id).includes(Number(i.value)))
             // }
         />
+        <Box py={3} borderTop={"1px"} borderBottom={"1px"} borderColor={"gray.300"} mb={3}>
+            <TimeSelect
+                name={nameof<UserDto>("startWorkTime")}
+                label="Время начала работы по умолчанию"
+            />
+            <TimeSelect
+                name={nameof<UserDto>("endWorkTime")}
+                label="Время окончания работы по умолчанию"
+            />
+            <Text color="gray.400">
+                *Используется при заполнении расписания
+            </Text>
+        </Box>
         <CustomInput
             label="Логин"
             name={nameof<UserDto>("login")}

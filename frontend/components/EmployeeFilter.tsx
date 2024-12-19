@@ -1,5 +1,5 @@
 import { usersClient } from "@/services/services"
-import { MASTER_ROLE_NAME } from "@/utils/constants"
+import { ADMIN_ROLE_NAME, MASTER_ROLE_NAME } from "@/utils/constants"
 import { useAuth } from "@/utils/useAuth"
 import { Box } from "@chakra-ui/react"
 import { Select } from "chakra-react-select"
@@ -15,7 +15,7 @@ export const EmployeeFilter = ({userId, setUserId}: EmployeeFilterProps) => {
 
     const {data: users} = useQuery(
         ["get users"],
-        () => usersClient.get({page: undefined, size: undefined, role: MASTER_ROLE_NAME}), {
+        () => usersClient.get({page: undefined, size: undefined, roles: [MASTER_ROLE_NAME, ADMIN_ROLE_NAME]}), {
             select: (data) => data.list.map(i => ({label: i.fullName || i.login, value: i.id})),
             onSuccess: (data) => setUserId(data.length > 0 ? data[0].value : undefined)
         }

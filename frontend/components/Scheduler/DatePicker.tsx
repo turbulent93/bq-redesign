@@ -64,7 +64,7 @@ const checkAwType = (aw?: string, index?: number) => {
 
 // const isAllowedWeekday = (aw?: string, index?: number) => checkAwType(aw, index) || !aw || aw?.includes(String((index! % 7) + 1))
 
-const isAllowedWeekday = (aw?: string, index?: number) => checkAwType(aw, index) || aw && aw?.includes(String((index! % 7) + 1))
+const isAllowedWeekday = (aw?: string, index?: number) => checkAwType(aw, index) || (aw && aw?.includes(String((index! % 7) + 1)))
 
 const getBgColor = (
     scheduleId?: number,
@@ -73,18 +73,18 @@ const getBgColor = (
     allowedWeekDays?: string,
     index?: number
 ) => {
-    if(!!selectedScheduleId) {
-        console.log(selectedScheduleId)
-    }
+    // if(!!selectedScheduleId) {
+    //     console.log(selectedScheduleId)
+    // }
     if(!!scheduleId && scheduleId == selectedScheduleId) {
         return "gray.700"
     }
     if(allowedWeekDays && allowedWeekDays?.includes(String((index! % 7) + 1))) {
         return "gray.300"
     }
-    // if(!!scheduleId && selectedSchedules?.includes(scheduleId)) {
-    //     return "red.100"
-    // }
+    if(!!scheduleId && selectedSchedules?.includes(scheduleId)) {
+        return "red.100"
+    }
 }
 
 
@@ -130,9 +130,10 @@ export const DatePicker = ({
     }
     
     const handler = (item: ScheduleDayDto, index: number) => {
-        if(!item.isCurrentMonth || !isAllowedWeekday(allowedWeekDays, index)) return
+        if(!item.isCurrentMonth || isAllowedWeekday(allowedWeekDays, index)) return
 
         if(isDatePick) {
+            console.log("adsad")
             onChangeHandler(item.day, item.scheduleId)
             return
         }
@@ -144,7 +145,8 @@ export const DatePicker = ({
                 toast({
                     title: "Нельзя создать день для записи раньше чем сегодня",
                     isClosable: true,
-                    status: "error"
+                    status: "error",
+                    position: "top"
                 })
             }
         } else {

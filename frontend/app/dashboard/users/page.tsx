@@ -105,7 +105,7 @@ export default function ServicesPage() {
     const [page, setPage] = useState<number>(1)
     const {data} = useQuery(
         ["get users", page, role?.value],
-        () => usersClient.get({page: page, size: 10, role: isAdmin ? role?.value : CLIENT_ROLE_NAME})
+        () => usersClient.get({page: page, size: 10, roles: [isAdmin ? role?.value : CLIENT_ROLE_NAME]})
     )
 
     const queryClient = useQueryClient()

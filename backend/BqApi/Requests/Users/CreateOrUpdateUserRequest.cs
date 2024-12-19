@@ -48,7 +48,11 @@ namespace BeautyQueenApi.Requests.Users
                         request.PunchMapId,
                         request.StepsCount,
                         request.FullName,
-                        request.AvatarId
+                        request.AvatarId,
+                        null,
+                        null,
+                        request.StartWorkTime,
+                        request.EndWorkTime
                     );
 
                     _context.User.Add(item);

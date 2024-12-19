@@ -38,7 +38,7 @@ export const ScheduleToPrint = ({onOpen, setScheduleId, scheduleId, userId, clos
     })
 
     useEffect(() => {
-            console.log("print", avatar)
+            // console.log("print", avatar)
         if(!!avatar && print) {
             toPDF()
             close()

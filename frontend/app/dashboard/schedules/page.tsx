@@ -31,10 +31,6 @@ export default function ServicesPage() {
 
     const [print, setPrint] = useState(false)
 
-    useEffect(() => {
-        console.log(print)
-    }, [print])
-
     return <Container maxW="1100px">
         <DashboardNavigation routes={appointmentRoutes}/>
         <EmployeeFilter

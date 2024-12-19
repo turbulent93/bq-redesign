@@ -13,6 +13,7 @@ import { FaTelegramPlane } from "react-icons/fa"
 import { useMutation, useQueryClient } from "react-query"
 import { UserDto } from "@/services/client"
 import { usersClient } from "@/services/services"
+import { MasterForm } from "../users/MasterForm"
 
 const SERVER_URL = process.env.SERVER_URL!
 
@@ -34,17 +35,30 @@ export default function ServicesPage() {
             setNotificationsEnabled(!!user?.notificationsEnabled && !!user?.tgChatId)
     }, [user])
 
-    useEffect(() => {
-        if(notificationsEnabled != user?.notificationsEnabled && user?.notificationsEnabled != undefined) {
-            if(notificationsEnabled && !user?.tgChatId) {
+    // useEffect(() => {
+    //     if(notificationsEnabled != user?.notificationsEnabled && user?.notificationsEnabled != undefined) {
+    //         if(notificationsEnabled && !user?.tgChatId) {
+    //             window.open(`https://telegram.me/bq_kg_bot?start=${user?.authTgCode}`)
+    //         }
+
+    //         mutate({
+    //             ...user
+    //         } as UserDto)
+    //     }
+    // }, [notificationsEnabled])
+
+    const handler = (checked: boolean) => {
+        if(checked != user?.notificationsEnabled) {
+            if(checked && !user?.tgChatId) {
                 window.open(`https://telegram.me/bq_kg_bot?start=${user?.authTgCode}`)
             }
 
             mutate({
-                ...user
+                ...user,
+                invitePromo: undefined
             } as UserDto)
         }
-    }, [notificationsEnabled])
+    }
 
     return <Flex
         flexDir={"column"}
@@ -80,7 +94,16 @@ export default function ServicesPage() {
         </Box>
         {
             isUpdate
-                ? <Form mutate={mutate} values={user} />
+                ? <MasterForm
+                    mutate={mutate}
+                    values={{
+                        ...user!,
+                        specializationIds: user?.specializations?.map(i => i.id!)!,
+                        startWorkTime: user?.startWorkTime ? user.startWorkTime : "9:00",
+                        endWorkTime: user?.endWorkTime ? user.endWorkTime : "18:00",
+                        invitePromo: undefined
+                    }}
+                />
                 : <>
                     <Avatar
                         src={!!user?.avatar?.path ? `${SERVER_URL}/${user?.avatar?.path}` : undefined}
@@ -127,7 +150,7 @@ export default function ServicesPage() {
                     >
                         <Switch
                             isChecked={notificationsEnabled}
-                            onChange={(e) => setNotificationsEnabled(e.target.checked)}
+                            onChange={(e) => handler(e.target.checked)}
                         />
                         <Text>
                             Уведомления

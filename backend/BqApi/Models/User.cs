@@ -17,7 +17,9 @@ namespace BeautyQueenApi.Models
         string? fullName,
         int? avatarId,
         int? inviterId = null,
-        int? invitePromoId = null)
+        int? invitePromoId = null,
+        string? startWorkTime = null,
+        string? endWorkTime = null)
     {
         [Key]
         public int Id { get; set; }
@@ -35,6 +37,8 @@ namespace BeautyQueenApi.Models
         public string? TgChatId { get; set; }
         public int? InviterId { get; set; } = inviterId;
         public int? InvitePromoId { get; set; } = invitePromoId;
+        public string? StartWorkTime { get; set; } = startWorkTime;
+        public string? EndWorkTime { get; set; } = endWorkTime;
 
         public Promo InvitePromo { get; set; } = null!;
         public User Inviter { get; set; } = null!;
@@ -47,9 +51,10 @@ namespace BeautyQueenApi.Models
         public List<Promo> Promos { get; set; } = null!;
         public List<PunchMap>? PunchMaps { get; set; } = null!;
 
-        public void Update(UserDto request, string? newPassword = null) {
+        public void Update(UserDto request, string? newPassword = null)
+        {
             Login = request.Login;
-            if(newPassword != null)
+            if (newPassword != null)
                 Password = newPassword;
             Role = request.Role;
             PunchMapId = request.PunchMapId;
@@ -57,6 +62,8 @@ namespace BeautyQueenApi.Models
             FullName = request.FullName;
             AvatarId = request.AvatarId;
             InviterId = request.InviterId;
+            StartWorkTime = request.StartWorkTime;
+            EndWorkTime = request.EndWorkTime;
         }
 
         public void AddStep()
@@ -66,11 +73,11 @@ namespace BeautyQueenApi.Models
 
         public void PartialUpdate(string? phone, int? punchMapId, int? invitePromoId)
         {
-            if(phone != null)
+            if (phone != null)
                 Login = phone;
-            if(punchMapId != null)
+            if (punchMapId != null)
                 PunchMapId = punchMapId;
-            if(invitePromoId != null)
+            if (invitePromoId != null)
                 InvitePromoId = invitePromoId;
         }
 

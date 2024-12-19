@@ -14,7 +14,7 @@ export const DayCountInput = () => {
     return <Flex gap={3} mb={1}>
         <Box>
             <Text mb='8px'>Рабочие дни</Text>
-            <NumberInput defaultValue={2} min={1} max={moment().endOf("month").day() - 1}>
+            <NumberInput min={1} max={moment().endOf("month").day() - 1}>
                 <NumberInputField {...register(nameof<FillScheduleDto>("workDays"))} />
                 <NumberInputStepper>
                     <NumberIncrementStepper />
@@ -24,7 +24,7 @@ export const DayCountInput = () => {
         </Box>
         <Box>
             <Text mb='8px'>Выходные дни</Text>
-            <NumberInput defaultValue={2} min={1} max={moment().endOf("month").day() - 1}>
+            <NumberInput min={1} max={moment().endOf("month").day() - 1}>
                 <NumberInputField {...register(nameof<FillScheduleDto>("weekendDays"))} />
                 <NumberInputStepper>
                     <NumberIncrementStepper />

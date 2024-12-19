@@ -31,7 +31,7 @@ export const Form = (props: FormProps) => {
         </TabList>
         <TabPanels>
             <TabPanel px={0}>
-                <MasterForm {...props} />
+                <MasterForm {...props} isRoleVisible />
             </TabPanel>
             <TabPanel px={0}>
                 <ClientForm {...props} />
