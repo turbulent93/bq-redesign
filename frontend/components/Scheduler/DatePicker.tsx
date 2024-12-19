@@ -35,9 +35,10 @@ const getTextColor = (
     month: number,
     day: number,
     scheduleId?: number,
-    selectedScheduleId?: number
+    selectedScheduleId?: number,
+    print?: boolean
 ) => {
-    if(isToday(year, month, day))
+    if(isToday(year, month, day) && !print)
         return "blue.100"
 
     if(scheduleId) {
@@ -98,7 +99,8 @@ export const DatePicker = ({
     selectedSchedules,
     userId,
     selectFirst,
-    allowedWeekDays
+    allowedWeekDays,
+    print
 }: DatePickerProps) => {
     const queryClient = useQueryClient()
     
@@ -182,7 +184,7 @@ export const DatePicker = ({
                     textAlign={"center"}
                     textTransform={"uppercase"}
                     fontWeight={"bold"}
-                    fontSize={isAllowedWeekday(allowedWeekDays, index) ? 16 : 12}
+                    fontSize={print ? 24 : isAllowedWeekday(allowedWeekDays, index) ? 16 : 12}
                     textColor={"gray.500"}
                     key={i}
                     opacity={isAllowedWeekday(allowedWeekDays, index) ? "0.7" : undefined}
@@ -192,7 +194,7 @@ export const DatePicker = ({
                 data?.map((i, index) => <GridItem key={index} w="100%">
                     <Flex
                         w="100%"
-                        h="60px"
+                        h={print ? "90px" : "60px"}
                         py={1}
                         flexDir={"column"}
                         alignItems={"center"}
@@ -206,14 +208,14 @@ export const DatePicker = ({
                         // }
                     >
                         <Flex
-                            textColor={getTextColor(year, month, i.day, i.scheduleId, value?.scheduleId)}
+                            textColor={getTextColor(year, month, i.day, i.scheduleId, value?.scheduleId, print)}
                             bgColor={getBgColor(i.scheduleId, value?.scheduleId, selectedSchedules, allowedWeekDays, index)}
                             // _hover={{
                             //     bgColor: contentType == "COUNT" ? "red.200" : "gray.500",
                             //     color: "gray.100"
                             // }}
-                            fontWeight={isToday(year, month, i.day) ? "bold" : undefined}
-                            fontSize={isToday(year, month, i.day) ? 14 : 12}
+                            fontWeight={isToday(year, month, i.day) && !print ? "bold" : undefined}
+                            fontSize={print ? 24 : isToday(year, month, i.day) ? 14 : 12}
                             textAlign={"center"}
                             cursor={"pointer"}
                             onClick={() => handler(i, index)}
@@ -226,7 +228,7 @@ export const DatePicker = ({
                             {i.day}
                         </Flex>
                         {
-                            i.scheduleId && <Text color="red.300" fontSize={10} fontWeight="bold" whiteSpace={"nowrap"}>
+                            i.scheduleId && <Text color="red.300" fontSize={print ? 20 : 10} fontWeight="bold" whiteSpace={"nowrap"}>
                                 {
                                     selectedSchedules
                                         ? selectedSchedules.includes(i.scheduleId) && i.content

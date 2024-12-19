@@ -63,6 +63,7 @@ export const Content = ({children, type} : {children: React.ReactNode, type: "da
 		position={"relative"}
 		// bgColor={"gray.300"}
 		pt={"80px"}
+		maxW="1100px"
 	>
 		{/* <Sidebar /> */}
 		<Box

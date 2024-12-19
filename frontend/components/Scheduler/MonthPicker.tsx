@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Flex } from "@chakra-ui/react"
+import { Box, Flex, Text } from "@chakra-ui/react"
 import { useState } from "react"
 import { IoIosArrowForward } from "react-icons/io"
 
@@ -11,18 +11,25 @@ type MonthPickerProps = {
     year: number
     decreaseMonth: () => void
     increaseMonth: () => void
+    print?: boolean
 }
 
-export const MonthPicker = ({month, year, decreaseMonth, increaseMonth}: MonthPickerProps) => {
-    return <Flex gap={2} alignItems={"center"} cursor="pointer" justifyContent={"space-between"} px={4} mb={4} mr="auto">
-        <Box transform={"rotate(180deg)"}>
-            <IoIosArrowForward onClick={decreaseMonth}/>
-        </Box>
+export const MonthPicker = ({month, year, decreaseMonth, increaseMonth, print}: MonthPickerProps) => {
+    return <Flex gap={2} alignItems={"center"} cursor="pointer" justifyContent={"space-between"} px={4} mb={4} mr={!print ? "auto" : undefined}>
         {
-            `${months[month - 1]}, ${year}`
+            !print && <Box transform={"rotate(180deg)"}>
+                <IoIosArrowForward onClick={decreaseMonth}/>
+            </Box>
         }
-        <Box cursor="pointer">
-            <IoIosArrowForward onClick={increaseMonth}/>
-        </Box>
+        <Text fontSize={print ? 32 : undefined} w={"100%"} textAlign={"center"}>
+            {
+                `${months[month - 1]}, ${year}`
+            }
+        </Text>
+        {
+            !print && <Box cursor="pointer">
+                <IoIosArrowForward onClick={increaseMonth}/>
+            </Box>
+        }
     </Flex>
 }

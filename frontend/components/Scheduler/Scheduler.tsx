@@ -21,6 +21,7 @@ export type SchedulerProps = {
     selectFirst?: boolean
     userId?: number
     allowedWeekDays?: string
+    print?: boolean
 }
 
 export const Scheduler = ({isMonthPickerVisible = true, ...props}: SchedulerProps) => {
@@ -58,6 +59,7 @@ export const Scheduler = ({isMonthPickerVisible = true, ...props}: SchedulerProp
                 year={year}
                 decreaseMonth={decreaseMonth}
                 increaseMonth={increaseMonth}
+                print={props.print}
             />
         }
         <DatePicker
