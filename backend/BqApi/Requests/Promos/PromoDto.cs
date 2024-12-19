@@ -17,6 +17,9 @@ namespace BeautyQueenApi.Requests.Promos
         public string? Type { get; set; }
         public int ImageId { get; set; }
         public bool ShowOnHomePage { get; set; }
+        public string? StartAt { get; set; }
+        public string? EndAt { get; set; }
+        public string? AllowedWeekDays { get; set; }
 
         public FileDto? Image { get; set; }
         public List<PromoServiceDto> PromoServices { get; set; } = null!;

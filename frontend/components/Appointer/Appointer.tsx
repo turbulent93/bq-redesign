@@ -18,6 +18,7 @@ import { serviceGroupClient } from "@/services/services"
 import { useQuery } from "react-query"
 import { CustomSwitch } from "../CustomSwitch"
 import { AppointerContent } from "./AppointerContent"
+import { UsePromo } from "./UsePromo"
 
 type FormProps = {
     mutate: (item: AppointmentDto) => void,
@@ -39,6 +40,8 @@ export const Appointer = ({mutate, values, promoId, phone, inviterId}: FormProps
         index: 1,
         count: steps.length,
     })
+
+    const [usePromo, setUsePromo] = useState(true)
 
     return <Container maxW="800px" px={0}>
         <Stepper
@@ -79,11 +82,16 @@ export const Appointer = ({mutate, values, promoId, phone, inviterId}: FormProps
             isSubmitVisible={activeStep == 4}
             submitText="Записаться"
         >
+            <UsePromo
+                usePromo={usePromo}
+                setUsePromo={setUsePromo}
+                promoId={promoId}
+            />  
             <AppointerContent
                 index={activeStep}
                 goToNext={goToNext}
                 setActiveStep={setActiveStep}
-                promoId={promoId}
+                promoId={usePromo ? promoId : undefined}
                 phone={phone}
                 inviterId={inviterId}
             />

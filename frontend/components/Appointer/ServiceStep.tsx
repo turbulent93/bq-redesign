@@ -3,7 +3,7 @@
 import { PriceList } from "@/app/PriceList";
 import { ColumnType, CustomTable } from "@/components/Table/Table";
 import { AppointmentDto, ServiceDto } from "@/services/client";
-import { serviceGroupClient, servicesClient } from "@/services/services";
+import { promosClient, serviceGroupClient, servicesClient } from "@/services/services";
 import { nameof } from "@/utils/nameof";
 import { Button, Container, Flex, Switch, Text } from "@chakra-ui/react";
 import Link from "next/link";
@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { UsePromo } from "./UsePromo";
 
 type ServiceStepProps = {
     goToNext: () => void
@@ -28,10 +29,17 @@ const AppointerPriceList = ({onClick, promoId}: {onClick: (v: ServiceDto) => voi
 
     const {data: serviceGroups, isLoading: isServiceGroupsLoading} = useQuery(
         ["get service-groups", promoId],
-        () => serviceGroupClient.get({promoId: promoId ? promoId : undefined}), {
+        () => serviceGroupClient.get({promoId}), {
 			select: (data) => data.list
 			// onSuccess: (data) => console.log(data)
 		}
+    )
+
+	const {data} = useQuery(
+        ["view promo", promoId],
+        () => promosClient.view(Number(promoId)), {
+            enabled: !!promoId
+        }
     )
 
     return <PriceList
@@ -42,41 +50,18 @@ const AppointerPriceList = ({onClick, promoId}: {onClick: (v: ServiceDto) => voi
         }}
         viewTitle={false}
         items={serviceGroups}
+        promoServices={promoId ? data?.promoServices : undefined}
     />
 }
 
 
 export default function ServiceStep({goToNext, setDuration, promoId}: ServiceStepProps) {
-    const {setValue} = useFormContext()
-    const [usePromo, setUsePromo] = useState(true)
-
-    return <>
-        {
-            !!promoId && <Flex mb={4} alignItems={"center"} justifyContent={"center"}>
-                <Text mr={4}>
-                    Использовать акцию
-                </Text>
-                <Switch
-                    isChecked={usePromo}
-                    onChange={(e) => {
-                        setUsePromo(e.target.checked)
-                        if(e.target.checked) {
-                            setValue(nameof<AppointmentDto>("promoId"), promoId)
-                        } else {
-                            setValue(nameof<AppointmentDto>("promoId"), undefined)
-                        }
-                    }}
-                    variant={"gray"}
-                />
-            </Flex>
-        }
-        <AppointerPriceList 
-            onClick={(v) => {
-                setDuration(v.duration)
-                
-                goToNext()
-            }}
-            promoId={usePromo ? promoId : undefined}
-        />
-    </>
+    return <AppointerPriceList 
+        onClick={(v) => {
+            setDuration(v.duration)
+            
+            goToNext()
+        }}
+        promoId={promoId}
+    />
 }

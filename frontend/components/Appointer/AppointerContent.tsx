@@ -36,12 +36,14 @@ export const AppointerContent = ({index, goToNext, setActiveStep, promoId, phone
             goBack={() => setActiveStep(1)}
             goToPhone={() => setActiveStep(4)}
             duration={duration}
+            promoId={promoId}
         />
     } else if(index == 3) {
         return <ScheduleStep
             duration={duration}
             goToServiceStep={() => setActiveStep(1)}
             goToNext={goToNext}
+            promoId={promoId}
         />
     } else {
         return <PhoneStep promoId={promoId} phone={phone}/>

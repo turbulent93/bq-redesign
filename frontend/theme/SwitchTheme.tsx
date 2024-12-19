@@ -16,7 +16,8 @@ const gray = definePartsStyle({
     track: {
         _checked: {
             bg: "gray.700",
-        }
+        },
+        borderColor: "inherit"
     },
     thumb: {
         _checked: {

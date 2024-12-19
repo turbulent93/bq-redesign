@@ -6,7 +6,7 @@ import { DatePicker } from "./DatePicker"
 import { useState } from "react"
 
 export type SchedulerValue = {
-    date: string
+    date?: string
     scheduleId?: number
 }
 
@@ -20,6 +20,7 @@ export type SchedulerProps = {
     duration?: number
     selectFirst?: boolean
     userId?: number
+    allowedWeekDays?: string
 }
 
 export const Scheduler = ({isMonthPickerVisible = true, ...props}: SchedulerProps) => {

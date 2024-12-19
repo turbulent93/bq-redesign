@@ -5,13 +5,11 @@ import { schedulesClient } from "@/services/services"
 import { Box, Flex, Grid, GridItem, Modal, ModalCloseButton, ModalContent, ModalOverlay, Spinner, Text, useDisclosure, useToast } from "@chakra-ui/react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import moment, { isMoment } from "moment"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { SchedulerProps } from "./Scheduler"
 import { useAuth } from "@/utils/useAuth"
 import { useSchedulesQuery } from "./useSchedulesQuery"
-import { DATE_FORMAT } from "@/utils/constants"
-
-const weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
+import { DATE_FORMAT, PROMO_LIMIT_WEEKDAYS, PROMO_LIMIT_WEEKEND, weekDays } from "@/utils/constants"
 
 type DatePickerProps = {
     month: number
@@ -53,18 +51,41 @@ const getTextColor = (
     }
 }
 
+const checkAwType = (aw?: string, index?: number) => {
+    if(aw == PROMO_LIMIT_WEEKDAYS) {
+        return index! >= 1 && index! <= 5
+    }
+
+    if(aw == PROMO_LIMIT_WEEKEND) {
+        return index == 5 || index == 6
+    }
+}
+
+// const isAllowedWeekday = (aw?: string, index?: number) => checkAwType(aw, index) || !aw || aw?.includes(String((index! % 7) + 1))
+
+const isAllowedWeekday = (aw?: string, index?: number) => checkAwType(aw, index) || aw && aw?.includes(String((index! % 7) + 1))
+
 const getBgColor = (
     scheduleId?: number,
     selectedScheduleId?: number,
-    selectedSchedules?: number[]
+    selectedSchedules?: number[],
+    allowedWeekDays?: string,
+    index?: number
 ) => {
+    if(!!selectedScheduleId) {
+        console.log(selectedScheduleId)
+    }
     if(!!scheduleId && scheduleId == selectedScheduleId) {
-        return "gray.500"
+        return "gray.700"
     }
-    if(!!scheduleId && selectedSchedules?.includes(scheduleId)) {
-        return "red.100"
+    if(allowedWeekDays && allowedWeekDays?.includes(String((index! % 7) + 1))) {
+        return "gray.300"
     }
+    // if(!!scheduleId && selectedSchedules?.includes(scheduleId)) {
+    //     return "red.100"
+    // }
 }
+
 
 export const DatePicker = ({
     month,
@@ -76,7 +97,8 @@ export const DatePicker = ({
     contentType = "SLOTS",
     selectedSchedules,
     userId,
-    selectFirst
+    selectFirst,
+    allowedWeekDays
 }: DatePickerProps) => {
     const queryClient = useQueryClient()
     
@@ -104,9 +126,9 @@ export const DatePicker = ({
     const onChangeHandler = (day: number, scheduleId?: number) => {
         onChange({date: moment({year, month: month - 1, day}).format(DATE_FORMAT), scheduleId})
     }
-
-    const handler = (item: ScheduleDayDto) => {
-        if(!item.isCurrentMonth) return
+    
+    const handler = (item: ScheduleDayDto, index: number) => {
+        if(!item.isCurrentMonth || !isAllowedWeekday(allowedWeekDays, index)) return
 
         if(isDatePick) {
             onChangeHandler(item.day, item.scheduleId)
@@ -154,15 +176,16 @@ export const DatePicker = ({
             gap={2}
         >
             {
-                weekDays.map(i => <GridItem
+                weekDays.map((i, index) => <GridItem
                     w="100%"
                     p={2}
                     textAlign={"center"}
                     textTransform={"uppercase"}
                     fontWeight={"bold"}
-                    fontSize={12}
+                    fontSize={isAllowedWeekday(allowedWeekDays, index) ? 16 : 12}
                     textColor={"gray.500"}
                     key={i}
+                    opacity={isAllowedWeekday(allowedWeekDays, index) ? "0.7" : undefined}
                 >{i}</GridItem>)
             }
             {
@@ -173,21 +196,28 @@ export const DatePicker = ({
                         py={1}
                         flexDir={"column"}
                         alignItems={"center"}
-                        opacity={!i.isCurrentMonth ? "0.5" : undefined}
+                        // opacity={
+                        //     !i.isCurrentMonth
+                        //     || checkAwType(allowedWeekDays, index)
+                        //     || !allowedWeekDays
+                        //     || allowedWeekDays?.includes(String((index! % 7) + 1))
+                        //         ? "0.5"
+                        //         : undefined
+                        // }
                     >
                         <Flex
                             textColor={getTextColor(year, month, i.day, i.scheduleId, value?.scheduleId)}
-                            bgColor={getBgColor(i.scheduleId, value?.scheduleId, selectedSchedules)}
-                            _hover={{
-                                bgColor: contentType == "COUNT" ? "red.200" : "gray.500",
-                                color: "gray.100"
-                            }}
+                            bgColor={getBgColor(i.scheduleId, value?.scheduleId, selectedSchedules, allowedWeekDays, index)}
+                            // _hover={{
+                            //     bgColor: contentType == "COUNT" ? "red.200" : "gray.500",
+                            //     color: "gray.100"
+                            // }}
                             fontWeight={isToday(year, month, i.day) ? "bold" : undefined}
                             fontSize={isToday(year, month, i.day) ? 14 : 12}
                             textAlign={"center"}
                             cursor={"pointer"}
-                            onClick={() => handler(i)}
-                            borderRadius={"100%"}
+                            onClick={() => handler(i, index)}
+                            borderRadius={"md"}
                             h="36px"
                             w="36px"
                             alignItems={"center"}

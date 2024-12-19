@@ -1,7 +1,7 @@
 "use client"
 
 import { Carousel } from "@/components/Carousel/Carousel";
-import { ServiceDto, ServiceGroupDto } from "@/services/client";
+import { PromoServiceDto, ServiceDto, ServiceGroupDto } from "@/services/client";
 import { promosClient, serviceGroupClient } from "@/services/services";
 import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, AspectRatio, Box, Button, Container, Flex, Grid, GridItem, Image, Link, Spinner, Text } from "@chakra-ui/react";
 import { useFormContext } from "react-hook-form";
@@ -12,9 +12,10 @@ type PriceListProps = {
     items?: ServiceGroupDto[]
     onClick?: (value: ServiceDto) => void
     viewTitle?: boolean
+    promoServices?: PromoServiceDto[]
 }
 
-export const PriceList = ({items, onClick, viewTitle = true}: PriceListProps) => {
+export const PriceList = ({items, onClick, viewTitle = true, promoServices}: PriceListProps) => {
     if(!items)
         <Spinner textAlign={"center"}/>
 
@@ -67,7 +68,11 @@ export const PriceList = ({items, onClick, viewTitle = true}: PriceListProps) =>
                                     </Text>
                                     <Flex>
                                         <Text>
-                                            {s.price}р
+                                            {
+                                                !!promoServices?.find(i => i.serviceId == s.id)
+                                                    ? promoServices?.find(i => i.serviceId == s.id)?.discount
+                                                    : s.price
+                                            }р
                                         </Text>
                                         {
                                             s.bonusCount > 0 && <Box

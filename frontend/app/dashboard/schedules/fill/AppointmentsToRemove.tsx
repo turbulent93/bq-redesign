@@ -20,7 +20,7 @@ export const AppointmentsToRemove = ({data}: AppointmentsToRemoveProps) => {
     const {data: appointments, isLoading} = useQuery(
         ["get statistic", schedulerValue?.scheduleId],
         () => appointmentsClient.get({
-                employeeId: user?.employee?.id!,
+                employeeId: user?.id!,
                 scheduleId: schedulerValue?.scheduleId, page: undefined, size: undefined
             }), {
                 enabled: !!data && !!schedulerValue?.scheduleId

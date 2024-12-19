@@ -96,7 +96,7 @@ namespace BqApi.Services.ScheduleService
             return items;
         }
 
-        public async Task<List<ScheduleTimeDto>> GetAvailableTime(int scheduleId, int duration, TimeOnly? startAt = null)
+        public async Task<List<ScheduleTimeDto>> GetAvailableTime(int scheduleId, int duration, TimeOnly? startAt = null, TimeOnly? endAt = null)
         {
             var schedule = await _context
                     .Schedule
@@ -108,7 +108,7 @@ namespace BqApi.Services.ScheduleService
             var items = new List<ScheduleTimeDto>();
 
             var curTime = startAt ?? schedule.StartAt;
-            var endTime = schedule.EndAt;
+            var endTime = endAt ?? schedule.EndAt;
 
             for (; curTime.Hour * 60 + curTime.Minute < endTime.Hour * 60 + endTime.Minute;)
             {

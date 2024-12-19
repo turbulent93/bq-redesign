@@ -32,14 +32,6 @@ export const PromoServiceForm = ({isOpen, onClose, values, items, setItems, curr
         }
     )
 
-    useEffect(() => {
-        console.log(items)
-    }, [items])
-
-    // onClose={() => {
-    //     setCurrentService()
-    //     onClose()
-    // }}
     return <CustomModal
         isOpen={isOpen}
         onClose={() => {

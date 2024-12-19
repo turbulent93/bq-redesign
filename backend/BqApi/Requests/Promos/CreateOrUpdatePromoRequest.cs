@@ -51,22 +51,23 @@ namespace BeautyQueenApi.Requests.Promos
                 }
                 else
                 {
-
                     var isStartDateCorrect = DateOnly.TryParseExact(request.StartDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly startDate);
                     var isEndDateCorrect = DateOnly.TryParseExact(request.EndDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly endDate);
 
+                    var isStartAtCorrect = TimeOnly.TryParseExact(request.StartDate, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly startAt);
+                    var isEndAtCorrect = TimeOnly.TryParseExact(request.EndDate, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly endAt);
+
                     item = new(request.Title,
                         request.Description,
-                        isStartDateCorrect
-                            ? startDate
-                            : null,
-                        isEndDateCorrect
-                            ? endDate
-                            : null,
+                        isStartDateCorrect ? startDate : null,
+                        isEndDateCorrect ? endDate : null,
                         request.BonusCount,
                         request.Type,
                         request.ImageId,
-                        request.ShowOnHomePage);
+                        request.ShowOnHomePage,
+                        isStartAtCorrect ? startAt : null,
+                        isEndAtCorrect ? endAt : null,
+                        request.AllowedWeekDays);
 
                     _context.Promo.Add(item);
 

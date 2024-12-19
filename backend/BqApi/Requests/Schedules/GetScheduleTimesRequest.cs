@@ -11,6 +11,8 @@ namespace BeautyQueenApi.Requests.Schedules
     public class GetScheduleTimesRequest : IRequest<List<ScheduleTimeDto>> {
         public int ScheduleId { get; set; }
         public int Duration { get; set; }
+        public TimeOnly? StartAt { get; set; }
+        public TimeOnly? EndAt { get; set; }
 
         public class Handler(IScheduleService scheduleService)
                 : IRequestHandler<GetScheduleTimesRequest, List<ScheduleTimeDto>> {
@@ -20,7 +22,7 @@ namespace BeautyQueenApi.Requests.Schedules
                 GetScheduleTimesRequest request, CancellationToken cancellationToken
             ) {
                 
-                return await _scheduleService.GetAvailableTime(request.ScheduleId, request.Duration);
+                return await _scheduleService.GetAvailableTime(request.ScheduleId, request.Duration, request.StartAt, request.EndAt);
             }
         }
     }

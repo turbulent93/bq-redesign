@@ -87,7 +87,7 @@ export default function Sidebar() {
                 <Link href="/dashboard/profile">
                     <Flex>
                         <Avatar
-                            src={`${SERVER_URL}/${user?.employee?.file?.path}`}
+                            src={`${SERVER_URL}/${user?.avatar?.path}`}
                             w="40px"
                             h="40px"
                         />
@@ -96,7 +96,7 @@ export default function Sidebar() {
                                 as="h3"
                                 fontSize={"15px"}
                                 whiteSpace={"nowrap"}
-                            >{user?.employee?.fullName || user?.login}</Heading>
+                            >{user?.fullName || user?.login}</Heading>
                             <Text
                                 color="gray"
                                 fontSize={"12px"}

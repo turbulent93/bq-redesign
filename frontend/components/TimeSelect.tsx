@@ -39,7 +39,11 @@ export const TimeSelect = ({label, name, defaultValue}: TimeSelectProps) => {
     }
 
     const setHour = (value: string, hoursToAdd: number) => {
-        return moment(value, TIME_FORMAT).set("hour", hoursToAdd).format(TIME_FORMAT)
+        const m = !!value ? moment(value, TIME_FORMAT) : moment().set("minutes", 0)
+
+        return m
+            .set("hour", hoursToAdd)
+            .format(TIME_FORMAT)
     }
 
     const getMinutes = (value: string) => {
@@ -48,22 +52,25 @@ export const TimeSelect = ({label, name, defaultValue}: TimeSelectProps) => {
         return minutes.find(i => i.value == (minute == 0 ? "00" : String(minute)))
     }
 
-    const setMinutes = (value: string, minutesToAdd: number) => {
-        return moment(value, TIME_FORMAT).set("minutes", minutesToAdd).format(TIME_FORMAT)
+    const setMinutes = (value?: string, minutesToAdd?: number) => {
+        const m = !!value ? moment(value, TIME_FORMAT) : moment()
+
+        return m.set("minutes", minutesToAdd!).format(TIME_FORMAT)
     }
 
     return <>
-        <Text mb="8px">{label}</Text>
+        <Text mb={1}>{label}</Text>
         <Controller
             name={name}
             control={control}
-            defaultValue={defaultValue}
-            render={({field}) => <Flex w="300px" gap={2} alignItems={"center"} mb={1}>
+            // defaultValue={defaultValue}
+            render={({field}) => <Flex w="300px" gap={2} alignItems={"center"} mb={3}>
                 <Select
                     options={hours}
                     value={getHour(field.value)}
                     onChange={(value) => field.onChange(setHour(field.value, Number(value?.value)))}
                     useBasicStyles
+                    placeholder="Часы"
                 />
                 :
                 <Select
@@ -71,6 +78,7 @@ export const TimeSelect = ({label, name, defaultValue}: TimeSelectProps) => {
                     value={getMinutes(field.value)}
                     onChange={(value) => field.onChange(setMinutes(field.value, Number(value?.value)))}
                     useBasicStyles
+                    placeholder="Минуты"
                 />
             </Flex>}
         />

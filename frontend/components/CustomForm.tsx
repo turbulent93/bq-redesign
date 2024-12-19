@@ -8,6 +8,7 @@ type FormProps = {
     children: React.ReactNode,
     onSubmit: (value: any) => void,
     values?: Record<string, any>,
+    defaultValues?: Record<string, any>
     submitText?: string
     submitW?: string
     isSubmitVisible?: boolean
@@ -17,12 +18,18 @@ type FormProps = {
     px?: number
 }
 
-export const CustomForm = ({onSubmit, children, values, buttons, submitText, maxW, isSubmitVisible = true, my = 0, submitW, px}: FormProps) => {
+export const CustomForm = ({onSubmit, children, values, buttons, submitText, maxW, isSubmitVisible = true, my = 0, submitW, px, defaultValues}: FormProps) => {
     const methods = useForm()
 
     useEffect(() => {
-        methods.reset(values)
+        methods.reset(values ? values : defaultValues)
     }, [values])
+
+    // const v = methods.watch()
+
+    // useEffect(() => {
+    //     console.log(v)
+    // }, [v])
 
     return <Container maxW={maxW ?? "600px"} my={my ?? 4} px={px}>
         <FormProvider {...methods}>

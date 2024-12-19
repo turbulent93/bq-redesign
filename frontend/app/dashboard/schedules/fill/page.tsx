@@ -64,7 +64,7 @@ export default function Page() {
 
         return schedulesClient.fill({
             ...item,
-            employeeId: user?.employee?.id!,
+            employeeId: user?.id!,
             startDate: startDate?.date!,
             endDate: endDate?.date!,
             removeApplications: removeApplications ? isConfirmed : false

@@ -15,6 +15,7 @@ namespace BeautyQueenApi.Requests.Users
         public bool? WithUpcomingAppointments { get; set; }
         public int? Duration { get; set; }
         public int? ServiceId { get; set; }
+        public int? PromoId { get; set; }
 
         public class Handler(ApplicationDbContext context, IScheduleService scheduleService) : IRequestHandler<GetUsersRequest, PaginationResponse<UserDto>> {
             private readonly ApplicationDbContext _context = context;
@@ -30,6 +31,13 @@ namespace BeautyQueenApi.Requests.Users
                         .Include(i => i.Promos)
                         .Include(i => i.PunchMap)
                         .Include(i => i.ClientAppointments);
+
+                Promo? promo = null;
+
+                if(request.PromoId != null)
+                {
+                    promo = await _context.Promo.FirstOrDefaultAsync(i => i.Id == request.PromoId, cancellationToken);
+                }
 
                 if (request.Role != null)
                 {
@@ -57,7 +65,8 @@ namespace BeautyQueenApi.Requests.Users
                             .Where(i => i.EmployeeId == item.Id
                                 && i.Date.Day >= DateTime.Now.Day
                                 && i.Date.Month >= DateTime.Now.Month
-                                && i.Date.Year >= DateTime.Now.Year)
+                                && i.Date.Year >= DateTime.Now.Year
+                                && (promo == null || promo.AllowedWeekDays!.Contains(i.Date.DayOfWeek == 0 ? "7" : i.Date.DayOfWeek.ToString())))
                             .ToListAsync(cancellationToken);
 
 
@@ -65,7 +74,11 @@ namespace BeautyQueenApi.Requests.Users
                         {
                             TimeOnly? startTime = schedules[i].Date.Equals(dateNow) ? timeNow : null;
 
-                            var at = (await _scheduleService.GetAvailableTime(schedules[i].Id, (int)request.Duration, startTime))
+                            var at = (await _scheduleService.GetAvailableTime(
+                                    schedules[i].Id,
+                                    (int)request.Duration,
+                                    (promo == null || startTime > promo.StartAt) ? startTime : promo.StartAt,
+                                    promo?.EndAt))
                                 .Where(i => i.IsAvailable)
                                 .Select(std => {
                                     TimeOnly.TryParseExact(std.Time, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly time);

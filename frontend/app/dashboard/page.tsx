@@ -17,7 +17,7 @@ export default function Page() {
 
     const {data, isLoading} = useQuery(
         ["get statistic"],
-        () => statisticClient.get({employeeId: user?.employee?.id})
+        () => statisticClient.get({employeeId: user?.id})
     )
 
     if(isLoading)

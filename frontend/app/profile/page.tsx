@@ -18,7 +18,7 @@ import { ClientAppointments } from "./ClientAppointments";
 export default function Page() {
     const {user: data} = useAuth()
 
-    return <Content type={"register"}>
+    return <Content type={"client"}>
         <ProfileHeader />
         <Container>
             {

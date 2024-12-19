@@ -22,6 +22,7 @@ namespace BeautyQueenApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<PromoDto>> View(int id)
         {
             return await _mediator.Send(new ViewPromoRequest { Id = id });

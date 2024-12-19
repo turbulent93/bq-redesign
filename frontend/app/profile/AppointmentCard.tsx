@@ -1,12 +1,10 @@
 import { AppointmentDto } from "@/services/client";
-import { DATE_FORMAT } from "@/utils/constants";
+import { DATE_FORMAT, weekDays } from "@/utils/constants";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import moment from "moment";
 
 
 type AppointmentCardProps = {} & AppointmentDto
-
-const weekDays = ["пн", "вт", "ср", "чт", "пт", "сб", "вс"]
 
 const months = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"]
 

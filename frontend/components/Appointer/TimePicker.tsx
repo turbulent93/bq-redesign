@@ -126,20 +126,26 @@ const TimePickerContent = ({scheduleId, duration, goToServiceStep, goToNext}: Ti
         </Grid>
 }
 
-export const TimePicker = (props: TimePickerProps) => {
-    const {isOpen, onOpen, onClose} = useDisclosure()
+export const TimePicker = (props: TimePickerProps & {isOpen: boolean, onClose: () => void}) => {
+    // const {setValue} = useFormContext()
 
     const {w} = useWindowSize()
 
-    useEffect(() => {
-        if(props.scheduleId) 
-            onOpen()
-    }, [props.scheduleId])
+    // useEffect(() => {
+    //     if(props.scheduleId) 
+    //         onOpen()
+    // }, [props.scheduleId])
+
+    // useEffect(() => {
+    //     if(!isOpen && props.scheduleId) {
+    //         setValue(nameof<AppointmentDto>("scheduleId"), undefined)
+    //     }
+    // }, [isOpen])
 
     if(w && w < 700) {
         return <CustomModal
-            isOpen={isOpen}
-            onClose={onClose}
+            isOpen={props.isOpen}
+            onClose={props.onClose}
         >
             <ModalCloseButton />
             <TimePickerContent {...props} />

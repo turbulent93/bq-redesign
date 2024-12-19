@@ -3372,6 +3372,9 @@ export interface PromoDto {
     type?: string | undefined;
     imageId: number;
     showOnHomePage: boolean;
+    startAt?: string | undefined;
+    endAt?: string | undefined;
+    allowedWeekDays?: string | undefined;
     image?: FileDto | undefined;
     promoServices: PromoServiceDto[];
 }
@@ -3530,6 +3533,8 @@ export interface ScheduleTimeDto {
 export interface GetScheduleTimesRequest {
     scheduleId: number;
     duration: number;
+    startAt?: string | undefined;
+    endAt?: string | undefined;
 }
 
 export interface FillScheduleDto {
@@ -4907,6 +4912,7 @@ export interface GetUsersRequest extends PaginationRequest {
     withUpcomingAppointments?: boolean | undefined;
     duration?: number | undefined;
     serviceId?: number | undefined;
+    promoId?: number | undefined;
 }
 
 export interface CreateOrUpdateUserRequest extends UserDto {

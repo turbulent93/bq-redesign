@@ -28,6 +28,7 @@ export const FormContent = ({onOpen, ...listProps}: FormContent) => {
                 leftIcon={<CiCirclePlus size={24}/>}
                 mb={2}
                 onClick={onOpen}
+                w="100%"
             >Добавить услугу</Button>
             <PromoServicesList
                 {...listProps}

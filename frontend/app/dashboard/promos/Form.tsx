@@ -22,13 +22,15 @@ import { CiCirclePlus } from "react-icons/ci";
 import { FormContent } from "./FormContent"
 import { CustomSwitch } from "@/components/CustomSwitch"
 import { PROMO_TYPES } from "@/utils/constants"
+import { PromoLimits } from "./PromoLimits"
+import { TimeSelect } from "@/components/TimeSelect"
 
 type FormProps = {
     mutate: (item: PromoDto) => void,
     values?: PromoDto
 }
 
-export const Form = ({mutate, values = {type: PROMO_TYPES[0]} as PromoDto}: FormProps) => {
+export const Form = ({mutate, values}: FormProps) => {
     const {isOpen, onOpen, onClose} = useDisclosure()
     const [promoServices, setPromoServices] = useState<PromoServiceDto[]>([])
     const [currentService, setCurrentService] = useState<PromoServiceDto>()
@@ -39,13 +41,17 @@ export const Form = ({mutate, values = {type: PROMO_TYPES[0]} as PromoDto}: Form
     }, [currentService])
 
     useEffect(() => {
-        console.log(values)
-        if(values.promoServices)
+        if(values?.promoServices)
             setPromoServices(values?.promoServices)
     }, [values])
 
     return <>
-        <CustomForm onSubmit={(value) => mutate({...value, promoServices})} values={values}>
+        <CustomForm
+            // onSubmit={(value) => console.log(value)/* mutate({...value, promoServices}) */ }
+            onSubmit={(value) => mutate({...value, promoServices})}
+            values={values}
+            defaultValues={{startAt: "9:00", endAt: "18:00", type: PROMO_TYPES[0]}}
+        >
             <PromoTemplate />
             <FileUpload
                 name={nameof<PromoDto>("imageId")}
@@ -61,14 +67,28 @@ export const Form = ({mutate, values = {type: PROMO_TYPES[0]} as PromoDto}: Form
                 label="Описание"
                 name={nameof<PromoDto>("description")}
             />
-            <FormDateInput
-                label="Дата начала"
-                name={nameof<PromoDto>("startDate")}
-            />
-            <FormDateInput
-                label="Дата окончания"
-                name={nameof<PromoDto>("endDate")}
-            />
+            <Box py={2} borderTop={"1px"} borderBottom={"1px"} borderColor={"gray.300"} mb={3} mt={1}>
+                <Text fontSize={20} color={"gray.700"} mb={4} fontWeight={"bold"}>
+                    Ограничения по применению
+                </Text>
+                <FormDateInput
+                    label="Дата начала"
+                    name={nameof<PromoDto>("startDate")}
+                />
+                <FormDateInput
+                    label="Дата окончания"
+                    name={nameof<PromoDto>("endDate")}
+                    />
+                <PromoLimits />
+                <TimeSelect
+                    name={nameof<PromoDto>("startAt")}
+                    label="Время начала"
+                    />
+                <TimeSelect
+                    name={nameof<PromoDto>("endAt")}
+                    label="Время окончания"
+                />
+            </Box>
             <CustomSelect
                 label="Тип"
                 name={nameof<PromoDto>("type")}
