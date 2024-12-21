@@ -1,8 +1,8 @@
 "use client"
 
-import { Box, Flex, Text } from "@chakra-ui/react"
+import { Box, Button, Flex, Text } from "@chakra-ui/react"
 import { useState } from "react"
-import { IoIosArrowForward } from "react-icons/io"
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io"
 
 const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
 
@@ -15,21 +15,34 @@ type MonthPickerProps = {
 }
 
 export const MonthPicker = ({month, year, decreaseMonth, increaseMonth, print}: MonthPickerProps) => {
-    return <Flex gap={2} alignItems={"center"} cursor="pointer" justifyContent={"space-between"} px={4} mb={4} mr={!print ? "auto" : undefined}>
+    return <Flex
+        gap={2}
+        alignItems={"center"}
+        cursor="pointer"
+        justifyContent={"space-between"}
+        w={print ? "100%" : undefined}
+        mb={4}
+        mr={!print ? "auto" : undefined}
+    >
         {
-            !print && <Box transform={"rotate(180deg)"}>
-                <IoIosArrowForward onClick={decreaseMonth}/>
-            </Box>
+            !print && <Button size="sm" onClick={decreaseMonth}>
+                <Box>
+                    <IoIosArrowBack/>
+
+                </Box>
+            </Button>
         }
-        <Text fontSize={print ? 32 : undefined} w={"100%"} textAlign={"center"}>
+        <Text fontSize={print ? 32 : 18} w={"100%"} textAlign={"center"}>
             {
                 `${months[month - 1]}, ${year}`
             }
         </Text>
         {
-            !print && <Box cursor="pointer">
-                <IoIosArrowForward onClick={increaseMonth}/>
-            </Box>
+            !print && <Button size="sm" onClick={increaseMonth}>
+                <Box>
+                    <IoIosArrowForward />
+                </Box>
+            </Button>
         }
     </Flex>
 }

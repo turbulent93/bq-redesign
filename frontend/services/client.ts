@@ -126,6 +126,61 @@ export class AppointmentsClient {
         return Promise.resolve<AppointmentDto>(null as any);
     }
 
+    update(id: number, request: CreateOrUpdateAppointmentRequest, cancelToken?: CancelToken): Promise<AppointmentDto> {
+        let url_ = this.baseUrl + "/api/appointments/{id}";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined.");
+        url_ = url_.replace("{id}", encodeURIComponent("" + id));
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "PUT",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processUpdate(_response);
+        });
+    }
+
+    protected processUpdate(response: AxiosResponse): Promise<AppointmentDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return Promise.resolve<AppointmentDto>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<AppointmentDto>(null as any);
+    }
+
     remove(id: number, cancelToken?: CancelToken): Promise<AppointmentDto> {
         let url_ = this.baseUrl + "/api/appointments/{id}";
         if (id === undefined || id === null)
@@ -177,7 +232,7 @@ export class AppointmentsClient {
         return Promise.resolve<AppointmentDto>(null as any);
     }
 
-    create(request: CreateAppointmentRequest, cancelToken?: CancelToken): Promise<AppointmentDto> {
+    create(request: CreateOrUpdateAppointmentRequest, cancelToken?: CancelToken): Promise<AppointmentDto> {
         let url_ = this.baseUrl + "/api/appointments";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -1219,6 +1274,58 @@ export class SchedulesClient {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
         }
         return Promise.resolve<ScheduleTimeDto[]>(null as any);
+    }
+
+    getPeriods(request: GetSchedulePriodsRequest, cancelToken?: CancelToken): Promise<SchedulePeriodDto[]> {
+        let url_ = this.baseUrl + "/api/schedules/periods/get";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(request);
+
+        let options_: AxiosRequestConfig = {
+            data: content_,
+            method: "POST",
+            url: url_,
+            headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processGetPeriods(_response);
+        });
+    }
+
+    protected processGetPeriods(response: AxiosResponse): Promise<SchedulePeriodDto[]> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return Promise.resolve<SchedulePeriodDto[]>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<SchedulePeriodDto[]>(null as any);
     }
 
     view(id: number, cancelToken?: CancelToken): Promise<ScheduleDto> {
@@ -3261,6 +3368,58 @@ export class UsersClient {
         return Promise.resolve<UserDto>(null as any);
     }
 
+    viewByPhone(phone: string | undefined, cancelToken?: CancelToken): Promise<UserDto> {
+        let url_ = this.baseUrl + "/api/users/by-phone?";
+        if (phone === null)
+            throw new Error("The parameter 'phone' cannot be null.");
+        else if (phone !== undefined)
+            url_ += "phone=" + encodeURIComponent("" + phone) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_: AxiosRequestConfig = {
+            method: "GET",
+            url: url_,
+            headers: {
+                "Accept": "application/json"
+            },
+            cancelToken
+        };
+
+        return this.instance.request(options_).catch((_error: any) => {
+            if (isAxiosError(_error) && _error.response) {
+                return _error.response;
+            } else {
+                throw _error;
+            }
+        }).then((_response: AxiosResponse) => {
+            return this.processViewByPhone(_response);
+        });
+    }
+
+    protected processViewByPhone(response: AxiosResponse): Promise<UserDto> {
+        const status = response.status;
+        let _headers: any = {};
+        if (response.headers && typeof response.headers === "object") {
+            for (const k in response.headers) {
+                if (response.headers.hasOwnProperty(k)) {
+                    _headers[k] = response.headers[k];
+                }
+            }
+        }
+        if (status === 200) {
+            const _responseText = response.data;
+            let result200: any = null;
+            let resultData200  = _responseText;
+            result200 = JSON.parse(resultData200);
+            return Promise.resolve<UserDto>(result200);
+
+        } else if (status !== 200 && status !== 204) {
+            const _responseText = response.data;
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+        }
+        return Promise.resolve<UserDto>(null as any);
+    }
+
     partialUpdate(id: number, request: PartialUpdateUserRequest, cancelToken?: CancelToken): Promise<UserDto> {
         let url_ = this.baseUrl + "/api/users/partial/{id}";
         if (id === undefined || id === null)
@@ -3511,7 +3670,7 @@ export interface GetAppointmentRequest extends PaginationRequest {
     scheduleId?: number | undefined;
 }
 
-export interface CreateAppointmentRequest extends AppointmentDto {
+export interface CreateOrUpdateAppointmentRequest extends AppointmentDto {
 }
 
 export interface PaginationResponseOfGalleryDto {
@@ -3546,6 +3705,7 @@ export interface PaginationResponseOfPromoDto {
 export interface GetPromoRequest extends PaginationRequest {
     showOnHomePage?: boolean | undefined;
     onlyCurrent?: boolean | undefined;
+    type?: string | undefined;
 }
 
 export interface CreateOrUpdatePromoRequest extends PromoDto {
@@ -3582,6 +3742,9 @@ export interface GetSchedulesRequest {
     month?: number | undefined;
     duration?: number | undefined;
     contentType: string;
+    startAt?: string | undefined;
+    endAt?: string | undefined;
+    allowedWeekdays?: string | undefined;
 }
 
 export interface ScheduleTimeDto {
@@ -3594,6 +3757,17 @@ export interface GetScheduleTimesRequest {
     duration: number;
     startAt?: string | undefined;
     endAt?: string | undefined;
+}
+
+export interface SchedulePeriodDto {
+    startAt?: string | undefined;
+    endAt?: string | undefined;
+    appointment?: AppointmentDto | undefined;
+}
+
+export interface GetSchedulePriodsRequest {
+    scheduleId: number;
+    excludedId?: number | undefined;
 }
 
 export interface FillScheduleDto {

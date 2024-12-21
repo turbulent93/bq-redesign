@@ -64,8 +64,9 @@ export const TimeSelect = ({label, name, defaultValue}: TimeSelectProps) => {
             name={name}
             control={control}
             // defaultValue={defaultValue}
-            render={({field}) => <Flex w="300px" gap={2} alignItems={"center"} mb={3}>
+            render={({field}) => <Flex gap={2} alignItems={"center"} mb={3}>
                 <Select
+                    className="w-32"
                     options={hours}
                     value={getHour(field.value)}
                     onChange={(value) => field.onChange(setHour(field.value, Number(value?.value)))}
@@ -74,6 +75,7 @@ export const TimeSelect = ({label, name, defaultValue}: TimeSelectProps) => {
                 />
                 :
                 <Select
+                    className="w-32"
                     options={minutes}
                     value={getMinutes(field.value)}
                     onChange={(value) => field.onChange(setMinutes(field.value, Number(value?.value)))}

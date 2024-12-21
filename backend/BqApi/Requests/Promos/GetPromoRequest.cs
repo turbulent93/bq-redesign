@@ -10,6 +10,7 @@ namespace BeautyQueenApi.Requests.Promos
     public class GetPromoRequest : PaginationRequest, IRequest<PaginationResponse<PromoDto>> {
         public bool? ShowOnHomePage { get; set; }
         public bool? OnlyCurrent { get; set; }
+        public string? Type { get; set; }
 
         public class Handler(ApplicationDbContext context) : IRequestHandler<GetPromoRequest, PaginationResponse<PromoDto>> {
             private readonly ApplicationDbContext _context = context;
@@ -25,6 +26,12 @@ namespace BeautyQueenApi.Requests.Promos
                 {
                     items = items.
                         Where(i => i.ShowOnHomePage);
+                }
+
+                if (request.Type != null)
+                {
+                    items = items.
+                        Where(i => i.Type == request.Type);
                 }
 
                 if (request.OnlyCurrent == true)

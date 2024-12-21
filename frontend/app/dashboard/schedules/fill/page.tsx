@@ -21,6 +21,7 @@ import { useFormContext } from "react-hook-form"
 import { useAuth } from "@/utils/useAuth"
 import { ADMIN_ROLE_NAME, DATE_FORMAT, MASTER_ROLE_NAME } from "@/utils/constants"
 import { EmployeeFilter } from "@/components/EmployeeFilter"
+import { FormDateInput } from "@/components/FormDateInput"
 
 const fillTypes = [
     {
@@ -44,11 +45,7 @@ export default function Page() {
     const endWorkTime = "18:00"
 
     const queryClient = useQueryClient()
-    const curDate = moment()
     const router = useRouter()
-
-    const [startDate, setStartDate] = useState<SchedulerValue | undefined>({date: curDate.format(DATE_FORMAT)})
-    const [endDate, setEndDate] = useState<SchedulerValue | undefined>({date: curDate.endOf("month").format(DATE_FORMAT)})
     const [removeApplications, setRemoveApplications] = useState(false)
     const [isConfirmed, setIsConfirmed] = useState(false)
 
@@ -67,8 +64,6 @@ export default function Page() {
         return schedulesClient.fill({
             ...item,
             employeeId: user?.role == MASTER_ROLE_NAME ? user?.id! : userId!,
-            startDate: startDate?.date!,
-            endDate: endDate?.date!,
             removeApplications: removeApplications ? isConfirmed : false
         })
     }, {
@@ -95,7 +90,9 @@ export default function Page() {
             weekendDays: 2,
             workDays: 2,
             startAt: user?.startWorkTime || "9:00",
-            endAt: user?.endWorkTime || "18:00"
+            endAt: user?.endWorkTime || "18:00",
+            startDate: moment().format(DATE_FORMAT),
+            endDate: moment().endOf("month").format(DATE_FORMAT)
         }}
         my={2}
     >
@@ -105,7 +102,7 @@ export default function Page() {
                 setUserId={setUserId}
             />
         }
-        <DateInput
+        {/* <DateInput
             label="Дата начала"
             value={startDate}
             onChange={setStartDate}
@@ -116,6 +113,14 @@ export default function Page() {
             value={endDate}
             onChange={setEndDate}
             // disabled={fillType != "DEFAULT"}
+        /> */}
+        <FormDateInput
+            label="Дата начала"
+            name={nameof<FillScheduleDto>("startDate")}
+        />
+        <FormDateInput
+            label="Дата окончания"
+            name={nameof<FillScheduleDto>("endDate")}
         />
         <DayCountInput />
         {/* <Divider border={"1px"} borderColor={"gray.200"} my={2}/> */}

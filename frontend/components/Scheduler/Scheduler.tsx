@@ -1,9 +1,11 @@
 'use client'
 
-import { Flex } from "@chakra-ui/react"
+import { Box, Button, Flex } from "@chakra-ui/react"
 import { MonthPicker } from "./MonthPicker"
 import { DatePicker } from "./DatePicker"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { BsArrowDown } from "react-icons/bs"
+import { IoIosArrowDown } from "react-icons/io"
 
 export type SchedulerValue = {
     date?: string
@@ -22,11 +24,15 @@ export type SchedulerProps = {
     userId?: number
     allowedWeekDays?: string
     print?: boolean
+    collapsed?: boolean
+    startAt?: string
+    endAt?: string
 }
 
 export const Scheduler = ({isMonthPickerVisible = true, ...props}: SchedulerProps) => {
     const [month, setMonth] = useState(new Date().getMonth() + 1)
     const [year, setYear] = useState(new Date().getFullYear())
+    const [isCollapsed, setIsCollapsed] = useState(props.collapsed)
 
     const decreaseMonth = () => {
         if(month == 1) {
@@ -53,21 +59,31 @@ export const Scheduler = ({isMonthPickerVisible = true, ...props}: SchedulerProp
         userSelect={"none"}
         mt={4}
     >
-        {
-            isMonthPickerVisible && <MonthPicker
-                month={month}
-                year={year}
-                decreaseMonth={decreaseMonth}
-                increaseMonth={increaseMonth}
-                print={props.print}
-            />
-        }
+        <Flex justifyContent={"space-between"} w="100%">
+            {
+                isMonthPickerVisible && <MonthPicker
+                    month={month}
+                    year={year}
+                    decreaseMonth={decreaseMonth}
+                    increaseMonth={increaseMonth}
+                    print={props.print}
+                />
+            }
+            {
+                !props.print && <Button size="sm" onClick={() => setIsCollapsed(!isCollapsed)}>
+                    <Box transform={!isCollapsed ? "rotate(180deg)" : undefined}>
+                        <IoIosArrowDown />
+                    </Box>
+                </Button>
+            }
+        </Flex>
         <DatePicker
             month={month}
             year={year}
             decreaseMonth={decreaseMonth}
             increaseMonth={increaseMonth}
             {...props}
+            collapsed={isCollapsed}
         />
     </Flex>
 }

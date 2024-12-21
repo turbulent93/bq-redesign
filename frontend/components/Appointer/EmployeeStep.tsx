@@ -38,7 +38,7 @@ const getUpcomingDate = (items: UpcomigAppointment[]) => {
 }
 
 export default function EmployeeStep({goToNext, goBack, goToPhone, duration, promoId}: EmployeeStepProps) {
-    const {setValue, watch} = useFormContext()
+    const {setValue, watch, reset, getValues} = useFormContext()
 
     const serviceId = watch(nameof<AppointmentDto>("serviceId"))
 
@@ -151,7 +151,7 @@ export default function EmployeeStep({goToNext, goBack, goToPhone, duration, pro
                         // leftIcon={<AiOutlineSchedule size={20} />}
                         // ml={2}
                         onClick={() => {
-                            setValue(nameof<AppointmentDto>("employeeId"), i.id)
+                            reset({...getValues(), [nameof<AppointmentDto>("employeeId")]: i.id})
                             goToNext()
                         }}
                     >

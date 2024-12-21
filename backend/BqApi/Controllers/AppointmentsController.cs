@@ -33,8 +33,15 @@ namespace BeautyQueenApi.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<AppointmentDto>> Create(CreateAppointmentRequest request)
+        public async Task<ActionResult<AppointmentDto>> Create(CreateOrUpdateAppointmentRequest request)
         {
+            return await _mediator.Send(request);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<AppointmentDto>> Update(int id, CreateOrUpdateAppointmentRequest request)
+        {
+            request.Id = id;
             return await _mediator.Send(request);
         }
 

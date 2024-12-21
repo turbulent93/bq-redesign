@@ -1,4 +1,5 @@
 ﻿using BeautyQueenApi.Requests.Schedules;
+using BqApi.Requests.Schedules;
 using BqApi.Services.ScheduleService;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -29,6 +30,13 @@ namespace BeautyQueenApi.Controllers
         [HttpPost("times/get")]
         [AllowAnonymous]
         public async Task<ActionResult<List<ScheduleTimeDto>>> GetTimes(GetScheduleTimesRequest request)
+        {
+            return await _mediator.Send(request);
+        }
+
+        [HttpPost("periods/get")]
+        [AllowAnonymous]
+        public async Task<ActionResult<List<SchedulePeriodDto>>> GetPeriods(GetSchedulePriodsRequest request)
         {
             return await _mediator.Send(request);
         }

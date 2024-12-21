@@ -1,6 +1,7 @@
 ﻿using BeautyQueenApi.Requests.Appointments;
 using BqApi.Models.Audit;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace BeautyQueenApi.Models
 {
@@ -22,5 +23,20 @@ namespace BeautyQueenApi.Models
         public Service Service { get; set; } = null!;
         public User Client { get; set; } = null!;
         public Promo Promo { get; set; } = null!;
+
+        public void Update(AppointmentDto request, int clientId)
+        {
+            TimeOnly.TryParseExact(request.StartAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly startAt);
+            TimeOnly.TryParseExact(request.EndAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly endAt);
+
+            StartAt = startAt;
+            EndAt = endAt;
+            EmployeeId = request.EmployeeId;
+            ScheduleId = request.ScheduleId;
+            ServiceId = request.ServiceId;
+            ClientId = clientId;
+            PaidWithBonuses = (int)request.PaidWithBonuses!;
+            PromoId = request.PromoId;
+        }
     }
 }

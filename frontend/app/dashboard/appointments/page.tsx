@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { AppointmentsActivity } from "./AppointmentsActivity";
 import { DateInput } from "@/components/DateInput";
-import { SchedulerValue } from "@/components/Scheduler/Scheduler";
+import { Scheduler, SchedulerValue } from "@/components/Scheduler/Scheduler";
 import { useAuth } from "@/utils/useAuth";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { DashboardNavigation } from "@/components/DashboardNavigation";
@@ -69,13 +69,13 @@ export default function Page() {
     const [userId, setUserId] = useState<number | undefined>()
     const [schedulerValue, setSchedulerValue] = useState<SchedulerValue>()
 
-    const {} = useQuery(
-        ["get nearest schedule", user?.role == MASTER_ROLE_NAME ? !!user?.id : !!userId],
-        () => schedulesClient.nearest({employeeId: user?.role == MASTER_ROLE_NAME ? user?.id! : userId!}), {
-            enabled: user?.role == MASTER_ROLE_NAME ? !!user?.id : !!userId,
-            onSuccess: (data) => setSchedulerValue(data ? {date: data.date, scheduleId: data.id} : undefined)
-        }
-    )
+    // const {} = useQuery(
+    //     ["get nearest schedule", user?.role == MASTER_ROLE_NAME ? !!user?.id : !!userId],
+    //     () => schedulesClient.nearest({employeeId: user?.role == MASTER_ROLE_NAME ? user?.id! : userId!}), {
+    //         enabled: user?.role == MASTER_ROLE_NAME ? !!user?.id : !!userId,
+    //         onSuccess: (data) => setSchedulerValue(data ? {date: data.date, scheduleId: data.id} : undefined)
+    //     }
+    // )
 
     const [tab, setTab] = useState<number>()
 
@@ -122,15 +122,21 @@ export default function Page() {
                 userId={userId}
                 setUserId={setUserId}
             />
-            <DateInput value={schedulerValue} onChange={setSchedulerValue}/>
+            <Scheduler
+                value={schedulerValue}
+                onChange={setSchedulerValue}
+                contentType="COUNT"
+                collapsed
+                isDatePick
+            />
             <Tabs tabIndex={tab} onChange={setTab}>
                 <TabList>
                     <Tab>Календарь</Tab>
                     <Tab>Таблица</Tab>
                 </TabList>
                 <TabPanels>
-                <TabPanel overflowX={"scroll"} px={0}>
-                    <AppointmentsActivity data={data?.list} />
+                <TabPanel px={0}>
+                    <AppointmentsActivity data={data?.list} collapsed={abbreviatedTable}/>
                 </TabPanel>
                 <TabPanel>
                     <CustomTable

@@ -25,6 +25,11 @@ namespace BeautyQueenApi.Controllers
         {
             return await _mediator.Send(new ViewUserRequest { Id = id });
         }
+        [HttpGet("by-phone")]
+        public async Task<ActionResult<UserDto>> ViewByPhone(string phone)
+        {
+            return await _mediator.Send(new ViewByPhoneUserRequest { Phone = phone });
+        }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<UserDto>> Update(int id, CreateOrUpdateUserRequest request)

@@ -30,7 +30,8 @@ namespace BeautyQueenApi.Requests.Appointments
                     .Appointment
                     .Where(i => i.EmployeeId == request.EmployeeId)
                     .Include(i => i.Service)
-                    .Include(i => i.Schedule);
+                    .Include(i => i.Schedule)
+                    .Include(i => i.Client);
 
                 if(request.ScheduleId != null)
                 {

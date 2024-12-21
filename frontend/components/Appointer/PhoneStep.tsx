@@ -47,7 +47,7 @@ export const PhoneStep = ({promoId, phone}: {promoId?: number, phone?: string}) 
     [service, bonusCount])
 
     useEffect(() => {
-        console.log(formPhone, formPhone.length)
+        // console.log(formPhone, formPhone.length)
         if(formPhone && formPhone.length == 16) {
             mutate({login: formPhone})
         }

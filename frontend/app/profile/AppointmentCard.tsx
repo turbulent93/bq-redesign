@@ -1,14 +1,61 @@
-import { AppointmentDto } from "@/services/client";
+import { AppointmentDto, ScheduleDto, ServiceDto, UserDto } from "@/services/client";
+import { promosClient, schedulesClient, servicesClient } from "@/services/services";
 import { DATE_FORMAT, weekDays } from "@/utils/constants";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import moment from "moment";
+import { useMemo } from "react";
+import { useQuery } from "react-query";
 
 
-type AppointmentCardProps = {} & AppointmentDto
+type AppointmentCardProps = {
+    id?: number | undefined;
+    employeeId?: number;
+    scheduleId?: number;
+    serviceId?: number;
+    startAt?: string;
+    endAt?: string;
+    phone?: string;
+    paidWithBonuses?: number | undefined;
+    promoId?: number | undefined;
+    inviterId?: number | undefined;
+    employee?: UserDto | undefined;
+    schedule?: ScheduleDto | undefined;
+    service?: ServiceDto | undefined;
+}
 
 const months = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"]
 
 export const AppointmentCard = (props: AppointmentCardProps) => {
+    const {data: schedule} = useQuery(
+        ["view schedule", props.scheduleId],
+        () => schedulesClient.view(props.scheduleId!), {
+            enabled: !!props.scheduleId && !props.schedule
+        }
+    )
+
+    const {data: service} = useQuery(
+        ["view service", props.serviceId],
+        () => servicesClient.view(props.serviceId!), {
+            enabled: !!props.serviceId && !props.service
+        }
+    )
+
+    const {data: promo} = useQuery(
+        ["view promo", props.promoId],
+        () => promosClient.view(props.promoId!), {
+            enabled: !!props.promoId
+        }
+    )
+
+    const date = useMemo(() => schedule || props.schedule
+        ? moment(schedule
+            ? schedule?.date
+            : props.schedule?.date, DATE_FORMAT) 
+        : moment(),
+    [schedule])
+
+    const s = useMemo(() => props.service ? props.service : service, [props.service, service])
+
     return <Box
         borderRadius={"md"}
         p={3}
@@ -50,50 +97,67 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
                     textTransform={"uppercase"}
                 >
                     {
-                        weekDays[moment(props.schedule?.date, DATE_FORMAT).day() - 1]
+                        weekDays[date.day() - 1]
                     }
                 </Text>
                 <Text
                     textAlign={"center"}
+                    whiteSpace={"nowrap"}
                 >
                     {
-                        moment(props.schedule?.date, DATE_FORMAT).date()
+                        date.date()
                         + " "
-                        + months[moment(props.schedule?.date, DATE_FORMAT).month()]
+                        + months[date.month()]
                     },
                 </Text>
                 <Text
                     textAlign={"center"}
                 >
                     {
-                        moment(props.schedule?.date, DATE_FORMAT).year()
+                        date.year()
                     }
                 </Text>
             </Box>
             <Box>
                 <Text
+                    fontWeight={"bold"}
                     fontSize={24}
                     mb={1}
                 >
                     {
-                        props.service?.name
+                        s?.name || "Услуга"
                     }
                 </Text>
                 <Text
-                    fontWeight={"bold"}
+                    // fontWeight={"bold"}
                     fontSize={12}
                     mb={1}
                 >
                     {
-                        `${props.startAt} - ${props.endAt}`
+                        `${props?.startAt || "10:00"} - ${props?.endAt || "10:30"}`
                     }
                 </Text>
                 <Text
                     color={"gray.700"}
-                    fontSize={16}
+                    fontSize={18}
                     mb={1}
                 >
-                    {props.service?.price}р
+                    {
+                        s && (promo || props.paidWithBonuses)
+                            ? <Flex textTransform={"uppercase"}>
+                                <Text mr={1} textDecor={"line-through"}>
+                                    {
+                                        s?.price
+                                    }р
+                                </Text>
+                                {
+                                    promo
+                                        ? promo.promoServices.find(i => i.serviceId == s?.id)?.discount
+                                        : s?.price - (props.paidWithBonuses || 0)
+                                }р
+                            </Flex>
+                            : `${s?.price || 500}Р`
+                    }
                 </Text>
             </Box>
         </Flex>

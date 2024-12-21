@@ -16,8 +16,11 @@ namespace BeautyQueenApi.Requests.Appointments
             public async Task<AppointmentDto> Handle(
                 ViewAppointmentRequest request, CancellationToken cancellationToken
             ) {
-                var item = await _context.Appointment.FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken)
-                    ?? throw new Exception(ErrorMessages.APPOINTMENT_ERROR);
+                var item = await _context
+                    .Appointment
+                    .Include(i => i.Client)
+                    .FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken)
+                        ?? throw new Exception(ErrorMessages.APPOINTMENT_ERROR);
 
                 return item.Adapt<AppointmentDto>();
             }

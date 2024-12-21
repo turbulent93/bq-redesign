@@ -3,6 +3,7 @@ using BeautyQueenApi.Models;
 using BeautyQueenApi.Requests.Appointments;
 using BeautyQueenApi.Requests.Schedules;
 using BqApi.Constants;
+using BqApi.Requests.Schedules;
 using Mapster;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -67,18 +68,21 @@ namespace BqApi.Services.ScheduleService
                             .Appointment
                             .FirstOrDefaultAsync(i => i.ScheduleId == curSchedule!.Id);
 
-                        if(request.RemoveApplications)
-                        {
-
-                        }
-
-                        if(appointment == null || !request.RemoveApplications)
-                        {
-                            _context.Schedule.Remove(curSchedule);
-                        } else if(appointment != null && request.RemoveApplications)
+                        if (appointment != null)
                         {
                             items.Add(curSchedule.Id);
+                        } else
+                        {
+                            _context.Schedule.Remove(curSchedule);
                         }
+
+                        //if(appointment == null || !request.RemoveApplications)
+                        //{
+                        //    _context.Schedule.Remove(curSchedule);
+                        //} else if(appointment != null && request.RemoveApplications)
+                        //{
+                        //    items.Add(curSchedule.Id);
+                        //}
 
                         //if (appointment != null)
                         //{
@@ -109,6 +113,76 @@ namespace BqApi.Services.ScheduleService
             return items;
         }
 
+        public async Task<List<SchedulePeriodDto>> GetAvailablePeriods(int scheduleId, int? excludedId)
+        {
+            var schedule = await _context
+                    .Schedule
+                    .FirstOrDefaultAsync((i) => i.Id == scheduleId)
+                        ?? throw new Exception(ErrorMessages.SCHEDULE_ERROR);
+
+            var appointments = await _context
+                .Appointment
+                .Include(i => i.Service)
+                .Where(i => i.ScheduleId == scheduleId && (excludedId == null || i.Id != excludedId))
+                .OrderBy(i => i.StartAt)
+                .ToListAsync();
+
+            var periods = new List<SchedulePeriodDto>();
+
+            for (int i = 0; i < appointments.Count; i++)
+            {
+                if (appointments[i].EndAt <= schedule.StartAt || appointments[i].StartAt >= schedule.EndAt)
+                {
+                    break;
+                }
+
+                if(appointments[i].StartAt > schedule.StartAt)
+                {
+                    if(i == 0)
+                    {
+                        periods.Add(new SchedulePeriodDto()
+                        {
+                            StartAt = schedule.StartAt.ToString(),
+                            EndAt = appointments[i].StartAt.ToString()
+                        });
+                    } else
+                    {
+                        periods.Add(new SchedulePeriodDto()
+                        {
+                            StartAt = appointments[i - 1].EndAt.ToString(),
+                            EndAt = appointments[i].StartAt.ToString()
+                        });
+                    }
+                }
+
+                periods.Add(new SchedulePeriodDto()
+                {
+                    StartAt = appointments[i].StartAt < schedule.StartAt ? schedule.StartAt.ToString() : appointments[i].StartAt.ToString(),
+                    EndAt = appointments[i].EndAt > schedule.EndAt ? schedule.EndAt.ToString() : appointments[i].EndAt.ToString(),
+                    Appointment = appointments[i].Adapt<AppointmentDto>()
+                });
+
+                if(i == appointments.Count - 1)
+                {
+                    periods.Add(new SchedulePeriodDto()
+                    {
+                        StartAt = appointments[i].EndAt > schedule.StartAt ? appointments[i].EndAt.ToString() : schedule.StartAt.ToString(),
+                        EndAt = schedule.EndAt.ToString()
+                    });
+                }
+            }
+
+            if (appointments.Count == 0 || periods.Count == 0)
+            {
+                return [new SchedulePeriodDto {
+                    StartAt = schedule.StartAt.ToString(),
+                    EndAt = schedule.EndAt.ToString(),
+                }];
+            }
+
+            return periods;
+        }
+
         public async Task<List<ScheduleTimeDto>> GetAvailableTime(int scheduleId, int duration, TimeOnly? startAt = null, TimeOnly? endAt = null)
         {
             var schedule = await _context
@@ -120,8 +194,8 @@ namespace BqApi.Services.ScheduleService
 
             var items = new List<ScheduleTimeDto>();
 
-            var curTime = startAt ?? schedule.StartAt;
-            var endTime = endAt ?? schedule.EndAt;
+            TimeOnly curTime = startAt != null ? (TimeOnly)startAt : schedule.StartAt;
+            TimeOnly endTime = endAt != null ? (TimeOnly)endAt: schedule.EndAt;
 
             for (; curTime.Hour * 60 + curTime.Minute < endTime.Hour * 60 + endTime.Minute;)
             {
@@ -164,9 +238,9 @@ namespace BqApi.Services.ScheduleService
             return items;
         }
 
-        private async Task<string?> GetAvailableTimeCount(int scheduleId, int duration)
+        private async Task<string?> GetAvailableTimeCount(int scheduleId, int duration, TimeOnly? startAt = null, TimeOnly? endAt = null)
         {
-            var count = (await GetAvailableTime(scheduleId, duration)).Count(i => i.IsAvailable);
+            var count = (await GetAvailableTime(scheduleId, duration, startAt, endAt)).Count(i => i.IsAvailable);
 
             if (count > 0)
             {
@@ -229,13 +303,13 @@ namespace BqApi.Services.ScheduleService
             return $"{schedule.StartAt.Hour} - {schedule.EndAt.Hour}";
         }
 
-        public async Task<string?> GetContent(string contentType, int? scheduleId, int? duration)
+        public async Task<string?> GetContent(string contentType, int? scheduleId, int? duration, TimeOnly? startAt = null, TimeOnly? endAt = null)
         {
             if (scheduleId == null) return null;
 
             if(contentType == "SLOTS" && duration != null)
             {
-                return await GetAvailableTimeCount((int)scheduleId, (int)duration);
+                return await GetAvailableTimeCount((int)scheduleId, (int)duration, startAt, endAt);
             } else if(contentType == "COUNT")
             {
                 return await GetAppointmentsCount((int)scheduleId);

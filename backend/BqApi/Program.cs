@@ -69,7 +69,8 @@ var config = TypeAdapterConfig.GlobalSettings;
 config.Scan(Assembly.GetExecutingAssembly());
 
 config.NewConfig<Appointment, AppointmentDto>()
-    .Map(dest => dest.Schedule!.Date, src => src.Schedule.Date.ToString("dd.MM.yyyy"));
+    .Map(dest => dest.Schedule!.Date, src => src.Schedule.Date.ToString("dd.MM.yyyy"))
+    .Map(dest => dest.Phone, src => src.Client.Login);
 
 
 config.NewConfig<User, UserDto>()

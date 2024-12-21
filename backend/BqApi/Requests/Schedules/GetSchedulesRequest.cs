@@ -5,7 +5,9 @@ using BeautyQueenApi.Services.TokenService;
 using BqApi.Services.ScheduleService;
 using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace BeautyQueenApi.Requests.Schedules
 {
@@ -25,6 +27,9 @@ namespace BeautyQueenApi.Requests.Schedules
         public int? Month { get; set; }
         public int? Duration { get; set; }
         public string ContentType { get; set; } = null!;
+        public string? StartAt { get; set; }
+        public string? EndAt { get; set; }
+        public string? AllowedWeekdays { get; set; }
 
         public class Handler(ApplicationDbContext context, IScheduleService scheduleService)
                 : IRequestHandler<GetSchedulesRequest, List<ScheduleDayDto>> {
@@ -34,6 +39,9 @@ namespace BeautyQueenApi.Requests.Schedules
             public async Task<List<ScheduleDayDto>> Handle(
                 GetSchedulesRequest request, CancellationToken cancellationToken
             ) {
+                TimeOnly.TryParseExact(request.StartAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly startAt);
+                TimeOnly.TryParseExact(request.EndAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly endAt);
+
                 var days = new List<ScheduleDayDto>();
 
                 var currentDate = new DateTime((int)request.Year!, (int)request.Month!, 1);
@@ -50,7 +58,7 @@ namespace BeautyQueenApi.Requests.Schedules
 
                 var curDate = new DateOnly(
                     currentDate.Year,
-                    currentDate.Month - (weekdayOfFirstDay != 1 ? 1 : 0),
+                    currentDate.Month - (weekdayOfFirstDay != 1 ? 1 : 0) == 0 ? 12 : currentDate.Month - (weekdayOfFirstDay != 1 ? 1 : 0),
                     weekdayOfFirstDay != 1 ? startDay : 1
                 );
 
@@ -63,6 +71,7 @@ namespace BeautyQueenApi.Requests.Schedules
                             .FirstOrDefaultAsync(i => i.Date.Year == curDate.Year
                                 && i.Date.Month == curDate.Month
                                 && i.Date.Day == curDate.Day
+                                && (request.ContentType != "SLOTS" || i.Date.Day >= DateTime.Now.Day)
                                 && (request.EmployeeId == null || i.EmployeeId == request.EmployeeId), cancellationToken);
 
                         //int count = 0;
@@ -79,8 +88,13 @@ namespace BeautyQueenApi.Requests.Schedules
                             ScheduleId = item?.Id,
                             StartAt = item?.StartAt.ToString(),
                             EndAt = item?.EndAt.ToString(),
-                            Content = await _scheduleService.GetContent(request.ContentType, item?.Id, request.Duration)
-                    });
+                            Content = await _scheduleService.GetContent(
+                                request.ContentType,
+                                item?.Id,
+                                request.Duration,
+                                request.StartAt != null ? startAt : null,
+                                request.EndAt != null ? endAt : null)
+                        });
                         curDate = curDate.AddDays(1);
                     }
                 }
@@ -92,6 +106,7 @@ namespace BeautyQueenApi.Requests.Schedules
                             .FirstOrDefaultAsync(i => i.Date.Year == curDate.Year
                                 && i.Date.Month == curDate.Month
                                 && i.Date.Day == curDate.Day
+                                && (request.ContentType != "SLOTS" || i.Date.Day >= DateTime.Now.Day)
                                 && (request.EmployeeId == null || i.EmployeeId == request.EmployeeId), cancellationToken);
 
                     //var count = 0;
@@ -108,7 +123,12 @@ namespace BeautyQueenApi.Requests.Schedules
                         ScheduleId = item?.Id,
                         StartAt = item?.StartAt.ToString(),
                         EndAt = item?.EndAt.ToString(),
-                        Content = await _scheduleService.GetContent(request.ContentType, item?.Id, request.Duration)
+                        Content = await _scheduleService.GetContent(
+                                request.ContentType,
+                                item?.Id,
+                                request.Duration,
+                                request.StartAt != null ? startAt : null,
+                                request.EndAt != null ? endAt : null)
                     });
                     curDate = curDate.AddDays(1);
                 }
@@ -120,6 +140,7 @@ namespace BeautyQueenApi.Requests.Schedules
                             .FirstOrDefaultAsync(i => i.Date.Year == curDate.Year
                                 && i.Date.Month == curDate.Month
                                 && i.Date.Day == curDate.Day
+                                && (request.ContentType != "SLOTS" || i.Date.Day >= DateTime.Now.Day)
                                 && (request.EmployeeId == null || i.EmployeeId == request.EmployeeId), cancellationToken);
 
                     //int count = 0;
@@ -136,7 +157,12 @@ namespace BeautyQueenApi.Requests.Schedules
                         ScheduleId = item?.Id,
                         StartAt = item?.StartAt.ToString(),
                         EndAt = item?.EndAt.ToString(),
-                        Content = await _scheduleService.GetContent(request.ContentType, item?.Id, request.Duration)
+                        Content = await _scheduleService.GetContent(
+                                request.ContentType,
+                                item?.Id,
+                                request.Duration,
+                                request.StartAt != null ? startAt : null,
+                                request.EndAt != null ? endAt : null)
                     });
                     curDate = curDate.AddDays(1);
                 }

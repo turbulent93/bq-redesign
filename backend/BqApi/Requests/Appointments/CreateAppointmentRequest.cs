@@ -8,18 +8,18 @@ using System.Globalization;
 
 namespace BeautyQueenApi.Requests.Appointments
 {
-    public class CreateAppointmentRequest : AppointmentDto, IRequest<AppointmentDto> {
+    public class CreateOrUpdateAppointmentRequest : AppointmentDto, IRequest<AppointmentDto> {
         public class Handler(ApplicationDbContext context)
-                : IRequestHandler<CreateAppointmentRequest, AppointmentDto> {
+                : IRequestHandler<CreateOrUpdateAppointmentRequest, AppointmentDto> {
             private readonly ApplicationDbContext _context = context;
 
             public async Task<AppointmentDto> Handle(
-                CreateAppointmentRequest request, CancellationToken cancellationToken
+                CreateOrUpdateAppointmentRequest request, CancellationToken cancellationToken
             ) {
                 var user = await _context
-                    .User
-                    .Include(i => i.Promos)
-                    .FirstOrDefaultAsync(i => i.Login == request.Phone, cancellationToken);
+                        .User
+                        .Include(i => i.Promos)
+                        .FirstOrDefaultAsync(i => i.Login == request.Phone, cancellationToken);
 
                 if (user == null)
                 {
@@ -41,52 +41,65 @@ namespace BeautyQueenApi.Requests.Appointments
                     await _context.SaveChangesAsync(cancellationToken);
                 }
 
-                TimeOnly.TryParseExact(request.StartAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly startAt);
-                TimeOnly.TryParseExact(request.EndAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly endAt);
+                Appointment? item;
 
-                Appointment? item = new(user.Id,
-                    startAt,
-                    endAt,
-                    request.EmployeeId,
-                    request.ScheduleId,
-                    request.ServiceId,
-                    request.PaidWithBonuses != null ? (int)request.PaidWithBonuses : 0,
-                    request.PromoId);
-
-                _context.Appointment.Add(item);
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-
-                if(request.PromoId != null)
+                if(request.Id != null)
                 {
-                    var promo = await _context.Promo.FirstOrDefaultAsync(i => i.Id == request.PromoId, cancellationToken)
-                        ?? throw new Exception(ErrorMessages.PROMO_ERROR);
+                    item = await _context.Appointment.FirstOrDefaultAsync(i => i.Id == request.Id, cancellationToken)
+                        ?? throw new Exception(ErrorMessages.APPOINTMENT_ERROR);
 
-                    if(user.Promos.Contains(promo))
+
+                    item.Update(request, user.Id);
+                } else
+                {
+                    TimeOnly.TryParseExact(request.StartAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly startAt);
+                    TimeOnly.TryParseExact(request.EndAt, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out TimeOnly endAt);
+
+                    item = new(user.Id,
+                        startAt,
+                        endAt,
+                        request.EmployeeId,
+                        request.ScheduleId,
+                        request.ServiceId,
+                        request.PaidWithBonuses != null ? (int)request.PaidWithBonuses : 0,
+                        request.PromoId);
+
+                    _context.Appointment.Add(item);
+
+                    await _context.SaveChangesAsync(cancellationToken);
+
+
+                    if (request.PromoId != null)
                     {
-                        throw new Exception("Эта акция уже была использована");
-                    } else
-                    {
-                        user.Promos.Add(promo);
+                        var promo = await _context.Promo.FirstOrDefaultAsync(i => i.Id == request.PromoId, cancellationToken)
+                            ?? throw new Exception(ErrorMessages.PROMO_ERROR);
+
+                        if (user.Promos.Contains(promo))
+                        {
+                            throw new Exception("Эта акция уже была использована");
+                        }
+                        else
+                        {
+                            user.Promos.Add(promo);
+                        }
                     }
-                }
 
-                user.AddStep();
+                    user.AddStep();
 
-                user.ClientAppointments.Add(item);
+                    user.ClientAppointments.Add(item);
 
-                if(request.InviterId != null && user.Id != request.InviterId)
-                {
-                    var inviter = await _context
-                        .User
-                        .Include(i => i.InvitedUsers)
-                        .FirstOrDefaultAsync(i => i.Id == request.InviterId, cancellationToken)
-                            ?? throw new Exception(ErrorMessages.USER_ERROR);
-
-                    if(!inviter.InvitedUsers.Contains(user))
+                    if (request.InviterId != null && user.Id != request.InviterId)
                     {
-                        inviter.InvitedUsers.Add(user);
+                        var inviter = await _context
+                            .User
+                            .Include(i => i.InvitedUsers)
+                            .FirstOrDefaultAsync(i => i.Id == request.InviterId, cancellationToken)
+                                ?? throw new Exception(ErrorMessages.USER_ERROR);
+
+                        if (!inviter.InvitedUsers.Contains(user))
+                        {
+                            inviter.InvitedUsers.Add(user);
+                        }
                     }
                 }
 

@@ -24,6 +24,17 @@ export const AppointerContent = ({index, goToNext, setActiveStep, promoId, phone
         reset({...getValues(), [nameof<AppointmentDto>("inviterId")]: inviterId})
     }, [inviterId])
 
+    useEffect(() => {
+        // if(!promoId)
+        reset({
+            ...getValues(),
+            [nameof<AppointmentDto>("scheduleId")]: undefined,
+            [nameof<AppointmentDto>("startAt")]: undefined,
+            [nameof<AppointmentDto>("endAt")]: undefined,
+            [nameof<AppointmentDto>("paidWithBonuses")]: 0,
+        })
+    }, [promoId])
+
     if(index == 1) {
         return <ServiceStep
             goToNext={goToNext}

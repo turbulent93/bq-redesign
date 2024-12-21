@@ -1,29 +1,46 @@
-import { Box, FormErrorMessage, Input, InputGroup, InputLeftElement, InputRightElement, Text, Textarea } from "@chakra-ui/react"
-import { useFormContext } from "react-hook-form"
-import { DateInput } from "./DateInput"
-import { useEffect } from "react"
-import { DATE_FORMAT } from "@/utils/constants"
-import moment from "moment"
+import { Box, Text } from "@chakra-ui/react"
+import { Controller, useFormContext } from "react-hook-form"
+import { Scheduler, SchedulerValue } from "./Scheduler/Scheduler"
+import { useState } from "react"
+import { useQuery } from "react-query"
+import { servicesClient } from "@/services/services"
 
 type CustomInputProps = {
     label: string
     name: string
     required?: boolean
+    type?: "date" | "schedule"
 }
 
-export const FormDateInput = ({label, name, required}: CustomInputProps) => {
-    const {formState: {errors}, setValue, watch, reset, getValues} = useFormContext()
+export const FormDateInput = ({label, name, required, type = "date"}: CustomInputProps) => {
+    const {formState: {errors}, control, watch} = useFormContext()
 
-    // useEffect(() => {
-    //     reset({...getValues(), [name]: moment().format(DATE_FORMAT)})
-    // }, [])
+    const [schedulerValue, setSchedulerValue] = useState<SchedulerValue>()
 
     return <>
         <Text mb='8px'>{label}</Text>
-        <Box className={!errors[name] ? "mb-3" : "mb-1"}>
-            <DateInput
-                value={{date: watch(name) || ""}}
-                onChange={(value) => setValue(name, value?.date)}
+        <Box mb={3}>
+            <Controller
+                    control={control}
+                    name={name}
+                    rules={required ? {required: "*Обязательное поле"} : undefined}
+                    render={({field}) => <Scheduler
+                        value={{
+                            ...schedulerValue,
+                            [type == "date" ? "date" : "scheduleId"]: field.value
+                        }}
+                        onChange={(v) => {
+                            console.log(v)
+                            setSchedulerValue(v)
+                            if(type == "date") {
+                                field.onChange(v.date)
+                            } else {
+                                field.onChange(v.scheduleId)
+                            }
+                        }}
+                        contentType="WORK_TIME"
+                        collapsed
+                    />}
             />
         </Box>
         {

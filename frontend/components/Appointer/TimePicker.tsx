@@ -34,14 +34,16 @@ type TimePickerProps = {
     duration?: number
     goToServiceStep: () => void
     goToNext: () => void
+    startAt?: string
+    endAt?: string
 }
 
 const END_WORK_HOUR = 17
 
-const TimePickerContent = ({scheduleId, duration, goToServiceStep, goToNext}: TimePickerProps) => {
+const TimePickerContent = ({scheduleId, duration, goToServiceStep, goToNext, startAt, endAt}: TimePickerProps) => {
     const {data, isLoading} = useQuery(
         ["get schedule times", scheduleId, duration],
-        () => schedulesClient.getTimes({scheduleId: scheduleId!, duration: duration!}), {
+        () => schedulesClient.getTimes({scheduleId: scheduleId!, duration: duration!, startAt, endAt}), {
         enabled: !!scheduleId && !!duration
     })
 

@@ -2,10 +2,10 @@
 
 import { ScheduleDayDto, ScheduleTimeDto } from "@/services/client"
 import { schedulesClient } from "@/services/services"
-import { Box, Flex, Grid, GridItem, Modal, ModalCloseButton, ModalContent, ModalOverlay, Spinner, Text, useDisclosure, useToast } from "@chakra-ui/react"
+import { Box, Flex, Grid, GridItem, Modal, ModalCloseButton, ModalContent, ModalOverlay, scroll, Spinner, Text, useDisclosure, useToast } from "@chakra-ui/react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
-import moment, { isMoment } from "moment"
-import { useEffect, useState } from "react"
+import moment, { isMoment, weekdays } from "moment"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { SchedulerProps } from "./Scheduler"
 import { useAuth } from "@/utils/useAuth"
 import { useSchedulesQuery } from "./useSchedulesQuery"
@@ -33,23 +33,24 @@ const isTodayOrAfter = (year: number, month: number, day: number) => {
 const getTextColor = (
     year: number,
     month: number,
-    day: number,
-    scheduleId?: number,
+    i: ScheduleDayDto,
     selectedScheduleId?: number,
     print?: boolean
 ) => {
-    if(isToday(year, month, day) && !print)
+    if(isToday(year, month, i.day) && !print)
         return "blue.100"
 
-    if(scheduleId) {
-        if(scheduleId == selectedScheduleId) {
+    if(i.scheduleId) {
+        if(i.scheduleId == selectedScheduleId) {
             return "gray.100"
         } else {
-            return "gray.600"
+            return "gray.700"
         }
-    } else {
+    }
+    if(i.isCurrentMonth) {
         return "gray.400"
     }
+    return "gray.200"
 }
 
 const checkAwType = (aw?: string, index?: number) => {
@@ -64,7 +65,7 @@ const checkAwType = (aw?: string, index?: number) => {
 
 // const isAllowedWeekday = (aw?: string, index?: number) => checkAwType(aw, index) || !aw || aw?.includes(String((index! % 7) + 1))
 
-const isAllowedWeekday = (aw?: string, index?: number) => checkAwType(aw, index) || (aw && aw?.includes(String((index! % 7) + 1)))
+const isAllowedWeekday = (aw?: string, index?: number) => !aw || (checkAwType(aw, index) || (aw?.includes(String((index! % 7) + 1))))
 
 const getBgColor = (
     scheduleId?: number,
@@ -100,7 +101,10 @@ export const DatePicker = ({
     userId,
     selectFirst,
     allowedWeekDays,
-    print
+    print,
+    collapsed,
+    startAt,
+    endAt
 }: DatePickerProps) => {
     const queryClient = useQueryClient()
     
@@ -110,13 +114,29 @@ export const DatePicker = ({
 
     // const [selectedDate, setSelectedDate] = useState<number | undefined>()
 
-    const {data, isLoading} = useSchedulesQuery({month, year, employeeId: userId, duration, contentType})
+    const {data, isLoading} = useSchedulesQuery({
+        month,
+        year,
+        employeeId: userId,
+        duration,
+        contentType,
+        startAt,
+        endAt,
+        select: collapsed ? (data) => data.filter(i => i.isCurrentMonth) : undefined 
+    })
+
+    // const {data: nearest} = useQuery(
+    //     ["get nearest schedule", userId],
+    //     () => schedulesClient.nearest({employeeId: userId!}), {
+    //         enabled: !!userId && contentType == "SLOTS"
+    //     }
+    // )
 
     const {mutate: createMutate} = useMutation((day: number) => schedulesClient.create({
         date: moment(new Date(year, month - 1, day)).format(DATE_FORMAT),
         employeeId: userId!,
-        startAt: "10:00",
-        endAt: "18:00"
+        startAt: user?.startWorkTime || "10:00",
+        endAt: user?.endWorkTime || "18:00"
     }), {
         onSuccess: () => {
             queryClient.invalidateQueries(["get schedules"])
@@ -130,116 +150,242 @@ export const DatePicker = ({
     }
     
     const handler = (item: ScheduleDayDto, index: number) => {
-        if(!item.isCurrentMonth || isAllowedWeekday(allowedWeekDays, index)) return
+        if(!item.isCurrentMonth || !isAllowedWeekday(allowedWeekDays, collapsed ? (index + fdwd) % 7 : index % 7)) return
 
         if(isDatePick) {
-            console.log("adsad")
             onChangeHandler(item.day, item.scheduleId)
             return
         }
 
         if(!item.scheduleId) {
-            if(isTodayOrAfter(year, month, item.day)) {
-                createMutate(item.day)
-            } else {
-                toast({
-                    title: "Нельзя создать день для записи раньше чем сегодня",
-                    isClosable: true,
-                    status: "error",
-                    position: "top"
-                })
-            }
+            createMutate(item.day)
+            // if(isTodayOrAfter(year, month, item.day)) {
+            //     createMutate(item.day)
+            // } else {
+            //     toast({
+            //         title: "Нельзя создать день для записи раньше чем сегодня",
+            //         isClosable: true,
+            //         status: "error",
+            //         position: "top"
+            //     })
+            // }
         } else {
             onChangeHandler(item.day, item.scheduleId)
         }
     }
+
+    
+
+    const fdwd = useMemo(() => {
+        const weekday = moment().set({year, month: month - 1, date: 1}).weekday()
+
+        return (weekday == 0 ? 7 : weekday) - 1
+    }, [month, year])
+
+    const scrollToRef = useRef<HTMLDivElement>(null)
+
+    const nearest = useMemo(() => data?.find(i => i.isCurrentMonth
+        && i.scheduleId
+        && (!allowedWeekDays
+            || allowedWeekDays.includes(String(moment({year, month: month - 1, date: i.day}).weekday())))),
+    [data, allowedWeekDays])
+
+    const str = useMemo(() => value?.date
+        ? moment(value.date, DATE_FORMAT).date()
+        : contentType == "SLOTS" && nearest
+            ? nearest.day
+            : moment().month() == month - 1 && moment().year() == year
+                ? moment().date()
+                : 1,
+    [month, year, nearest, value?.date])
+
+    useEffect(() => {
+        console.log(value)
+    }, [value])
+
+    // const isNearest = (day: number) => {
+    //     if(!nearest) return
+        
+    //     const n = moment(nearest.date, DATE_FORMAT)
+
+    //     return n.month() == month - 1
+    //         && n.year() == year
+    //         && n.date() == day
+    // }
+
+    // const isScrollRef = (day: number, index: number, si?: number) => {
+    //     console.log(day, !!scrollToRef.current)
+    //     if(!!scrollToRef.current) return false
+        
+    //     if(contentType != "SLOTS") return isToday(year, month, day)
+
+    //     if(allowedWeekDays && isAllowedWeekday(allowedWeekDays, collapsed ? (index + fdwd) % 7 : index % 7) && !!si) {
+    //         console.log(day, !!scrollToRef.current)
+    //         return true
+    //     }
+
+    //     return false
+    // }
+
+    useEffect(() => {
+        if(!collapsed) return
+
+        // console.log(scrollToRef.current)
+
+        const timeout = setTimeout(() => scrollToRef.current?.scrollIntoView({
+            block: "center",
+            behavior: "smooth",
+            inline: "center"
+        }), 1000)
+        console.log("scroll", !!scrollToRef.current)
+
+        return () => clearTimeout(timeout)
+    }, [str, collapsed])
+
+    const isSelected = (si?: number) => !!si && si == value?.scheduleId 
 
     if(isLoading)
         return  <Flex w="100%" justifyContent={"center"} alignItems="center" my={4}>
             <Spinner />
         </Flex>
 
-    // if(isAppointment && data && !data.find(i => i.isCurrentMonth && i.content)) {
-    //     return <Flex
-    //         w="100%"
-    //         justifyContent={"center"}
-    //         alignItems="center"
-    //         cursor={"pointer"}
-    //         gap={2}
-    //         textColor={"gray.600"}
-    //     >
-    //         Нет доступного времени в этом месяце
-    //     </Flex>
-    // }
-
     return <>
         <Grid
-            templateColumns={"repeat(7, 1fr)"}
-            templateRows={"repeat(7, 1fr)"}
+            templateColumns={!collapsed ? "repeat(7, 1fr)" : `repeat(${data?.length}, 60px)`}
+            templateRows={!collapsed ? "repeat(7, 1fr)" : "repeat(1, 1fr)"}
             w="100%"
-            gap={2}
+            columnGap={1}
+            rowGap={!collapsed ? 1 : undefined}
+            overflowX={collapsed ? "scroll" : undefined}
         >
             {
-                weekDays.map((i, index) => <GridItem
-                    w="100%"
-                    p={2}
-                    textAlign={"center"}
-                    textTransform={"uppercase"}
-                    fontWeight={"bold"}
-                    fontSize={print ? 24 : isAllowedWeekday(allowedWeekDays, index) ? 16 : 12}
-                    textColor={"gray.500"}
+                !collapsed && weekDays.map((i, index) => <GridItem
                     key={i}
-                    opacity={isAllowedWeekday(allowedWeekDays, index) ? "0.7" : undefined}
-                >{i}</GridItem>)
+                    textTransform={"uppercase"}
+                    color={"gray.500"}
+                    textAlign={"center"}
+                    display={"flex"}
+                    alignItems={"center"}
+                    justifyContent={"center"}
+                    fontSize={print ? 24 : 18}
+                >
+                    <Flex
+                        borderRadius={"md"}
+                        bgColor={allowedWeekDays && isAllowedWeekday(allowedWeekDays, index) ? "gray.100" : undefined}
+                        alignItems={"center"}
+                        justifyContent={collapsed ? "start" : "center"}
+                        w={!collapsed ? "40px" : "60px"}
+                        h={!collapsed ? "40px" : "100%"}
+                    >
+                        {
+                            i
+                        }
+                    </Flex>
+                </GridItem>)
             }
             {
-                data?.map((i, index) => <GridItem key={index} w="100%">
+                data?.map((i, index) => <GridItem
+                    key={index}
+                    display={"flex"}
+                    alignItems={"center"}
+                    justifyContent={"start"}
+                    flexDir={"column"}
+                >
                     <Flex
-                        w="100%"
-                        h={print ? "90px" : "60px"}
-                        py={1}
+                        ref={
+                            str == i.day ? scrollToRef : undefined
+                        }
                         flexDir={"column"}
                         alignItems={"center"}
-                        // opacity={
-                        //     !i.isCurrentMonth
-                        //     || checkAwType(allowedWeekDays, index)
-                        //     || !allowedWeekDays
-                        //     || allowedWeekDays?.includes(String((index! % 7) + 1))
-                        //         ? "0.5"
-                        //         : undefined
-                        // }
+                        justifyContent={collapsed ? "start" : "center"}
+                        w={!collapsed ? "40px" : "60px"}
+                        h={!collapsed ? "40px" : "100%"}
+                        bgColor={
+                            !!i.scheduleId && i.scheduleId == value?.scheduleId 
+                                ? "gray.700" 
+                                : allowedWeekDays && isAllowedWeekday(allowedWeekDays, collapsed ? (index + fdwd) % 7 : index % 7) && !!i.scheduleId
+                                    ? "gray.200"
+                                    : isToday(year, month, i.day)
+                                        ? "gray.100"
+                                        : undefined
+                        }
+                        // bgGradient={isSelected(i.day) ? 'linear(to-br, gray.700, red.500)' : undefined}
+    
+                        borderTopRadius={"md"}
+                        borderBottomRadius={!collapsed ? "md" : undefined}
+                        color={isSelected(i.scheduleId) ? "white" : "gray.700"}
+                        onClick={() => handler(i, index)}
+                        opacity={
+                            !i.isCurrentMonth
+                                ? "0.3"
+                                : !i.scheduleId || !isAllowedWeekday(allowedWeekDays, collapsed ? (index + fdwd) % 7 : index % 7) 
+                                    ? "0.6"
+                                    : undefined
+                        }
+                        // border={isToday(year, month, i.day) ? "1px" : undefined}
+                        py={collapsed ? 1 : undefined}
                     >
-                        <Flex
-                            textColor={getTextColor(year, month, i.day, i.scheduleId, value?.scheduleId, print)}
-                            bgColor={getBgColor(i.scheduleId, value?.scheduleId, selectedSchedules, allowedWeekDays, index)}
-                            // _hover={{
-                            //     bgColor: contentType == "COUNT" ? "red.200" : "gray.500",
-                            //     color: "gray.100"
-                            // }}
-                            fontWeight={isToday(year, month, i.day) && !print ? "bold" : undefined}
-                            fontSize={print ? 24 : isToday(year, month, i.day) ? 14 : 12}
-                            textAlign={"center"}
-                            cursor={"pointer"}
-                            onClick={() => handler(i, index)}
-                            borderRadius={"md"}
-                            h="36px"
-                            w="36px"
-                            alignItems={"center"}
-                            justifyContent={"center"}
+                        <Text
+                            fontSize={print ? 24 : collapsed ? 20 : 18}
+                            fontWeight={"bold"}
                         >
                             {i.day}
-                        </Flex>
+                            {
+                                // i.isNearest ? "n" : "d"
+                            }
+                        </Text>
                         {
-                            i.scheduleId && <Text color="red.300" fontSize={print ? 20 : 10} fontWeight="bold" whiteSpace={"nowrap"}>
+                            collapsed && <Text>
+                                {weekDays[(index + fdwd) % 7]}
+                            </Text>
+                        }
+                        {
+                            collapsed && <Text
+                                // h={"20px"}
+                                color={
+                                    isSelected(i.scheduleId)
+                                        ? "white"
+                                        : collapsed && isAllowedWeekday(allowedWeekDays, collapsed ? (index + fdwd) % 7 : index % 7)
+                                            ? "gray.700"
+                                            : "red.300"
+                                }
+                                fontSize={print ? 20 : 10}
+                                fontWeight="bold"
+                                whiteSpace={"nowrap"}
+                            >
                                 {
-                                    selectedSchedules
+                                    // i.scheduleId && "3 места"
+                                }
+                                {
+                                    i.scheduleId && selectedSchedules
                                         ? selectedSchedules.includes(i.scheduleId) && i.content
                                         : i.content
                                 }
+                                {/* 3 slots */}
                             </Text>
                         }
                     </Flex>
-                    
+                    {
+                        !collapsed && <Text
+                            // h={"20px"}
+                            color={!isAllowedWeekday(allowedWeekDays, collapsed ? (index + fdwd) % 7 : index % 7)
+                                ? "red.100"
+                                : "red.300"}
+                            fontSize={print ? 20 : 10}
+                            fontWeight="bold"
+                            whiteSpace={"nowrap"}
+                        >
+                            {
+                                // i.scheduleId && "3 места"
+                            }
+                            {
+                                i.scheduleId && selectedSchedules
+                                    ? selectedSchedules.includes(i.scheduleId) && i.content
+                                    : i.content
+                            }
+                            {/* 3 slots */}
+                        </Text>
+                    }
                 </GridItem>)
             }
         </Grid>
