@@ -1,6 +1,7 @@
 ﻿using BeautyQueenApi.Requests.Specializations;
 using BeautyQueenApi.Requests.Users;
 using BqApi.Models;
+using BqApi.Models.Audit;
 using BqApi.Requests.Users;
 using BqApi.Services.UploadService;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,7 @@ namespace BeautyQueenApi.Models
         int? inviterId = null,
         int? invitePromoId = null,
         string? startWorkTime = null,
-        string? endWorkTime = null)
+        string? endWorkTime = null) : TrackedEntity
     {
         [Key]
         public int Id { get; set; }
@@ -64,6 +65,11 @@ namespace BeautyQueenApi.Models
             InviterId = request.InviterId;
             StartWorkTime = request.StartWorkTime;
             EndWorkTime = request.EndWorkTime;
+        }
+
+        public void UpdatePassword(string password)
+        {
+            Password = password;
         }
 
         public void AddStep()

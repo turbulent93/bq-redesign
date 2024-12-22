@@ -19,11 +19,11 @@ export type RouteType = {
 }
 
 export const routes: RouteType[] = [
-    // {
-    //     title: "Главная",
-    //     href: "/dashboard/home",
-    //     Icon: IoMdHome
-    // },
+    {
+        title: "Главная",
+        href: "/dashboard",
+        Icon: IoMdHome
+    },
     {
         title: "Пользователи",
         href: "/dashboard/users",

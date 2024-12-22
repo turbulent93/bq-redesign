@@ -199,10 +199,6 @@ export const DatePicker = ({
                 : 1,
     [month, year, nearest, value?.date])
 
-    useEffect(() => {
-        console.log(value)
-    }, [value])
-
     // const isNearest = (day: number) => {
     //     if(!nearest) return
         
@@ -233,14 +229,13 @@ export const DatePicker = ({
         // console.log(scrollToRef.current)
 
         const timeout = setTimeout(() => scrollToRef.current?.scrollIntoView({
-            block: "center",
+            block: "nearest",
             behavior: "smooth",
             inline: "center"
         }), 1000)
-        console.log("scroll", !!scrollToRef.current)
 
         return () => clearTimeout(timeout)
-    }, [str, collapsed])
+    }, [str, collapsed, data])
 
     const isSelected = (si?: number) => !!si && si == value?.scheduleId 
 

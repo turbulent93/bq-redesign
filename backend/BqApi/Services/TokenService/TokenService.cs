@@ -78,21 +78,27 @@ namespace BeautyQueenApi.Services.TokenService
             User? user = _context.User
                 .FirstOrDefault(x => x.Login == request.Login);
 
-            if(user != null)
+            if(user != null && user.Password != null)
             {
                 throw new Exception("Номер телефона занят");
             }
 
-            user = new User(
-                request.Login,
-                BCrypt.Net.BCrypt.HashPassword(request.Password),
-                RoleNames.CLIENT_ROLE_NAME,
-                request.PunchMapId,
-                null,
-                null,
-                null);
+            if(user == null)
+            {
+                user = new User(
+                    request.Login,
+                    BCrypt.Net.BCrypt.HashPassword(request.Password),
+                    RoleNames.CLIENT_ROLE_NAME,
+                    request.PunchMapId,
+                    null,
+                    null,
+                    null);
 
-            _context.User.Add(user);
+                _context.User.Add(user);
+            } else
+            {
+                user.UpdatePassword(BCrypt.Net.BCrypt.HashPassword(request.Password));
+            }
 
             await _context.SaveChangesAsync();
 

@@ -28,8 +28,7 @@ export const useSchedulesQuery = ({month, year, employeeId, duration, contentTyp
         }), {
             refetchInterval: false,
             onSuccess,
-            select,
-            enabled: !!employeeId
+            select
         })
 
     return {

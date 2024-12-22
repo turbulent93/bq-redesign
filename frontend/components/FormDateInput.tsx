@@ -10,9 +10,10 @@ type CustomInputProps = {
     name: string
     required?: boolean
     type?: "date" | "schedule"
+    userId?: number
 }
 
-export const FormDateInput = ({label, name, required, type = "date"}: CustomInputProps) => {
+export const FormDateInput = ({label, name, required, type = "date", userId}: CustomInputProps) => {
     const {formState: {errors}, control, watch} = useFormContext()
 
     const [schedulerValue, setSchedulerValue] = useState<SchedulerValue>()
@@ -40,6 +41,7 @@ export const FormDateInput = ({label, name, required, type = "date"}: CustomInpu
                         }}
                         contentType="WORK_TIME"
                         collapsed
+                        userId={userId}
                     />}
             />
         </Box>

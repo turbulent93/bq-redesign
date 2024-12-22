@@ -37,10 +37,10 @@ namespace BeautyQueenApi.Data
         {
             if(_accessor.HttpContext != null)
             {
-                var userId = _accessor.HttpContext!.User.Claims
-                    .Where(c => c.Type == CustomClaimTypes.Id)
-                    .Select(x => x.Value)
-                    .FirstOrDefault()!;
+                //var userId = _accessor.HttpContext!.User.Claims
+                //    .Where(c => c.Type == CustomClaimTypes.Id)
+                //    .Select(x => x.Value)
+                //    .FirstOrDefault()!;
 
                 var changedEntries = ChangeTracker
                     .Entries<ITrackedEntity>()
@@ -48,7 +48,8 @@ namespace BeautyQueenApi.Data
 
                 foreach (var entry in changedEntries)
                 {
-                    entry.Entity.Update(Int32.Parse(userId));
+                    //entry.Entity.Update(Int32.Parse(userId));
+                    entry.Entity.Update(DateTime.Now);
                 }
             }
 

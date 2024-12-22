@@ -32,10 +32,6 @@ export const AvailableTime = () => {
         enabled: !!scheduleId
     })
 
-    useEffect(() => {
-        console.log(scheduleId)
-    }, [scheduleId])
-
     if(isLoading) {
         return <Spinner />
     }
@@ -59,6 +55,7 @@ export const AvailableTime = () => {
                     color={!!i.appointment ? "red.300" : "green.300"}
                     // shadow={!!i.appointment ? "lg" : undefined}
                     borderRadius={"md"}
+                    colSpan={index % 2 == 0 && index == data.length - 1 ? 2 : undefined}
                     // border={!!i.appointment && isInPeriodError(i.startAt!, i.endAt!, startAt, endAt) ? "2px" : undefined} 
                     // borderColor={!!i.appointment ? "red.200" : undefined}
                 >

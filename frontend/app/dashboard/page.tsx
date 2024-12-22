@@ -6,18 +6,29 @@ import { useQuery } from "react-query";
 import { useAuth } from "@/utils/useAuth";
 
 import dynamic from 'next/dynamic'
+import { StatisticBox } from "./StatisticBox";
+import { weekdays } from "moment";
+import { MASTER_ROLE_NAME, weekDays } from "@/utils/constants";
+import { EmployeeFilter } from "@/components/EmployeeFilter";
+import { useState } from "react";
     
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-const colors = ["#ff6f00", "#17A398", "#e0c097", "#002d5b"]
+const red400 = "#f87171"
+const blue400 = "#60a5fa"
+const teal400 = "#2dd4bf"
+const orange400 = "#fb923c"
+
+const colors = [red400, blue400, teal400, orange400]
 const gray600 = "#4A5568"
 
 export default function Page() {
-    const {user} = useAuth()
+    const {user, isAdmin} = useAuth()
+    const [userId, setUserId] = useState<number | undefined>()
 
     const {data, isLoading} = useQuery(
         ["get statistic"],
-        () => statisticClient.get({employeeId: user?.id})
+        () => statisticClient.get({employeeId: user?.role == MASTER_ROLE_NAME ? user?.id! : userId!})
     )
 
     if(isLoading)
@@ -32,37 +43,29 @@ export default function Page() {
     }
 
     const getPercent = (index: number) => {
-        return (data.services.values[index] * 100) / data.services.values.reduce((total, x) => x + total, 0)
+        return ((data.services.values[index] * 100) / data.services.values.reduce((total, x) => x + total, 0)).toFixed(1)
     }
 
     return <Container>
-        <Box
-            bgColor={"gray.100"}
-            borderRadius={5}
-            py={2}
-            px={3}
-            mb={4}
-        >
-            Текущий заработок:
-            <Text fontSize={18} fontWeight={"bold"}>
-                {data.revenueCount} р.
-            </Text>
-        </Box>
-        <Box
-            bgColor={"gray.100"}
-            borderRadius={5}
-            py={1}
-            px={1}
-            mb={4}
-        >
-            <Text
-                fontSize={12}
-                color={"gray.600"}
-                m={2}
-                fontWeight={"bold"}
-            >
-                Услуги
-            </Text>
+        {
+            isAdmin && <EmployeeFilter
+                userId={userId}
+                setUserId={setUserId}
+            />
+        }
+        <Flex gap={3}>
+            <StatisticBox title="Выручка">
+                <Text fontSize={18}>
+                    {data.revenueCount}Р
+                </Text>
+            </StatisticBox>
+            <StatisticBox title="Новые клиенты">
+                <Text fontSize={18}>
+                    {data.newUsersCount}
+                </Text>
+            </StatisticBox>
+        </Flex>
+        <StatisticBox title="Услуги">
             <Chart
                 options={{
                     chart: {
@@ -88,7 +91,6 @@ export default function Page() {
                         // enabled: false,
                         background: {
                             foreColor: gray600,
-                            // borderColor: colors[2],
 
                             enabled: true,
                             dropShadow: {
@@ -102,31 +104,15 @@ export default function Page() {
                             // colors: [gray600],
                         },
                         formatter: (value) => {
-                            return Number(value) < 15 ? "" : `${value}%`
+                            return Number(value) < 15 ? "" : `${Number(value).toFixed(1)}%`
                         },
                     },
                 }}
                 series={data.services.values}//{[30, 7, 2]}
                 type="pie"
             />
-        </Box>
-        <Box
-            overflowX="auto"
-            overflowY={"hidden"}
-            bgColor={"gray.100"}
-            borderRadius={5}
-            py={1}
-            px={1}
-            mb={4}
-        >
-            <Text
-                fontSize={12}
-                color={"gray.600"}
-                m={2}
-                fontWeight={"bold"}
-            >
-                Выручка
-            </Text>
+        </StatisticBox>
+        <StatisticBox title="Выручка">
             <Chart
                 options={{
                     chart: {
@@ -135,38 +121,22 @@ export default function Page() {
                             show: false
                         },
                     },
-                    xaxis: {
-                        categories: data.revenue.labels
-                    },
-                    colors: [colors[1]],
+                    colors: [red400],
                     stroke: {
-                        width: 2
-                    }
+                        curve: 'smooth',
+                    },
+                    labels: data.revenue.labels
                 }}
                 series={[{
                     name: "Выручка",
                     data: data.revenue.values,
                 }]}
-                width={40 & data.revenue.labels.length}
-                height={160}
+                type="line"
+                // width={40 * data.appointments.labels.length}
+                height={200}
             />
-        </Box>
-        <Box
-            overflowX="auto"
-            overflowY={"hidden"}
-            bgColor={"gray.100"}
-            borderRadius={5}
-            py={1}
-            px={1}
-        >
-            <Text
-                fontSize={12}
-                color={"gray.600"}
-                m={2}
-                fontWeight={"bold"}
-            >
-                Записи
-            </Text>
+        </StatisticBox>
+        <StatisticBox title="Записи">
             <Chart
                 options={{
                     chart: {
@@ -175,28 +145,93 @@ export default function Page() {
                             show: false
                         },
                     },
+                    yaxis: [
+                        {
+                          labels: {
+                            formatter: function(val) {
+                              return val.toFixed(0);
+                            }
+                          }
+                        }
+                    ],
                     xaxis: {
-                        categories: data.applications.labels
+                        categories: data.appointments.labels
                     },
-                    colors: [colors[0]],
+                    colors: [blue400],
+                    stroke: {
+                        width: 0,
+                        show: false
+                    },
+                    plotOptions: {
+                        bar: {
+                            columnWidth: 40
+                        }
+                    },
+                    dataLabels: {
+                        formatter: (value) => {
+                            return Number(value) < 4 ? "" : String(value)
+                        },
+                    }
+                }}
+                series={[{
+                    name: "Записи",
+                    data: data.appointments.values,
+                }]}
+                type="bar"
+                // width={40 * data.appointments.labels.length}
+                height={200}
+            />
+        </StatisticBox>
+        <StatisticBox title="Записи по дням недели">
+            <Chart
+                options={{
+                    chart: {
+                        id: "weekdays-chart",
+                        toolbar: {
+                            show: false
+                        },
+                    },
+                    yaxis: [
+                        {
+                          labels: {
+                            formatter: function(val) {
+                              return val.toFixed(0);
+                            }
+                          }
+                        }
+                    ],
+                    xaxis: {
+                        categories: data.weekdays.labels,
+                        labels: {
+                            formatter: function(value) {
+                                return weekDays[Number(value)]
+                            },
+                            style: {
+                                fontWeight: "bold",
+                                // fontSize: "18px",
+                                cssClass: "uppercase"
+                            }
+                        }
+                    },
+                    colors: [teal400],
                     stroke: {
                         width: 0,
                         show: false
                     },
                     dataLabels: {
                         formatter: (value) => {
-                            return Number(value) < 4 ? "" : String(value)
+                            return Number(value) < 1 ? "" : String(value)
                         },
-                    },
+                    }
                 }}
                 series={[{
-                    name: "Записи",
-                    data: data.applications.values,
+                    name: "Записи по дням недели",
+                    data: data.weekdays.values,
                 }]}
                 type="bar"
-                width={40 * data.applications.labels.length}
-                height={160}
+                // width={40 * data.weekdays.labels.length}
+                height={200}
             />
-        </Box>
+        </StatisticBox>
     </Container>
 }

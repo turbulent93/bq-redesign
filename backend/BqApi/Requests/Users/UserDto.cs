@@ -26,6 +26,7 @@ namespace BqApi.Requests.Users
         public int? InvitePromoId { get; set; }
         public string? StartWorkTime { get; set; }
         public string? EndWorkTime { get; set; }
+        public DateTime? CreatedAt { get; set; }
 
         public PromoDto? InvitePromo { get; set; } = null!;
         public List<UserDto>? InvitedUsers { get; set; } = null!;
@@ -33,9 +34,8 @@ namespace BqApi.Requests.Users
         public List<SpecializationDto>? Specializations { get; set; } = null!;
         public FileDto? Avatar { get; set; } = null!;
         public PunchMapDto? PunchMap { get; set; }
-        public List<AppointmentDto>? EmployeeAppointments { get; set; } = null!;
+        //public List<AppointmentDto>? EmployeeAppointments { get; set; } = null!;
         public List<AppointmentDto>? ClientAppointments { get; set; } = null!;
-        public List<AppointmentDto>? Master { get; set; }
         public List<PromoDto>? Promos { get; set; }
         public List<UpcomigAppointment> UpcomingAppointments { get; set; } = [];
     }

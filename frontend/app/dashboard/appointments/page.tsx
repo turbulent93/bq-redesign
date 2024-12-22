@@ -81,7 +81,7 @@ export default function Page() {
 
     const [page, setPage] = useState<number>(1)
     const {data} = useQuery(
-        ["get appointments", page, schedulerValue?.scheduleId, tab],
+        ["get appointments", page, schedulerValue?.scheduleId, tab, userId],
         () => appointmentsClient.get({
             ...(tab == 1 ? {
                 page: page,
@@ -123,6 +123,7 @@ export default function Page() {
                 setUserId={setUserId}
             />
             <Scheduler
+                userId={user?.role == MASTER_ROLE_NAME ? user.id : userId}
                 value={schedulerValue}
                 onChange={setSchedulerValue}
                 contentType="COUNT"

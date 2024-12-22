@@ -67,12 +67,12 @@ namespace BeautyQueenApi.Requests.Schedules
                     for (int i = startDay; i <= lastDayOfPreviousMonth.Day; i++)
                     {
                         var item = await _context
-                            .Schedule
-                            .FirstOrDefaultAsync(i => i.Date.Year == curDate.Year
-                                && i.Date.Month == curDate.Month
-                                && i.Date.Day == curDate.Day
-                                && (request.ContentType != "SLOTS" || i.Date.Day >= DateTime.Now.Day)
-                                && (request.EmployeeId == null || i.EmployeeId == request.EmployeeId), cancellationToken);
+                                .Schedule
+                                .FirstOrDefaultAsync(i => i.Date.Year == curDate.Year
+                                    && i.Date.Month == curDate.Month
+                                    && i.Date.Day == curDate.Day
+                                    && (request.ContentType != "SLOTS" || i.Date.Day >= DateTime.Now.Day)
+                                    && (request.EmployeeId == null || i.EmployeeId == request.EmployeeId), cancellationToken);
 
                         //int count = 0;
 

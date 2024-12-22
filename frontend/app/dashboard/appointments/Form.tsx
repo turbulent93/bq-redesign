@@ -14,7 +14,7 @@ import { AvailableBonuses } from "./AvailableBonuses"
 import { EndTime } from "./EndTime"
 import { EmployeeFilter } from "@/components/EmployeeFilter"
 import { useAuth } from "@/utils/useAuth"
-import { MASTER_ROLE_NAME, PROMO_TYPE_DISCOUNT } from "@/utils/constants"
+import { ADMIN_ROLE_NAME, MASTER_ROLE_NAME, PROMO_TYPE_DISCOUNT } from "@/utils/constants"
 import { StartTime } from "./StartTime"
 import { AppointmentCard } from "@/app/profile/AppointmentCard"
 import { AppointmentTemplate } from "./AppointmentTemplate"
@@ -50,10 +50,12 @@ export const Form = ({mutate, values}: FormProps) => {
         px={0}
     >
         <AppointmentTemplate />
-        <EmployeeFilter
-            userId={userId}
-            setUserId={setUserId}
-        />
+        {
+            user?.role == ADMIN_ROLE_NAME && <EmployeeFilter
+                userId={userId}
+                setUserId={setUserId}
+            />
+        }
         <CustomSelect
             label="Услуга"
             name={nameof<AppointmentDto>("serviceId")}
@@ -64,6 +66,7 @@ export const Form = ({mutate, values}: FormProps) => {
             label="День"
             name={nameof<AppointmentDto>("scheduleId")}
             type="schedule"
+            userId={userId}
         />
         <AvailableTime />
         <StartTime />

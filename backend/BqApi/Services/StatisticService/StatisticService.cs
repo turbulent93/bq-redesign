@@ -1,7 +1,9 @@
 ﻿using BeautyQueenApi.Data;
+using BqApi.Constants;
 using BqApi.Requests.Statistic;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 
 namespace BqApi.Services.StatisticService
@@ -161,6 +163,126 @@ namespace BqApi.Services.StatisticService
             };
         }
 
+        private async Task<StatisticDto> GetWeekdayStatistic(StatisticRequest request)
+        {
+            var apps = await _context.Appointment
+                .Include(x => x.Schedule)
+                .ToListAsync();
+
+            if (request.EmployeeId != null)
+            {
+                apps = apps.Where(x => x.EmployeeId == request.EmployeeId).ToList();
+            }
+
+            if (request.StartDate == null || request.EndDate == null)
+            {
+                var curDate = DateTime.Now;
+                apps = apps
+                    .Where(i => i.Schedule.Date.Year == curDate.Year && i.Schedule.Date.Month == curDate.Month)
+                    .ToList();
+            }
+
+            if (request.StartDate != null)
+            {
+                DateOnly.TryParseExact(request.StartDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly startDate);
+
+                var date = startDate;
+                apps = apps.Where(x => x.Schedule.Date >= date).ToList();
+            }
+
+            if (request.EndDate != null)
+            {
+                DateOnly.TryParseExact(request.EndDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly endDate);
+
+                apps = apps.Where(x => x.Schedule.Date <= endDate).ToList();
+            }
+
+            var statistics = apps
+                .GroupBy(x => x.Schedule.Date.DayOfWeek)
+                .Select(x => new
+                {
+                    Label = x.Select(a => (int)a.Schedule.Date.DayOfWeek).First(),
+                    Value = x.Select(a => a).Count()
+                });
+
+            return new StatisticDto
+            {
+                Labels = Enumerable.Range(0, 7).ToArray().Select(i => i.ToString()).ToList(),
+                Values = Enumerable.Range(0, 7).ToArray().Select(i =>
+                {
+                    var v = statistics.FirstOrDefault(s => s.Label == i);
+
+                    if (v != null)
+                    {
+                        return v.Value;
+                    }
+                    return 0;
+                }).ToList()
+            };
+        }
+
+        private async Task<StatisticDto> GetPromoStatistic(StatisticRequest request)
+        {
+            var apps = await _context.Appointment
+                .Include(x => x.Schedule)
+                .Include(i => i.Promo)
+                .Where(i => i.Promo != null)
+                .ToListAsync();
+
+            if (request.EmployeeId != null)
+            {
+                apps = apps.Where(x => x.EmployeeId == request.EmployeeId).ToList();
+            }
+
+            if (request.StartDate == null || request.EndDate == null)
+            {
+                var curDate = DateTime.Now;
+                apps = apps
+                    .Where(i => i.Schedule.Date.Year == curDate.Year && i.Schedule.Date.Month == curDate.Month)
+                    .ToList();
+            }
+
+            if (request.StartDate != null)
+            {
+                DateOnly.TryParseExact(request.StartDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly startDate);
+
+                var date = startDate;
+                apps = apps.Where(x => x.Schedule.Date >= date).ToList();
+            }
+
+            if (request.EndDate != null)
+            {
+                DateOnly.TryParseExact(request.EndDate, "dd.MM.yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateOnly endDate);
+
+                apps = apps.Where(x => x.Schedule.Date <= endDate).ToList();
+            }
+
+            var statistics = apps
+                .GroupBy(x => x.Promo.Type)
+                .Select(x => new
+                {
+                    Label = x.Select(a => a.Promo.Type).First(),
+                    Value = x.Select(a => a).Count()
+                });
+
+            var promoTypes = new List<string> { PromoTypes.PROMO_TYPE_DISCOUNT, PromoTypes.PROMO_TYPE_BONUS, PromoTypes.PROMO_TYPE_INVITE};
+
+            return new StatisticDto
+            {
+                Labels = promoTypes,
+                Values = promoTypes.Select(i =>
+                {
+                    var v = statistics.FirstOrDefault(s => s.Label == i);
+
+                    if (v != null)
+                    {
+                        return v.Value;
+                    }
+                    return 0;
+                }).ToList()
+            };
+        }
+
         private async Task<int> GetRevenueCount(StatisticRequest request)
         {
             var apps = await _context.Appointment
@@ -196,7 +318,33 @@ namespace BqApi.Services.StatisticService
                 apps = apps.Where(x => x.Schedule.Date <= endDate).ToList();
             }
 
-            return apps.Sum(i => i.Service.Price);
+            return apps.Sum(i =>
+            {
+                if(i.Promo != null && i.Promo.Type == PromoTypes.PROMO_TYPE_DISCOUNT)
+                {
+                    var promoService = i.Promo.PromoServices.FirstOrDefault(ps => ps.ServiceId == i.ServiceId);
+
+                    if(promoService != null)
+                    {
+                        return promoService.Discount;
+                    }
+                    return i.Service.Price;
+                } else if(i.PaidWithBonuses != 0)
+                {
+                    return i.Service.Price - i.PaidWithBonuses;
+                }
+                return i.Service.Price;
+            });
+        }
+
+        private async Task<int> GetNewUsersCount()
+        {
+            var curDate = DateTime.Now;
+            var count = await _context.User
+                .Where(i => i.CreatedAt != null && i.CreatedAt.Value.Year == curDate.Year && i.CreatedAt.Value.Month == curDate.Month)
+                .CountAsync();
+
+            return count;
         }
 
         public async Task<ResponseStatisticDto> Get(StatisticRequest request)
@@ -204,9 +352,12 @@ namespace BqApi.Services.StatisticService
             return new ResponseStatisticDto
             {
                 RevenueCount = await GetRevenueCount(request),
+                NewUsersCount = await GetNewUsersCount(),
                 Revenue = await GetRevenueStatistic(request),
-                Applications = await GetAppointmentStatistic(request),
-                Services = await GetServiceStatistic(request)
+                Appointments = await GetAppointmentStatistic(request),
+                Services = await GetServiceStatistic(request),
+                Weekdays = await GetWeekdayStatistic(request),
+                Promos = await GetPromoStatistic(request)
             };
         }
 

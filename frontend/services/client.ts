@@ -3567,15 +3567,14 @@ export interface UserDto {
     invitePromoId?: number | undefined;
     startWorkTime?: string | undefined;
     endWorkTime?: string | undefined;
+    createdAt?: string | undefined;
     invitePromo?: PromoDto | undefined;
     invitedUsers?: UserDto[] | undefined;
     specializationIds: number[];
     specializations?: SpecializationDto[] | undefined;
     avatar?: FileDto | undefined;
     punchMap?: PunchMapDto | undefined;
-    employeeAppointments?: AppointmentDto[] | undefined;
     clientAppointments?: AppointmentDto[] | undefined;
-    master?: AppointmentDto[] | undefined;
     promos?: PromoDto[] | undefined;
     upcomingAppointments: UpcomigAppointment[];
 }
@@ -3838,9 +3837,12 @@ export interface CreateOrUpdateSpecializationRequest extends SpecializationDto {
 
 export interface ResponseStatisticDto {
     revenueCount: number;
+    newUsersCount: number;
     revenue: StatisticDto;
-    applications: StatisticDto;
+    appointments: StatisticDto;
     services: StatisticDto;
+    weekdays: StatisticDto;
+    promos: StatisticDto;
 }
 
 export interface StatisticDto {

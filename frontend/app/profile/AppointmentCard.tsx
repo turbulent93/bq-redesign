@@ -2,7 +2,7 @@ import { AppointmentDto, ScheduleDto, ServiceDto, UserDto } from "@/services/cli
 import { promosClient, schedulesClient, servicesClient } from "@/services/services";
 import { DATE_FORMAT, weekDays } from "@/utils/constants";
 import { Box, Flex, Text } from "@chakra-ui/react";
-import moment from "moment";
+import moment, { weekdays } from "moment";
 import { useMemo } from "react";
 import { useQuery } from "react-query";
 
@@ -97,7 +97,7 @@ export const AppointmentCard = (props: AppointmentCardProps) => {
                     textTransform={"uppercase"}
                 >
                     {
-                        weekDays[date.day() - 1]
+                        weekDays[date.weekday() - 1]
                     }
                 </Text>
                 <Text

@@ -119,7 +119,7 @@ const getMr = (startAt: string, endAt: string, isNext?: boolean, isMobile?: bool
 
     if(isMobile) {
         const m = (COL_HEIGHT / 60) * (60 - endMinutes)
-        console.log(m)
+        
         return m == 0 ? 1 : m + "px"
     }
 
@@ -171,8 +171,6 @@ export const AppointmentsActivity = ({data, collapsed = false}: AppointmentsActi
             }).isSame(moment(data[0].schedule?.date, DATE_FORMAT))
     }, [data])
 
-    useEffect(() => console.log(isToday), [isToday])
-
     useEffect(() => {
         if(isMobile) {
             const timeout = setTimeout(() => scrollRef.current?.scrollIntoView({
@@ -189,6 +187,15 @@ export const AppointmentsActivity = ({data, collapsed = false}: AppointmentsActi
         from {transform: rotate(0deg);}   
         to {transform: rotate(360deg)} 
     `;
+
+    const scrollToId = useMemo(() => data?.reduce((p, c) => {
+        const cst = moment(c.startAt, DATE_FORMAT)
+        const pst = moment(p.startAt, DATE_FORMAT)
+        
+        const curTime = moment()
+
+        return cst.isSameOrAfter(pst) && cst.isBefore(curTime) ? c : p
+    }), [data])
 
     return <Box
         h={isMobile ? `401px` : undefined}
@@ -217,7 +224,7 @@ export const AppointmentsActivity = ({data, collapsed = false}: AppointmentsActi
             {
                 data?.map((i, index) =>
                     <GridItem
-                        ref={isMobile && isInProcess(i.startAt, i.endAt) ? scrollRef : undefined}
+                        ref={isMobile && i.id == scrollToId?.id ? scrollRef : undefined}
                         m={1}
                         bgColor={`${colors[index % colors.length]}.100`}
                         gridRow={!isMobile ? getRow(i.startAt, isMobile) : undefined}

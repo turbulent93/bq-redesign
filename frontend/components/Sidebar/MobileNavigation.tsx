@@ -99,7 +99,7 @@ export const MobileNavigation = () => {
                         w={"40px"}
                         h="40px"
                         my={3}
-                        bgColor={pathname.includes(href) ? "gray.600" : undefined}
+                        bgColor={pathname == href ? "gray.600" : undefined}
                         href={href}
                         key={href}
                     >

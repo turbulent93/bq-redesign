@@ -15,6 +15,8 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Globalization;
+using System.Linq;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -85,6 +87,8 @@ builder.Services.AddTransient<CodeGenerationService>();
 builder.Services.AddTransient<DbInitializer>();
 
 var app = builder.Build();
+
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 await app.InitializeDatabaseAsync();
 

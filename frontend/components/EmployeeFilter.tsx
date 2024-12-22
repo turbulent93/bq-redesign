@@ -8,16 +8,17 @@ import { useQuery } from "react-query"
 type EmployeeFilterProps = {
     userId?: number
     setUserId: (v?: number) => void
+    selectFirst?: boolean
 }
 
-export const EmployeeFilter = ({userId, setUserId}: EmployeeFilterProps) => {
+export const EmployeeFilter = ({userId, setUserId, selectFirst = false}: EmployeeFilterProps) => {
     const {isAdmin} = useAuth()
 
     const {data: users} = useQuery(
         ["get users"],
         () => usersClient.get({page: undefined, size: undefined, roles: [MASTER_ROLE_NAME, ADMIN_ROLE_NAME]}), {
             select: (data) => data.list.map(i => ({label: i.fullName || i.login, value: i.id})),
-            onSuccess: (data) => setUserId(data.length > 0 ? data[0].value : undefined)
+            onSuccess: (data) => selectFirst && setUserId(data.length > 0 ? data[0].value : undefined)
         }
     )
 
