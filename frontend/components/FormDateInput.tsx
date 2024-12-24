@@ -4,19 +4,23 @@ import { Scheduler, SchedulerValue } from "./Scheduler/Scheduler"
 import { useState } from "react"
 import { useQuery } from "react-query"
 import { servicesClient } from "@/services/services"
+import { nameof } from "@/utils/nameof"
+import { AppointmentDto } from "@/services/client"
 
 type CustomInputProps = {
     label: string
     name: string
     required?: boolean
     type?: "date" | "schedule"
-    userId?: number
+    // userId?: number
 }
 
-export const FormDateInput = ({label, name, required, type = "date", userId}: CustomInputProps) => {
+export const FormDateInput = ({label, name, required, type = "date"}: CustomInputProps) => {
     const {formState: {errors}, control, watch} = useFormContext()
 
     const [schedulerValue, setSchedulerValue] = useState<SchedulerValue>()
+
+    const employeeId = watch(nameof<AppointmentDto>("employeeId"))
 
     return <>
         <Text mb='8px'>{label}</Text>
@@ -41,7 +45,7 @@ export const FormDateInput = ({label, name, required, type = "date", userId}: Cu
                         }}
                         contentType="WORK_TIME"
                         collapsed
-                        userId={userId}
+                        userId={employeeId}
                     />}
             />
         </Box>

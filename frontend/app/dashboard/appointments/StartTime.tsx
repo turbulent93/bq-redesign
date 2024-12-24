@@ -9,24 +9,24 @@ import { useFormContext } from "react-hook-form"
 import { useQuery } from "react-query"
 
 export const StartTime = () => {
-    const {watch, reset, getValues} = useFormContext()
+    // const {watch, reset, getValues} = useFormContext()
 
-    const scheduleId = watch(nameof<AppointmentDto>("scheduleId"))
-    const startAt = watch(nameof<AppointmentDto>("startAt"))
+    // const scheduleId = watch(nameof<AppointmentDto>("scheduleId"))
+    // const startAt = watch(nameof<AppointmentDto>("startAt"))
 
-    const {data: schedule} = useQuery(
-        ["view schedule", scheduleId],
-        () => schedulesClient.view(scheduleId), {
-            enabled: !!scheduleId
-        }
-    )
+    // const {data: schedule} = useQuery(
+    //     ["view schedule", scheduleId],
+    //     () => schedulesClient.view(scheduleId), {
+    //         enabled: !!scheduleId
+    //     }
+    // )
 
-    useEffect(() => {
-        reset({
-            ...getValues(),
-            [nameof<AppointmentDto>("startAt")]: !!startAt ? startAt : schedule?.startAt
-        })
-    }, [scheduleId])
+    // useEffect(() => {
+    //     reset({
+    //         ...getValues(),
+    //         [nameof<AppointmentDto>("startAt")]: !!startAt ? startAt : schedule?.startAt
+    //     })
+    // }, [scheduleId])
 
     return <TimeSelect
         name={nameof<AppointmentDto>("startAt")}

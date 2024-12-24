@@ -18,6 +18,7 @@ import { ADMIN_ROLE_NAME, MASTER_ROLE_NAME, PROMO_TYPE_DISCOUNT } from "@/utils/
 import { StartTime } from "./StartTime"
 import { AppointmentCard } from "@/app/profile/AppointmentCard"
 import { AppointmentTemplate } from "./AppointmentTemplate"
+import { SelectEmployee } from "./SelectEmployee"
 
 type FormProps = {
     mutate: (item: AppointmentDto) => void,
@@ -27,7 +28,7 @@ type FormProps = {
 export const Form = ({mutate, values}: FormProps) => {
     const {user} = useAuth()
 
-    const [userId, setUserId] = useState<number | undefined>()
+    // const [userId, setUserId] = useState<number | undefined>()
 
     const {data: services} = useQuery(
         ["get services"],
@@ -43,19 +44,14 @@ export const Form = ({mutate, values}: FormProps) => {
     )
 
     return <CustomForm
-        onSubmit={v => mutate({...v, employeeId: user?.role == MASTER_ROLE_NAME ? user?.id! : userId!})}
+        onSubmit={v => mutate({...v})}
         // onSubmit={(v) => console.log(v)}
         // values={values ? values : {startAt: user?.startWorkTime}}
         values={values}
         px={0}
     >
         <AppointmentTemplate />
-        {
-            user?.role == ADMIN_ROLE_NAME && <EmployeeFilter
-                userId={userId}
-                setUserId={setUserId}
-            />
-        }
+        <SelectEmployee />
         <CustomSelect
             label="Услуга"
             name={nameof<AppointmentDto>("serviceId")}
@@ -66,7 +62,6 @@ export const Form = ({mutate, values}: FormProps) => {
             label="День"
             name={nameof<AppointmentDto>("scheduleId")}
             type="schedule"
-            userId={userId}
         />
         <AvailableTime />
         <StartTime />
