@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Form } from "../Form";
 import { AppointmentDto } from "@/services/client";
 import { appointmentsClient } from "@/services/services";
+import { Container } from "@chakra-ui/react";
 // import { Form } from "../../Form";
 
 export default function Page() {
@@ -20,9 +21,11 @@ export default function Page() {
 	})
 
 	const {data} = useQuery(
-        ["view employee", IDBCursor],
+        ["view employee", id],
         () => appointmentsClient.view(Number(id))
     )
 
-	return <Form mutate={mutate} values={data} />
+	return <Container>
+		<Form mutate={mutate} values={data} 	/>
+	</Container>
 }
